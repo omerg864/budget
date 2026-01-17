@@ -1,10 +1,9 @@
 import { Controller, Get, UseGuards } from '@nestjs/common';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
 import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
-
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
 
 @Controller(generateLink({ route: [API_ROUTES.USER.BASE] }))
 @UseGuards(AuthGuard)

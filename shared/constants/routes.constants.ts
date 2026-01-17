@@ -17,4 +17,12 @@ export const API_ROUTES = {
 		UPDATE: '/:id',
 		DELETE: '/:id',
 	},
+	ACCOUNT: {
+		BASE: '/v1/account',
+		CREATE: '/',
+		FIND_ALL: '/:ledgerId',
+		FIND_ONE: '/:id',
+		UPDATE: '/:id',
+		DELETE: '/:id',
+	},
 };

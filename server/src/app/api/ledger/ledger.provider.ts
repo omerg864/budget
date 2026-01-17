@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { Ledger, LedgerDocument } from './ledger.model.js';
 import { LedgerEntity } from '../../../../../shared/types/ledger.type.js';
+import { Ledger, LedgerDocument } from './ledger.model.js';
 
 @Injectable()
 export class LedgerProvider {
@@ -10,27 +10,30 @@ export class LedgerProvider {
     @InjectModel(Ledger.name) private ledgerModel: Model<LedgerDocument>,
   ) {}
 
-  async create(data: Omit<LedgerEntity, 'id'>): Promise<Ledger> {
+  async create(data: Omit<LedgerEntity, 'id'>): Promise<LedgerEntity> {
     const createdLedger = new this.ledgerModel(data);
     return createdLedger.save();
   }
 
-  async findAll(): Promise<Ledger[]> {
-    return this.ledgerModel.find().exec();
+  async findByIds(ids: string[]): Promise<LedgerEntity[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+    return this.ledgerModel.find({ _id: { $in: ids } });
   }
 
-  async findOne(id: string): Promise<Ledger | null> {
+  async findOne(id: string): Promise<LedgerEntity | null> {
     return this.ledgerModel.findById(id).exec();
   }
 
   async update(
     id: string,
     data: Partial<LedgerEntity>,
-  ): Promise<Ledger | null> {
+  ): Promise<LedgerEntity | null> {
     return this.ledgerModel.findByIdAndUpdate(id, data, { new: true }).exec();
   }
 
-  async delete(id: string): Promise<Ledger | null> {
+  async delete(id: string): Promise<LedgerEntity | null> {
     return this.ledgerModel.findByIdAndDelete(id).exec();
   }
 }

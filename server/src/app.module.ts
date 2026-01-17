@@ -1,14 +1,15 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { AccountModule } from './app/api/account/account.module';
 import { AuthModule } from './app/api/auth/auth.module';
+import { LedgerModule } from './app/api/ledger/ledger.module';
 import { UserModule } from './app/api/user/user.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
 import cloudConfig from './config/cloud.config';
 import dbConfig from './config/db.config';
 import emailConfig from './config/email.config';
-import { LedgerModule } from './app/api/ledger/ledger.module';
 
 @Module({
   imports: [
@@ -29,6 +30,7 @@ import { LedgerModule } from './app/api/ledger/ledger.module';
     AuthModule,
     UserModule,
     LedgerModule,
+    AccountModule,
   ],
 })
 export class AppModule {}

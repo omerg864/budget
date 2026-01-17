@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
+import { TransactionType } from '../../../../../shared/constants/transaction.constants.js';
 import {
   LedgerCategory,
   LedgerEntity,
 } from '../../../../../shared/types/ledger.type.js';
-import { TransactionType } from '../../../../../shared/constants/transaction.constants.js';
 
 @Schema({ timestamps: true })
 export class Ledger implements Omit<LedgerEntity, 'id'> {
