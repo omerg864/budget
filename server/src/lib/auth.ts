@@ -1,3 +1,4 @@
+import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient } from 'mongodb';
@@ -31,6 +32,7 @@ export const auth = betterAuth({
     updateAge: 60 * 60 * 24, // 1 day (every 1 day the session expiration is updated)
   },
   trustedOrigins: [process.env.CLIENT_URL || 'http://localhost:5173'],
+  plugins: [passkey()],
 });
 
 export type Session = typeof auth.$Infer.Session.session;

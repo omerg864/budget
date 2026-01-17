@@ -3,6 +3,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
 import { AccountModule } from './app/api/account/account.module';
 import { AuthModule } from './app/api/auth/auth.module';
+import { CreditModule } from './app/api/credit/credit.module';
 import { LedgerModule } from './app/api/ledger/ledger.module';
 import { UserModule } from './app/api/user/user.module';
 import appConfig from './config/app.config';
@@ -31,6 +32,7 @@ import emailConfig from './config/email.config';
     UserModule,
     LedgerModule,
     AccountModule,
+    CreditModule,
   ],
 })
 export class AppModule {}

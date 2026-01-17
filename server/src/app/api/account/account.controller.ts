@@ -15,7 +15,7 @@ import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
-import { CreateAccountDto } from './account.dto.js';
+import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
 import { AccountService } from './account.service.js';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
@@ -97,7 +97,7 @@ export class AccountController {
   async update(
     @User() user: UserEntity,
     @Param('id') accountId: string,
-    @Body() updateData: Partial<CreateAccountDto>,
+    @Body() updateData: UpdateAccountDto,
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {

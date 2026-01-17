@@ -71,4 +71,23 @@ export class LedgerAccessService {
         return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
     }
   }
+
+  async doesUserHaveAccessToCreditAction(
+    ledgerId: string,
+    userId: string,
+    action: 'read' | 'write' | 'delete',
+  ): Promise<boolean> {
+    const ledgerAccess = await this.findByLedgerIdAndUserId(ledgerId, userId);
+    if (!ledgerAccess) {
+      return false;
+    }
+    switch (action) {
+      case 'read':
+        return true;
+      case 'write':
+        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+      case 'delete':
+        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+    }
+  }
 }
