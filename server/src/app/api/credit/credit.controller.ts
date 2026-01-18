@@ -13,6 +13,7 @@ import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js'
 import { CreditEntity } from '../../../../../shared/types/credit.type.js';
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { AccountService } from '../account/account.service.js';
 import { User } from '../auth/auth.decorator.js';
@@ -67,7 +68,7 @@ export class CreditController {
   @Get(API_ROUTES.CREDIT.FIND_ALL)
   async findAll(
     @User() user: UserEntity,
-    @Param('ledgerId') ledgerId: string,
+    @Param('ledgerId', ParseObjectIdPipe) ledgerId: string,
   ): Promise<CreditEntity[]> {
     const hasAccess =
       await this.ledgerAccessService.doesUserHaveAccessToCreditAction(
@@ -88,7 +89,7 @@ export class CreditController {
   @Get(API_ROUTES.CREDIT.FIND_BY_ACCOUNT)
   async findByAccount(
     @User() user: UserEntity,
-    @Param('accountId') accountId: string,
+    @Param('accountId', ParseObjectIdPipe) accountId: string,
   ): Promise<CreditEntity[]> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {
@@ -114,7 +115,7 @@ export class CreditController {
   @Get(API_ROUTES.CREDIT.FIND_ONE)
   async findOne(
     @User() user: UserEntity,
-    @Param('id') creditId: string,
+    @Param('id', ParseObjectIdPipe) creditId: string,
   ): Promise<CreditEntity | null> {
     const credit = await this.creditService.findOne(creditId);
     if (!credit) {
@@ -140,7 +141,7 @@ export class CreditController {
   @Patch(API_ROUTES.CREDIT.UPDATE)
   async update(
     @User() user: UserEntity,
-    @Param('id') creditId: string,
+    @Param('id', ParseObjectIdPipe) creditId: string,
     @Body() updateData: UpdateCreditDto,
   ): Promise<CreditEntity | null> {
     const credit = await this.creditService.findOne(creditId);
@@ -161,6 +162,31 @@ export class CreditController {
       );
     }
 
+    if (updateData.accountId) {
+      const account = await this.accountService.findOne(updateData.accountId);
+      if (!account) {
+        throw new NotFoundException('Account not found');
+      }
+
+      if (account.ledgerId !== updateData.ledgerId) {
+        throw new ForbiddenException('Account does not belong to this ledger');
+      }
+      if (credit.ledgerId !== account.ledgerId) {
+        const hasAccessToNewLedger =
+          await this.ledgerAccessService.doesUserHaveAccessToCreditAction(
+            account.ledgerId,
+            user.id,
+            'write',
+          );
+
+        if (!hasAccessToNewLedger) {
+          throw new ForbiddenException(
+            'You do not have write access to this ledger to update credit',
+          );
+        }
+      }
+    }
+
     await this.creditService.validateUserForOwner(
       updateData.ownerId,
       credit.ledgerId,
@@ -172,7 +198,7 @@ export class CreditController {
   @Delete(API_ROUTES.CREDIT.DELETE)
   async remove(
     @User() user: UserEntity,
-    @Param('id') creditId: string,
+    @Param('id', ParseObjectIdPipe) creditId: string,
   ): Promise<CreditEntity | null> {
     const credit = await this.creditService.findOne(creditId);
     if (!credit) {

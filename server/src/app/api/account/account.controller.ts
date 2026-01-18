@@ -13,6 +13,7 @@ import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js'
 import { AccountEntity } from '../../../../../shared/types/account.type.js';
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
@@ -49,7 +50,7 @@ export class AccountController {
   @Get(API_ROUTES.ACCOUNT.FIND_ALL)
   async findAll(
     @User() user: UserEntity,
-    @Param('ledgerId') ledgerId: string,
+    @Param('ledgerId', ParseObjectIdPipe) ledgerId: string,
   ): Promise<AccountEntity[]> {
     const hasAccess =
       await this.ledgerAccessService.doesUserHaveAccessToAccountAction(
@@ -70,7 +71,7 @@ export class AccountController {
   @Get(API_ROUTES.ACCOUNT.FIND_ONE)
   async findOne(
     @User() user: UserEntity,
-    @Param('id') accountId: string,
+    @Param('id', ParseObjectIdPipe) accountId: string,
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {
@@ -96,7 +97,7 @@ export class AccountController {
   @Patch(API_ROUTES.ACCOUNT.UPDATE)
   async update(
     @User() user: UserEntity,
-    @Param('id') accountId: string,
+    @Param('id', ParseObjectIdPipe) accountId: string,
     @Body() updateData: UpdateAccountDto,
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
@@ -123,7 +124,7 @@ export class AccountController {
   @Delete(API_ROUTES.ACCOUNT.DELETE)
   async remove(
     @User() user: UserEntity,
-    @Param('id') accountId: string,
+    @Param('id', ParseObjectIdPipe) accountId: string,
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {

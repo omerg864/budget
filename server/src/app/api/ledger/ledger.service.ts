@@ -1,10 +1,20 @@
 import { Injectable } from '@nestjs/common';
 import { LedgerEntity } from '../../../../../shared/types/ledger.type.js';
+import { AccountService } from '../account/account.service.js';
+import { CreditService } from '../credit/credit.service.js';
+import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service.js';
+import { TransactionService } from '../transaction/transaction.service.js';
 import { LedgerProvider } from './ledger.provider.js';
 
 @Injectable()
 export class LedgerService {
-  constructor(private readonly ledgerProvider: LedgerProvider) {}
+  constructor(
+    private readonly ledgerProvider: LedgerProvider,
+    private readonly transactionService: TransactionService,
+    private readonly recurringTransactionService: RecurringTransactionService,
+    private readonly creditService: CreditService,
+    private readonly accountService: AccountService,
+  ) {}
 
   async create(data: Omit<LedgerEntity, 'id'>): Promise<LedgerEntity> {
     return this.ledgerProvider.create(data);
@@ -26,6 +36,13 @@ export class LedgerService {
   }
 
   async remove(id: string): Promise<LedgerEntity | null> {
-    return this.ledgerProvider.delete(id);
+    const deleted = await this.ledgerProvider.delete(id);
+    await Promise.allSettled([
+      this.transactionService.removeByLedgerId(id),
+      this.recurringTransactionService.removeByLedgerId(id),
+      this.creditService.removeByLedgerId(id),
+      this.accountService.removeByLedgerId(id),
+    ]);
+    return deleted;
   }
 }

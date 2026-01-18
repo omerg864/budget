@@ -10,4 +10,5 @@ export type CreditEntity = {
 	type: CreditType;
 	createdAt: Date;
 	updatedAt: Date;
+	deletedAt?: Date | null;
 };

@@ -34,4 +34,21 @@ export const API_ROUTES = {
 		UPDATE: '/:id',
 		DELETE: '/:id',
 	},
+	TRANSACTION: {
+		BASE: '/v1/transaction',
+		CREATE: '/',
+		FIND_ALL: '/:ledgerId',
+		FIND_BY_CREDIT: '/:creditId',
+		FIND_ONE: '/:id',
+		UPDATE: '/:id',
+		DELETE: '/:id',
+	},
+	RECURRING_TRANSACTION: {
+		BASE: '/v1/recurring-transaction',
+		CREATE: '/',
+		FIND_ALL: '/:ledgerId',
+		FIND_ONE: '/:id',
+		UPDATE: '/:id',
+		DELETE: '/:id',
+	},
 };

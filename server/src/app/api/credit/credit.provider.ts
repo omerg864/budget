@@ -18,29 +18,41 @@ export class CreditProvider {
   }
 
   async findAll(): Promise<CreditEntity[]> {
-    return this.creditModel.find();
+    return this.creditModel.find({ deletedAt: null });
   }
 
   async findByLedgerId(ledgerId: string): Promise<CreditEntity[]> {
-    return this.creditModel.find({ ledgerId });
+    return this.creditModel.find({ ledgerId, deletedAt: null });
   }
 
   async findByAccountId(accountId: string): Promise<CreditEntity[]> {
-    return this.creditModel.find({ accountId });
+    return this.creditModel.find({ accountId, deletedAt: null });
   }
 
   async findOne(id: string): Promise<CreditEntity | null> {
-    return this.creditModel.findById(id);
+    return this.creditModel.findOne({ _id: id, deletedAt: null });
   }
 
   async update(
     id: string,
     data: Partial<CreditEntity>,
   ): Promise<CreditEntity | null> {
-    return this.creditModel.findByIdAndUpdate(id, data, { new: true });
+    return this.creditModel.findOneAndUpdate(
+      { _id: id, deletedAt: null },
+      data,
+      { new: true },
+    );
   }
 
   async delete(id: string): Promise<CreditEntity | null> {
-    return this.creditModel.findByIdAndDelete(id);
+    return this.creditModel.findByIdAndUpdate(
+      id,
+      { deletedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async deleteByLedgerId(ledgerId: string): Promise<void> {
+    await this.creditModel.deleteMany({ ledgerId });
   }
 }

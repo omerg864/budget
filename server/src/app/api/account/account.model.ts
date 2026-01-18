@@ -23,6 +23,9 @@ export class Account implements Omit<AccountEntity, 'id'> {
 
   createdAt: Date;
   updatedAt: Date;
+
+  @Prop({ required: false, default: null })
+  deletedAt?: Date;
 }
 
 export type AccountDocument = HydratedDocument<Account>;

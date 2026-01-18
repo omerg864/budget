@@ -21,25 +21,37 @@ export class AccountProvider {
     if (ids.length === 0) {
       return [];
     }
-    return this.accountModel.find({ _id: { $in: ids } });
+    return this.accountModel.find({ _id: { $in: ids }, deletedAt: null });
   }
 
   async findByLedgerId(ledgerId: string): Promise<AccountEntity[]> {
-    return this.accountModel.find({ ledgerId });
+    return this.accountModel.find({ ledgerId, deletedAt: null });
   }
 
   async findOne(id: string): Promise<AccountEntity | null> {
-    return this.accountModel.findById(id);
+    return this.accountModel.findOne({ _id: id, deletedAt: null });
   }
 
   async update(
     id: string,
     data: Partial<AccountEntity>,
   ): Promise<AccountEntity | null> {
-    return this.accountModel.findByIdAndUpdate(id, data, { new: true });
+    return this.accountModel.findOneAndUpdate(
+      { _id: id, deletedAt: null },
+      data,
+      { new: true },
+    );
   }
 
   async delete(id: string): Promise<AccountEntity | null> {
-    return this.accountModel.findByIdAndDelete(id);
+    return this.accountModel.findByIdAndUpdate(
+      id,
+      { deletedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async deleteByLedgerId(ledgerId: string): Promise<void> {
+    await this.accountModel.deleteMany({ ledgerId });
   }
 }

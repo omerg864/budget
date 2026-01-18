@@ -23,17 +23,17 @@ export class LedgerProvider {
   }
 
   async findOne(id: string): Promise<LedgerEntity | null> {
-    return this.ledgerModel.findById(id).exec();
+    return this.ledgerModel.findById(id);
   }
 
   async update(
     id: string,
     data: Partial<LedgerEntity>,
   ): Promise<LedgerEntity | null> {
-    return this.ledgerModel.findByIdAndUpdate(id, data, { new: true }).exec();
+    return this.ledgerModel.findByIdAndUpdate(id, data, { new: true });
   }
 
   async delete(id: string): Promise<LedgerEntity | null> {
-    return this.ledgerModel.findByIdAndDelete(id).exec();
+    return this.ledgerModel.findByIdAndDelete(id);
   }
 }

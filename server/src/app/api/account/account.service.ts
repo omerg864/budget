@@ -34,4 +34,8 @@ export class AccountService {
   async remove(id: string): Promise<AccountEntity | null> {
     return this.accountProvider.delete(id);
   }
+
+  async removeByLedgerId(ledgerId: string): Promise<void> {
+    await this.accountProvider.deleteByLedgerId(ledgerId);
+  }
 }

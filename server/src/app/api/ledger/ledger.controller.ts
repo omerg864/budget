@@ -12,6 +12,7 @@ import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js'
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants.js';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { CreateLedgerDto } from './ledger.dto.js';
@@ -52,7 +53,7 @@ export class LedgerController {
   @Get(API_ROUTES.LEDGER.FIND_ONE)
   async findOne(
     @User() user: UserEntity,
-    @Param('id') ledgerId: string,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
   ): Promise<Ledger | null> {
     const readAccess =
       await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
@@ -69,7 +70,7 @@ export class LedgerController {
   @Patch(API_ROUTES.LEDGER.UPDATE)
   async update(
     @User() user: UserEntity,
-    @Param('id') ledgerId: string,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
     @Body() updateData: Partial<CreateLedgerDto>,
   ): Promise<Ledger | null> {
     const writeAccess =
@@ -87,7 +88,7 @@ export class LedgerController {
   @Delete(API_ROUTES.LEDGER.DELETE)
   async remove(
     @User() user: UserEntity,
-    @Param('id') ledgerId: string,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
   ): Promise<Ledger | null> {
     const ownerLedgerAccess =
       await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(

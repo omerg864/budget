@@ -49,6 +49,10 @@ export class CreditService {
     return this.creditProvider.delete(id);
   }
 
+  async removeByLedgerId(ledgerId: string): Promise<void> {
+    await this.creditProvider.deleteByLedgerId(ledgerId);
+  }
+
   async validateUserForOwner(
     userId: string | undefined,
     ledgerId: string,

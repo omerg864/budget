@@ -29,6 +29,9 @@ export class Credit implements CreditEntity {
 
   createdAt: Date;
   updatedAt: Date;
+
+  @Prop({ required: false, default: null })
+  deletedAt?: Date;
 }
 
 export type CreditDocument = HydratedDocument<Credit>;
