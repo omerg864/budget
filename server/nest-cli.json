@@ -4,6 +4,9 @@
   "sourceRoot": "src",
   "compilerOptions": {
     "deleteOutDir": true,
-    "assets": [{ "include": "**/*.ejs", "outDir": "dist/server/src" }]
+    "assets": [
+      { "include": "**/*.ejs", "outDir": "dist/server/src" },
+      { "include": "**/*.json", "outDir": "dist/server/src" }
+    ]
   }
 }

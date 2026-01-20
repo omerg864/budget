@@ -13,6 +13,7 @@ import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants.js';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { CreateLedgerDto } from './ledger.dto.js';
@@ -24,6 +25,7 @@ export class LedgerController {
   constructor(
     private readonly ledgerService: LedgerService,
     private readonly ledgerAccessService: LedgerAccessService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   @Post(API_ROUTES.LEDGER.CREATE)
@@ -62,7 +64,9 @@ export class LedgerController {
         'read',
       );
     if (!readAccess) {
-      throw new ForbiddenException('You do not have access to this ledger');
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
     }
     return this.ledgerService.findOne(ledgerId);
   }
@@ -80,7 +84,9 @@ export class LedgerController {
         'write',
       );
     if (!writeAccess) {
-      throw new ForbiddenException('You do not have access to this ledger');
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
     }
     return this.ledgerService.update(ledgerId, updateData);
   }
@@ -97,7 +103,9 @@ export class LedgerController {
         'delete',
       );
     if (!ownerLedgerAccess) {
-      throw new ForbiddenException('Only the owner can delete this ledger');
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.deleteForbidden'),
+      );
     }
     return this.ledgerService.remove(ledgerId);
   }

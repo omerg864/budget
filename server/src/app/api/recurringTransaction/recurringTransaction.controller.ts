@@ -19,6 +19,7 @@ import { RecurringTransactionEntity } from '../../../../../shared/types/recurrin
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { AuthGuard } from '../auth/auth.guard.js';
@@ -36,6 +37,7 @@ export class RecurringTransactionController {
     private readonly recurringTransactionService: RecurringTransactionService,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly creditService: CreditService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   @Post(API_ROUTES.RECURRING_TRANSACTION.CREATE)
@@ -53,18 +55,18 @@ export class RecurringTransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
     const credit = await this.creditService.findOne(createDto.creditId);
     if (!credit) {
-      throw new NotFoundException('Credit not found');
+      throw new NotFoundException(this.i18n.t('errorMessages.credit.notFound'));
     }
 
     if (credit.ledgerId !== createDto.ledgerId) {
       throw new UnauthorizedException(
-        'User does not have write access to this credit',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
 
@@ -88,7 +90,7 @@ export class RecurringTransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
     return this.recurringTransactionService.findByLedgerId(ledgerId);
@@ -101,7 +103,9 @@ export class RecurringTransactionController {
   ): Promise<RecurringTransactionEntity> {
     const transaction = await this.recurringTransactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Recurring transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.recurringTransaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -113,7 +117,7 @@ export class RecurringTransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -129,7 +133,9 @@ export class RecurringTransactionController {
   ): Promise<RecurringTransactionEntity> {
     const transaction = await this.recurringTransactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Recurring transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.recurringTransaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -141,19 +147,21 @@ export class RecurringTransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
     if (updateDto.creditId && updateDto.ledgerId) {
       const credit = await this.creditService.findOne(updateDto.creditId);
       if (!credit) {
-        throw new NotFoundException('Credit not found');
+        throw new NotFoundException(
+          this.i18n.t('errorMessages.credit.notFound'),
+        );
       }
 
       if (credit.ledgerId !== updateDto.ledgerId) {
         throw new UnauthorizedException(
-          'User does not have write access to this credit',
+          this.i18n.t('errorMessages.credit.accessDenied'),
         );
       }
       if (transaction.ledgerId !== updateDto.ledgerId) {
@@ -165,7 +173,7 @@ export class RecurringTransactionController {
           );
         if (!hasAccessToNewLedger) {
           throw new UnauthorizedException(
-            'User does not have write access to this ledger',
+            this.i18n.t('errorMessages.ledger.accessDenied'),
           );
         }
       }
@@ -193,7 +201,9 @@ export class RecurringTransactionController {
   ): Promise<RecurringTransactionEntity> {
     const transaction = await this.recurringTransactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Recurring transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.recurringTransaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -205,7 +215,7 @@ export class RecurringTransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have delete access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 

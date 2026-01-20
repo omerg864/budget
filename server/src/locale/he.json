@@ -1,0 +1,32 @@
+{
+  "errorMessages": {
+    "common": {
+      "unauthorized": "Not authenticated",
+      "forbidden": "Access denied"
+    },
+    "account": {
+      "notFound": "Account not found",
+      "notBelongToLedger": "Account does not belong to this ledger",
+      "accessDenied": "You do not have access to this account",
+      "deleteForbidden": "You cannot delete this account"
+    },
+    "ledger": {
+      "notFound": "Ledger not found",
+      "accessDenied": "You do not have access to this ledger",
+      "deleteForbidden": "Only the owner can delete this ledger"
+    },
+    "transaction": {
+      "notFound": "Transaction not found",
+      "accessDenied": "You do not have access to this transaction"
+    },
+    "credit": {
+      "notFound": "Credit not found",
+      "accessDenied": "You do not have access to this credit",
+      "accountNotBelongToLedger": "Account does not belong to this ledger"
+    },
+    "recurringTransaction": {
+      "notFound": "Recurring transaction not found",
+      "accessDenied": "You do not have access to this recurring transaction"
+    }
+  }
+}

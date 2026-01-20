@@ -14,6 +14,7 @@ import { AccountEntity } from '../../../../../shared/types/account.type.js';
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
@@ -24,6 +25,7 @@ export class AccountController {
   constructor(
     private readonly accountService: AccountService,
     private readonly ledgerAccessService: LedgerAccessService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   @Post(API_ROUTES.ACCOUNT.CREATE)
@@ -40,7 +42,7 @@ export class AccountController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -61,7 +63,7 @@ export class AccountController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -75,7 +77,9 @@ export class AccountController {
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {
-      throw new NotFoundException('Account not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.account.notFound'),
+      );
     }
 
     const hasAccess =
@@ -87,7 +91,7 @@ export class AccountController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -102,7 +106,9 @@ export class AccountController {
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {
-      throw new NotFoundException('Account not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.account.notFound'),
+      );
     }
 
     const hasAccess =
@@ -114,7 +120,7 @@ export class AccountController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -128,7 +134,9 @@ export class AccountController {
   ): Promise<AccountEntity | null> {
     const account = await this.accountService.findOne(accountId);
     if (!account) {
-      throw new NotFoundException('Account not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.account.notFound'),
+      );
     }
 
     const hasAccess =
@@ -140,7 +148,7 @@ export class AccountController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have delete access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 

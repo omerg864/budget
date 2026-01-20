@@ -6,9 +6,12 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { auth } from '../../../lib/auth';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 
 @Injectable()
 export class AuthGuard implements CanActivate {
+  constructor(private readonly i18n: AppI18nService) {}
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest<Request>();
 
@@ -17,7 +20,9 @@ export class AuthGuard implements CanActivate {
     });
 
     if (!session) {
-      throw new UnauthorizedException('Not authenticated');
+      throw new UnauthorizedException(
+        this.i18n.t('errorMessages.common.unauthorized'),
+      );
     }
 
     // Attach session to request object

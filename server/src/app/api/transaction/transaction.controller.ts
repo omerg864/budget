@@ -20,6 +20,7 @@ import { TransactionEntity } from '../../../../../shared/types/transaction.type.
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { AuthGuard } from '../auth/auth.guard.js';
@@ -37,6 +38,7 @@ export class TransactionController {
     private readonly transactionService: TransactionService,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly creditService: CreditService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   @Post(API_ROUTES.TRANSACTION.CREATE)
@@ -54,7 +56,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -62,12 +64,12 @@ export class TransactionController {
       createTransactionDto.creditId,
     );
     if (!credit) {
-      throw new NotFoundException('Credit not found');
+      throw new NotFoundException(this.i18n.t('errorMessages.credit.notFound'));
     }
 
     if (credit.ledgerId !== createTransactionDto.ledgerId) {
       throw new UnauthorizedException(
-        'User does not have write access to this credit',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
 
@@ -93,7 +95,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
     return this.transactionService.findByLedgerId(ledgerId, startDate, endDate);
@@ -108,7 +110,7 @@ export class TransactionController {
   ): Promise<TransactionEntity[]> {
     const credit = await this.creditService.findOne(creditId);
     if (!credit) {
-      throw new NotFoundException('Credit not found');
+      throw new NotFoundException(this.i18n.t('errorMessages.credit.notFound'));
     }
 
     const hasAccess =
@@ -120,7 +122,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -140,7 +142,9 @@ export class TransactionController {
   ): Promise<TransactionEntity> {
     const transaction = await this.transactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.transaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -152,7 +156,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have read access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -168,7 +172,9 @@ export class TransactionController {
   ): Promise<TransactionEntity> {
     const transaction = await this.transactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.transaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -180,7 +186,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have write access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -189,12 +195,14 @@ export class TransactionController {
         updateTransactionDto.creditId,
       );
       if (!credit) {
-        throw new NotFoundException('Credit not found');
+        throw new NotFoundException(
+          this.i18n.t('errorMessages.credit.notFound'),
+        );
       }
 
       if (credit.ledgerId !== updateTransactionDto.ledgerId) {
         throw new UnauthorizedException(
-          'User does not have write access to this credit',
+          this.i18n.t('errorMessages.credit.accessDenied'),
         );
       }
       if (transaction.ledgerId !== updateTransactionDto.ledgerId) {
@@ -206,7 +214,7 @@ export class TransactionController {
           );
         if (!hasAccessToNewLedger) {
           throw new UnauthorizedException(
-            'User does not have write access to this ledger',
+            this.i18n.t('errorMessages.ledger.accessDenied'),
           );
         }
       }
@@ -231,7 +239,9 @@ export class TransactionController {
   ): Promise<TransactionEntity> {
     const transaction = await this.transactionService.findOne(id);
     if (!transaction) {
-      throw new NotFoundException('Transaction not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.transaction.notFound'),
+      );
     }
 
     const hasAccess =
@@ -243,7 +253,7 @@ export class TransactionController {
 
     if (!hasAccess) {
       throw new UnauthorizedException(
-        'User does not have delete access to this ledger',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 

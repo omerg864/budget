@@ -14,6 +14,7 @@ import { CreditEntity } from '../../../../../shared/types/credit.type.js';
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
 import { generateLink } from '../../../../../shared/utils/route.utils.js';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { AccountService } from '../account/account.service.js';
 import { User } from '../auth/auth.decorator.js';
@@ -26,6 +27,7 @@ export class CreditController {
     private readonly creditService: CreditService,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly accountService: AccountService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   @Post(API_ROUTES.CREDIT.CREATE)
@@ -42,7 +44,7 @@ export class CreditController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have write access to this ledger to create credit',
+        this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
 
@@ -50,11 +52,15 @@ export class CreditController {
       createCreditDto.accountId,
     );
     if (!account) {
-      throw new NotFoundException('Account not found');
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.account.notFound'),
+      );
     }
 
     if (account.ledgerId !== createCreditDto.ledgerId) {
-      throw new ForbiddenException('Account does not belong to this ledger');
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.credit.accountNotBelongToLedger'),
+      );
     }
 
     await this.creditService.validateUserForOwner(
@@ -131,7 +137,7 @@ export class CreditController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have read access to this credit',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
 
@@ -158,18 +164,22 @@ export class CreditController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have write access to this credit',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
 
     if (updateData.accountId) {
       const account = await this.accountService.findOne(updateData.accountId);
       if (!account) {
-        throw new NotFoundException('Account not found');
+        throw new NotFoundException(
+          this.i18n.t('errorMessages.account.notFound'),
+        );
       }
 
       if (account.ledgerId !== updateData.ledgerId) {
-        throw new ForbiddenException('Account does not belong to this ledger');
+        throw new ForbiddenException(
+          this.i18n.t('errorMessages.credit.accountNotBelongToLedger'),
+        );
       }
       if (credit.ledgerId !== account.ledgerId) {
         const hasAccessToNewLedger =
@@ -181,7 +191,7 @@ export class CreditController {
 
         if (!hasAccessToNewLedger) {
           throw new ForbiddenException(
-            'You do not have write access to this ledger to update credit',
+            this.i18n.t('errorMessages.ledger.accessDenied'),
           );
         }
       }
@@ -214,7 +224,7 @@ export class CreditController {
 
     if (!hasAccess) {
       throw new ForbiddenException(
-        'You do not have delete access to this credit',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
 
