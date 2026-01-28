@@ -16,6 +16,10 @@ export class LedgerAccessService {
     return this.ledgerAccessProvider.findByUserId(userId);
   }
 
+  async getByLedgerId(ledgerId: string): Promise<LedgerAccess[]> {
+    return this.ledgerAccessProvider.findByLedgerId(ledgerId);
+  }
+
   private async findByLedgerIdAndUserId(
     ledgerId: string,
     userId: string,
@@ -32,6 +36,25 @@ export class LedgerAccessService {
 
   async remove(id: string): Promise<LedgerAccess | null> {
     return this.ledgerAccessProvider.delete(id);
+  }
+
+  async doesUserHaveAccessToUserAction(
+    ledgerId: string,
+    userId: string,
+    action: 'read' | 'write' | 'delete',
+  ): Promise<boolean> {
+    const ledgerAccess = await this.findByLedgerIdAndUserId(ledgerId, userId);
+    if (!ledgerAccess) {
+      return false;
+    }
+    switch (action) {
+      case 'read':
+        return true;
+      case 'write':
+        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+      case 'delete':
+        return ledgerAccess.role === LEDGER_ACCESS.OWNER;
+    }
   }
 
   async doesUserHaveAccessToLedgerAction(

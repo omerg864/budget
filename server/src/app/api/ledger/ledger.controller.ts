@@ -7,6 +7,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
 import type { UserEntity } from '../../../../../shared/types/user.type.js';
@@ -19,8 +20,10 @@ import { User } from '../auth/auth.decorator.js';
 import { CreateLedgerDto } from './ledger.dto.js';
 import { Ledger } from './ledger.model.js';
 import { LedgerService } from './ledger.service.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller(generateLink({ route: [API_ROUTES.LEDGER.BASE] }))
+@UseGuards(AuthGuard)
 export class LedgerController {
   constructor(
     private readonly ledgerService: LedgerService,

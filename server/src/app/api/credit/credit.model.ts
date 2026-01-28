@@ -5,7 +5,11 @@ import { CreditEntity } from '../../../../../shared/types/credit.type.js';
 import { Account } from '../account/account.model.js';
 import { Ledger } from '../ledger/ledger.model.js';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class Credit implements CreditEntity {
   id: string;
 

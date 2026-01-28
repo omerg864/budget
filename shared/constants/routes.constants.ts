@@ -6,8 +6,9 @@ export const API_ROUTES = {
 		WILDCARD: '/*path',
 	},
 	USER: {
-		BASE: '/user',
+		BASE: '/v1/user',
 		ME: '/me',
+		LEDGER: '/:ledgerId',
 	},
 	LEDGER: {
 		BASE: '/v1/ledger',
@@ -51,4 +52,10 @@ export const API_ROUTES = {
 		UPDATE: '/:id',
 		DELETE: '/:id',
 	},
+};
+
+export const CLIENT_ROUTES = {
+	HOME: '/',
+	LOGIN: '/login',
+	REGISTER: '/register',
 };

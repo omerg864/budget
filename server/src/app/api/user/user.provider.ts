@@ -11,4 +11,12 @@ export class UserProvider {
   async findById(userId: string): Promise<UserEntity | null> {
     return this.userModel.findById(userId);
   }
+
+  async list(ids?: string[]): Promise<UserEntity[]> {
+    const query: any = {};
+    if (ids) {
+      query._id = { $in: ids };
+    }
+    return this.userModel.find(query);
+  }
 }

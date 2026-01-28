@@ -1,8 +1,15 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { HydratedDocument } from 'mongoose';
+import { HydratedDocument, Types } from 'mongoose';
+import { SupportedCurrencies } from '../../../../../shared/constants/currency.constants.js';
 import { UserEntity } from '../../../../../shared/types/user.type.js';
+import { Ledger } from '../ledger/ledger.model.js';
 
-@Schema({ timestamps: true, collection: 'user' }) // Explicitly map to 'user' collection used by better-auth
+@Schema({
+  timestamps: true,
+  collection: 'user',
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+}) // Explicitly map to 'user' collection used by better-auth
 export class User implements UserEntity {
   id: string;
 
@@ -14,6 +21,16 @@ export class User implements UserEntity {
 
   @Prop({ required: true })
   emailVerified: boolean;
+
+  @Prop({ type: Types.ObjectId, ref: Ledger.name, required: true })
+  defaultLedgerId: string;
+
+  @Prop({
+    required: true,
+    enum: SupportedCurrencies,
+    default: SupportedCurrencies.ILS,
+  })
+  defaultCurrency: SupportedCurrencies;
 
   @Prop()
   image?: string;

@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
 import { AccountEntity } from '../../../../../shared/types/account.type.js';
@@ -19,8 +20,10 @@ import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.ser
 import { User } from '../auth/auth.decorator.js';
 import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
 import { AccountService } from './account.service.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
+@UseGuards(AuthGuard)
 export class AccountController {
   constructor(
     private readonly accountService: AccountService,

@@ -5,7 +5,11 @@ import { TransactionEntity } from '../../../../../shared/types/transaction.type.
 import { Credit } from '../credit/credit.model.js';
 import { Ledger } from '../ledger/ledger.model.js';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class Transaction implements TransactionEntity {
   id: string;
 

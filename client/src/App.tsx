@@ -1,35 +1,74 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
+import { lazy, Suspense, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Route, Routes } from 'react-router';
+import { Toaster } from 'sonner';
+import { Loader } from './components/custom/Loader.tsx';
+import NetworkBanner from './components/custom/NetworkBanner.tsx';
+import AuthenticatedRoute from './components/routes/AuthenticatedRoute.tsx';
+import { idbPersister } from './lib/clients/idb.client';
+import queryClient from './lib/clients/query.client';
+import { setZodLocale } from './lib/utils/zod.utils.ts';
+import { useAuthStore } from './stores/useAuthStore.ts';
+
+const Home = lazy(() => import('./pages/Home'));
+const Login = lazy(() => import('./pages/Login'));
+const Register = lazy(() => import('./pages/Register'));
+const Summary = lazy(() => import('./pages/Summary'));
+const Transactions = lazy(() => import('./pages/Transactions'));
+const Bills = lazy(() => import('./pages/Bills'));
+const Accounts = lazy(() => import('./pages/Accounts'));
+const Settings = lazy(() => import('./pages/Settings'));
 
 function App() {
-  const [count, setCount] = useState(0)
+	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
+	const { i18n } = useTranslation();
 
-  return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+	useEffect(() => {
+		setZodLocale(i18n.language);
+		// set default language to en if not set
+		if (i18n.language !== 'en') {
+			i18n.changeLanguage('en');
+		}
+	}, [i18n, i18n.language]);
+
+	return (
+		<PersistQueryClientProvider
+			client={queryClient}
+			persistOptions={{
+				persister: idbPersister,
+				maxAge: 1000 * 60 * 60 * 2, // 2 hours
+			}}
+		>
+			<NetworkBanner />
+			<Toaster />
+			<Suspense fallback={<Loader />}>
+				<main className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+					<Routes>
+						{!isAuthenticated && (
+							<Route path="/" element={<Home />} />
+						)}
+						{isAuthenticated && (
+							<Route element={<AuthenticatedRoute />}>
+								<Route path="/" element={<Summary />} />
+							</Route>
+						)}
+						<Route path="/login" element={<Login />} />
+						<Route path="/register" element={<Register />} />
+						<Route element={<AuthenticatedRoute />}>
+							<Route
+								path="/transactions"
+								element={<Transactions />}
+							/>
+							<Route path="/bills" element={<Bills />} />
+							<Route path="/accounts" element={<Accounts />} />
+							<Route path="/settings" element={<Settings />} />
+						</Route>
+					</Routes>
+				</main>
+			</Suspense>
+		</PersistQueryClientProvider>
+	);
 }
 
-export default App
+export default App;

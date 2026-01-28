@@ -123,3 +123,10 @@ export function getThisMonthChargeDates(
 
 	return dates;
 }
+
+export function convertCurrency(
+	amount: number,
+	conversionRate: number = 1,
+): number {
+	return amount * conversionRate;
+}

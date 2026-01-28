@@ -27,6 +27,9 @@
     "recurringTransaction": {
       "notFound": "Recurring transaction not found",
       "accessDenied": "You do not have access to this recurring transaction"
+    },
+    "user": {
+      "notFound": "User not found"
     }
   }
 }

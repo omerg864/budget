@@ -8,6 +8,7 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
 } from '@nestjs/common';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
 import { CreditEntity } from '../../../../../shared/types/credit.type.js';
@@ -20,8 +21,10 @@ import { AccountService } from '../account/account.service.js';
 import { User } from '../auth/auth.decorator.js';
 import { CreateCreditDto, UpdateCreditDto } from './credit.dto.js';
 import { CreditService } from './credit.service.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller(generateLink({ route: [API_ROUTES.CREDIT.BASE] }))
+@UseGuards(AuthGuard)
 export class CreditController {
   constructor(
     private readonly creditService: CreditService,

@@ -6,7 +6,11 @@ import {
   LedgerEntity,
 } from '../../../../../shared/types/ledger.type.js';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class Ledger implements Omit<LedgerEntity, 'id'> {
   @Prop({ type: String, required: true })
   name: string;

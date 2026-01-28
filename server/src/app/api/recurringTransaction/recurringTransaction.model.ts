@@ -8,7 +8,11 @@ import { RecurringTransactionEntity } from '../../../../../shared/types/recurrin
 import { Credit } from '../credit/credit.model.js';
 import { Ledger } from '../ledger/ledger.model.js';
 
-@Schema({ timestamps: true })
+@Schema({
+  timestamps: true,
+  toJSON: { virtuals: true },
+  toObject: { virtuals: true },
+})
 export class RecurringTransaction implements RecurringTransactionEntity {
   id: string;
 

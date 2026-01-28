@@ -1,9 +1,12 @@
-import { betterAuth } from 'better-auth';
+import type { SupportedCurrencies } from '../constants/currency.constants.ts';
 
-const auth = betterAuth(undefined as any);
-
-/**
- * UserEntity type from better-auth
- * Contains user information such as id, email, name, image, etc.
- */
-export type UserEntity = typeof auth.$Infer.Session.user;
+export type UserEntity = {
+	name: string;
+	email: string;
+	image?: string;
+	id: string;
+	defaultLedgerId: string;
+	defaultCurrency: SupportedCurrencies;
+	createdAt: Date;
+	updatedAt: Date;
+};
