@@ -4,6 +4,7 @@ import {
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { CreditEntity } from '../../../../../shared/types/credit.type.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { UserService } from '../user/user.service.js';
 import { CreditProvider } from './credit.provider.js';
@@ -14,6 +15,7 @@ export class CreditService {
     private readonly creditProvider: CreditProvider,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly userService: UserService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   async create(
@@ -62,17 +64,17 @@ export class CreditService {
     }
     const user = await this.userService.findOne(userId);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new NotFoundException(this.i18n.t('errorMessages.user.notFound'));
     }
     const userHasAccessToLedger =
       await this.ledgerAccessService.doesUserHaveAccessToCreditAction(
-        userId,
         ledgerId,
+        userId,
         'read',
       );
     if (!userHasAccessToLedger) {
       throw new UnprocessableEntityException(
-        'User does not have access to this ledger',
+        this.i18n.t('errorMessages.credit.accessDenied'),
       );
     }
   }

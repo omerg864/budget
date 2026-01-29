@@ -10,7 +10,7 @@ export type UserSelectorProps = Omit<
 > & {
 	ledgerId: string | undefined;
 	value: UserEntity['id'] | undefined;
-	onValueChange: (value: UserEntity['id'] | undefined) => void;
+	onValueChange: (value: UserEntity['id']) => void;
 	filter?: (option: UserEntity) => boolean;
 };
 

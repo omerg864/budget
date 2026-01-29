@@ -1,6 +1,8 @@
+import { useUsersByLedgerQuery } from '@/api/user.api.ts';
 import { cn } from '@/lib/utils.ts';
 import { AccountType } from '@shared/constants/account.constants.ts';
 import type { AccountEntity } from '@shared/types/account.type.ts';
+import { useMemoizedFn } from 'ahooks';
 import { Landmark, TrendingUp, Wallet } from 'lucide-react';
 import { useMemo, type ElementType, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -16,9 +18,11 @@ const AccountCard: FC<AccountCardProps> = ({
 	account,
 	onCardClick,
 }: AccountCardProps) => {
+	const { t: tGeneric } = useTranslation('generic');
 	const { t } = useTranslation('accounts');
+	const { data: ledgerUsers } = useUsersByLedgerQuery(account?.ledgerId);
 
-	const Icon = useMemo<ElementType>(() => {
+	const getIcon = useMemoizedFn((): ElementType => {
 		switch (account?.type) {
 			case AccountType.BANK:
 				return Landmark;
@@ -28,7 +32,24 @@ const AccountCard: FC<AccountCardProps> = ({
 				return TrendingUp;
 		}
 		return 'div';
-	}, [account?.type]);
+	});
+
+	const { accountDataList, Icon } = useMemo<{
+		accountDataList: string[];
+		Icon: ElementType;
+	}>(() => {
+		if (!account || !ledgerUsers)
+			return { accountDataList: [], Icon: 'div' };
+		const defaultData = [t(account.type), account.currency];
+		if (account.ownerId) {
+			defaultData.push(
+				ledgerUsers?.find((user) => user.id === account.ownerId)
+					?.name ?? tGeneric('unknown'),
+			);
+		}
+
+		return { accountDataList: defaultData, Icon: getIcon() };
+	}, [account, ledgerUsers, t, tGeneric, getIcon]);
 
 	if (!account) {
 		return null;
@@ -52,9 +73,7 @@ const AccountCard: FC<AccountCardProps> = ({
 				</div>
 				<div>
 					<h4 className="font-semibold">{account.name}</h4>
-					<InlineDotList
-						items={[t(account.type), account.currency]}
-					/>
+					<InlineDotList items={accountDataList} />
 				</div>
 			</div>
 			<div className="flex flex-col items-end">

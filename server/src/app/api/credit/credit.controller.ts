@@ -19,9 +19,9 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { AccountService } from '../account/account.service.js';
 import { User } from '../auth/auth.decorator.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 import { CreateCreditDto, UpdateCreditDto } from './credit.dto.js';
 import { CreditService } from './credit.service.js';
-import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller(generateLink({ route: [API_ROUTES.CREDIT.BASE] }))
 @UseGuards(AuthGuard)

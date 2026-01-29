@@ -9,6 +9,26 @@ import { generateLink } from '@shared/utils/route.utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
 
+export const useAccountQuery = (accountId?: string) => {
+	return useQuery({
+		queryKey: [
+			API_ROUTES.ACCOUNT.BASE,
+			API_ROUTES.ACCOUNT.FIND_ONE,
+			accountId,
+		],
+		queryFn: async () => {
+			if (!accountId) return undefined;
+			const url = generateLink({
+				route: [API_ROUTES.ACCOUNT.BASE, API_ROUTES.ACCOUNT.FIND_ONE],
+				params: { id: accountId },
+			});
+			const { data } = await axios.get<AccountEntity>(url);
+			return data;
+		},
+		enabled: !!accountId,
+	});
+};
+
 export const useAccountsQuery = (ledgerId?: string) => {
 	return useQuery({
 		queryKey: [

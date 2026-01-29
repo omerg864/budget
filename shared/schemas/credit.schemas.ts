@@ -7,14 +7,16 @@ export const CreateCreditSchema = z.object({
 	ledgerId: z.string().min(1, 'Ledger ID is required'),
 	ownerId: z.string().optional(),
 	type: z.enum(CreditType),
+	color: z.string(),
 });
 
 export const UpdateCreditSchema = z
 	.object({
-		name: z.string().min(1, 'Name is required').optional(),
+		name: z.string().optional(),
 		accountId: z.string().optional(),
 		ledgerId: z.string().optional(),
 		ownerId: z.string().optional(),
+		color: z.string().optional(),
 	})
 	.refine(
 		(data) => {
@@ -31,3 +33,6 @@ export const UpdateCreditSchema = z
 			path: ['accountId', 'ledgerId'],
 		},
 	);
+
+export type CreateCreditSchemaType = z.infer<typeof CreateCreditSchema>;
+export type UpdateCreditSchemaType = z.infer<typeof UpdateCreditSchema>;

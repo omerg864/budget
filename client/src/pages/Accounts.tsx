@@ -2,14 +2,18 @@ import { useAccountsQuery, useCreditsQuery } from '@/api/account.api';
 import { useUserQuery } from '@/api/user.api';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';
-import AddButton from '@/components/custom/AddButton.tsx';
+import CreditCard from '@/components/credit/CreditCard.tsx';
+import { CreditForm } from '@/components/credit/CreditForm';
+import ListRenderer from '@/components/custom/ListRenderer.tsx';
+import MenuButton from '@/components/custom/MenuButton.tsx';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter.tsx';
 import PageTitle from '@/components/layout/PageTitle.tsx';
 import { cn } from '@/lib/utils';
-import { CreditType } from '@shared/constants/credit.constants';
+import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { AccountEntity } from '@shared/types/account.type';
+import type { CreditEntity } from '@shared/types/credit.type.ts';
 import { useMemoizedFn } from 'ahooks';
-import { Coins, CreditCard } from 'lucide-react';
+import { Coins, CreditCardIcon, Landmark, Plus } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -24,17 +28,26 @@ export default function Accounts() {
 		null,
 	);
 
+	const [isCreditFormOpen, setIsCreditFormOpen] = useState(false);
+	const [creditToEdit, setCreditToEdit] = useState<CreditEntity | null>(null);
+
 	const totalAccountsBalance = useMemo(
-		() => accounts.reduce((sum, account) => sum + account.balance, 0),
+		() =>
+			accounts.reduce(
+				(sum, account) => sum + convertCurrency(account.balance),
+				0,
+			),
 		[accounts],
 	);
 
 	const totalCreditsBalance = useMemo(
-		() => credits.reduce((sum, credit) => sum + credit.amount, 0),
+		() =>
+			credits.reduce(
+				(sum, credit) => sum + convertCurrency(credit.amount),
+				0,
+			),
 		[credits],
 	);
-
-	const totalAssets = totalAccountsBalance + totalCreditsBalance;
 
 	const handleEditAccount = useMemoizedFn((account: AccountEntity) => {
 		setAccountToEdit(account);
@@ -46,12 +59,44 @@ export default function Accounts() {
 		setIsCreateOpen(true);
 	});
 
+	const handleCreateCredit = useMemoizedFn(() => {
+		setCreditToEdit(null);
+		setIsCreditFormOpen(true);
+	});
+
+	const handleEditCredit = useMemoizedFn((credit: CreditEntity) => {
+		setCreditToEdit(credit);
+		setIsCreditFormOpen(true);
+	});
+
 	if (!user) return null;
 
 	return (
 		<div className="flex flex-col gap-6">
 			<PageTitle title={t('title')}>
-				<AddButton onAdd={handleCreateAccount} />
+				<MenuButton
+					icon={<Plus className="w-5 h-5" />}
+					options={[
+						{
+							label: (
+								<>
+									<Landmark />
+									{t('addAccount')}
+								</>
+							),
+							onClick: handleCreateAccount,
+						},
+						{
+							label: (
+								<>
+									<CreditCardIcon />
+									{t('addCredit')}
+								</>
+							),
+							onClick: handleCreateCredit,
+						},
+					]}
+				/>
 			</PageTitle>
 
 			<AccountForm
@@ -60,56 +105,56 @@ export default function Accounts() {
 				accountToEdit={accountToEdit}
 			/>
 
+			<CreditForm
+				open={isCreditFormOpen}
+				onOpenChange={setIsCreditFormOpen}
+				creditToEdit={creditToEdit}
+			/>
+
 			{/* Total Assets Card */}
 			<div className="relative overflow-hidden rounded-3xl bg-white p-6 shadow-sm dark:bg-slate-900">
 				<div className="flex items-start justify-between">
-					<div>
-						<p className="text-sm font-medium text-gray-500 dark:text-gray-400">
-							{t('totalAssets')}
-						</p>
-						<h2
-							className={cn(
-								'mt-1 text-4xl font-bold tracking-tight',
-								totalAssets < 0
-									? 'text-red-500'
-									: 'text-gray-900 dark:text-white',
-							)}
-						>
-							<CurrencyFormatter
-								amount={totalAssets}
-								currency="ILS"
-							/>
-						</h2>
+					<div className="flex gap-8">
+						<div>
+							<p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+								{t('totalAssets')}
+							</p>
+							<h2
+								className={cn(
+									'mt-1 text-4xl font-bold tracking-tight',
+									totalAccountsBalance < 0
+										? 'text-red-500'
+										: 'text-gray-900 dark:text-white',
+								)}
+							>
+								<CurrencyFormatter
+									amount={totalAccountsBalance}
+									currency={user.defaultCurrency}
+								/>
+							</h2>
+						</div>
+						<div>
+							<p className="text-sm font-medium text-gray-500 dark:text-gray-400">
+								{t('totalCredit')}
+							</p>
+							<h2
+								className={cn(
+									'mt-1 text-4xl font-bold tracking-tight',
+									totalCreditsBalance < 0
+										? 'text-red-500'
+										: 'text-gray-900 dark:text-white',
+								)}
+							>
+								<CurrencyFormatter
+									amount={totalCreditsBalance}
+									currency={user.defaultCurrency}
+								/>
+							</h2>
+						</div>
 					</div>
+
 					<div className="rounded-full bg-green-100 p-3 text-green-600 dark:bg-green-900/30 dark:text-green-400">
 						<Coins className="h-6 w-6" />
-					</div>
-				</div>
-
-				<div className="mt-8 grid grid-cols-3 gap-4 border-t border-gray-100 pt-6 dark:border-gray-800">
-					<div className="flex flex-col items-center gap-1">
-						<span className="text-lg font-bold">
-							{accounts.length + credits.length}
-						</span>
-						<span className="text-xs text-gray-400">
-							{t('accounts')}
-						</span>
-					</div>
-					<div className="flex flex-col items-center gap-1">
-						<span className="text-lg font-bold">
-							{accounts.length}
-						</span>
-						<span className="text-xs text-gray-400">
-							{t('bank')}
-						</span>
-					</div>
-					<div className="flex flex-col items-center gap-1">
-						<span className="text-lg font-bold">
-							{credits.length}
-						</span>
-						<span className="text-xs text-gray-400">
-							{t('cards')}
-						</span>
 					</div>
 				</div>
 			</div>
@@ -120,56 +165,34 @@ export default function Accounts() {
 
 				<div className="flex flex-col gap-3">
 					{/* Bank Accounts */}
-					{accounts.map((account) => (
-						<AccountCard
-							key={account.id}
-							account={account}
-							onCardClick={handleEditAccount}
-						/>
-					))}
+					<ListRenderer
+						data={accounts}
+						emptyMessage={t('noAccounts')}
+						renderItem={(account) => (
+							<AccountCard
+								key={account.id}
+								account={account}
+								onCardClick={handleEditAccount}
+							/>
+						)}
+					/>
+
+					<h3 className="text-lg font-semibold mt-2">
+						{t('yourCredits')}
+					</h3>
 
 					{/* Credit Cards (Credits) */}
-					{credits.map((credit) => (
-						<div
-							key={credit.id}
-							className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm transition-transform active:scale-[0.98] dark:bg-slate-900"
-						>
-							<div className="flex items-center gap-4">
-								<div className="rounded-full bg-orange-100 p-3 text-orange-500 dark:bg-orange-900/30 dark:text-orange-400">
-									<CreditCard className="h-6 w-6" />
-								</div>
-								<div>
-									<h4 className="font-semibold">
-										{credit.name}
-									</h4>
-									<p className="text-xs text-gray-400">
-										{credit.type === CreditType.CREDIT
-											? t('cards')
-											: credit.type}{' '}
-										• {user.defaultCurrency}
-									</p>
-								</div>
-							</div>
-							<div className="flex flex-col items-end">
-								<span
-									className={cn(
-										'font-bold',
-										credit.amount < 0
-											? 'text-red-500'
-											: 'text-gray-900 dark:text-white',
-									)}
-								>
-									<CurrencyFormatter
-										amount={credit.amount}
-										currency={user.defaultCurrency}
-									/>
-								</span>
-								<span className="text-[10px] text-gray-400">
-									{t('balance')}
-								</span>
-							</div>
-						</div>
-					))}
+					<ListRenderer
+						emptyMessage={t('noCredits')}
+						data={credits}
+						renderItem={(credit) => (
+							<CreditCard
+								key={credit.id}
+								credit={credit}
+								onCardClick={handleEditCredit}
+							/>
+						)}
+					/>
 				</div>
 			</div>
 		</div>

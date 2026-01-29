@@ -8,6 +8,7 @@ export type CreditEntity = {
 	ledgerId: string;
 	ownerId?: string;
 	type: CreditType;
+	color: string;
 	createdAt: Date;
 	updatedAt: Date;
 	deletedAt?: Date | null;

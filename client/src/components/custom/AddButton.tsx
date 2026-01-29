@@ -3,7 +3,7 @@ import type { FC } from 'react';
 import { Button } from '../ui/button.tsx';
 
 export type AddButtonProps = {
-	onAdd: () => void;
+	onAdd?: () => void;
 };
 
 const AddButton: FC<AddButtonProps> = ({ onAdd }: AddButtonProps) => {

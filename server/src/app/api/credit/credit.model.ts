@@ -31,6 +31,9 @@ export class Credit implements CreditEntity {
   @Prop({ required: true, enum: CreditType })
   type: CreditType;
 
+  @Prop({ required: true })
+  color: string;
+
   createdAt: Date;
   updatedAt: Date;
 

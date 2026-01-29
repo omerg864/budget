@@ -18,9 +18,9 @@ import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
 import { User } from '../auth/auth.decorator.js';
+import { AuthGuard } from '../auth/auth.guard.js';
 import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
 import { AccountService } from './account.service.js';
-import { AuthGuard } from '../auth/auth.guard.js';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
 @UseGuards(AuthGuard)

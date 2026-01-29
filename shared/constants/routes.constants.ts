@@ -21,7 +21,7 @@ export const API_ROUTES = {
 	ACCOUNT: {
 		BASE: '/v1/account',
 		CREATE: '/',
-		FIND_ALL: '/:ledgerId',
+		FIND_ALL: '/ledger/:ledgerId',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',
 		DELETE: '/:id',
@@ -29,8 +29,8 @@ export const API_ROUTES = {
 	CREDIT: {
 		BASE: '/v1/credit',
 		CREATE: '/',
-		FIND_ALL: '/:ledgerId',
-		FIND_BY_ACCOUNT: '/:accountId',
+		FIND_ALL: '/ledger/:ledgerId',
+		FIND_BY_ACCOUNT: '/account/:accountId',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',
 		DELETE: '/:id',
@@ -38,8 +38,8 @@ export const API_ROUTES = {
 	TRANSACTION: {
 		BASE: '/v1/transaction',
 		CREATE: '/',
-		FIND_ALL: '/:ledgerId',
-		FIND_BY_CREDIT: '/:creditId',
+		FIND_ALL: '/ledger/:ledgerId',
+		FIND_BY_CREDIT: '/credit/:creditId',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',
 		DELETE: '/:id',
@@ -47,7 +47,7 @@ export const API_ROUTES = {
 	RECURRING_TRANSACTION: {
 		BASE: '/v1/recurring-transaction',
 		CREATE: '/',
-		FIND_ALL: '/:ledgerId',
+		FIND_ALL: '/ledger/:ledgerId',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',
 		DELETE: '/:id',
