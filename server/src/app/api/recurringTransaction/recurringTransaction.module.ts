@@ -1,15 +1,16 @@
 import { Module, forwardRef } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module.js';
-import { CreditModule } from '../credit/credit.module.js';
-import { TransactionModule } from '../transaction/transaction.module.js';
-import { RecurringTransactionController } from './recurringTransaction.controller.js';
+import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module';
+import { PaymentModule } from '../../modules/payment/payment.module';
+import { CreditModule } from '../credit/credit.module';
+import { TransactionModule } from '../transaction/transaction.module';
+import { RecurringTransactionController } from './recurringTransaction.controller';
 import {
   RecurringTransaction,
   RecurringTransactionSchema,
-} from './recurringTransaction.model.js';
-import { RecurringTransactionProvider } from './recurringTransaction.provider.js';
-import { RecurringTransactionService } from './recurringTransaction.service.js';
+} from './recurringTransaction.model';
+import { RecurringTransactionProvider } from './recurringTransaction.provider';
+import { RecurringTransactionService } from './recurringTransaction.service';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { RecurringTransactionService } from './recurringTransaction.service.js';
     ]),
     LedgerAccessModule,
     TransactionModule,
+    PaymentModule,
     forwardRef(() => CreditModule),
   ],
   controllers: [RecurringTransactionController],

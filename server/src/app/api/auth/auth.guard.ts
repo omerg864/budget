@@ -6,7 +6,7 @@ import {
 } from '@nestjs/common';
 import { Request } from 'express';
 import { auth } from '../../../lib/auth';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 
 @Injectable()
 export class AuthGuard implements CanActivate {

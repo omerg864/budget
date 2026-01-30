@@ -14,21 +14,22 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type.js';
-import type { UserEntity } from '../../../../../shared/types/user.type.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
-import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { User } from '../auth/auth.decorator.js';
-import { AuthGuard } from '../auth/auth.guard.js';
-import { CreditService } from '../credit/credit.service.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
+import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { PaymentService } from '../../modules/payment/payment.service';
+import { User } from '../auth/auth.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { CreditService } from '../credit/credit.service';
 import {
   CreateRecurringTransactionDto,
   UpdateRecurringTransactionDto,
-} from './recurringTransaction.dto.js';
-import { RecurringTransactionService } from './recurringTransaction.service.js';
+} from './recurringTransaction.dto';
+import { RecurringTransactionService } from './recurringTransaction.service';
 
 @Controller(generateLink({ route: [API_ROUTES.RECURRING_TRANSACTION.BASE] }))
 @UseGuards(AuthGuard)
@@ -37,6 +38,7 @@ export class RecurringTransactionController {
     private readonly recurringTransactionService: RecurringTransactionService,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly creditService: CreditService,
+    private readonly paymentService: PaymentService,
     private readonly i18n: AppI18nService,
   ) {}
 
@@ -59,14 +61,19 @@ export class RecurringTransactionController {
       );
     }
 
-    const credit = await this.creditService.findOne(createDto.creditId);
-    if (!credit) {
-      throw new NotFoundException(this.i18n.t('errorMessages.credit.notFound'));
+    const payment = await this.paymentService.getPayment(
+      createDto.paymentId,
+      createDto.paymentType,
+    );
+    if (!payment) {
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.payment.notFound'),
+      );
     }
 
-    if (credit.ledgerId !== createDto.ledgerId) {
+    if (payment.ledgerId !== createDto.ledgerId) {
       throw new UnauthorizedException(
-        this.i18n.t('errorMessages.credit.accessDenied'),
+        this.i18n.t('errorMessages.payment.accessDenied'),
       );
     }
 
@@ -151,23 +158,28 @@ export class RecurringTransactionController {
       );
     }
 
-    if (updateDto.creditId && updateDto.ledgerId) {
-      const credit = await this.creditService.findOne(updateDto.creditId);
-      if (!credit) {
+    if (updateDto.paymentId && updateDto.paymentType) {
+      const payment = await this.paymentService.getPayment(
+        updateDto.paymentId,
+        updateDto.paymentType,
+      );
+      if (!payment) {
         throw new NotFoundException(
-          this.i18n.t('errorMessages.credit.notFound'),
+          this.i18n.t('errorMessages.payment.notFound'),
         );
       }
 
-      if (credit.ledgerId !== updateDto.ledgerId) {
+      const targetLedgerId = updateDto.ledgerId || transaction.ledgerId;
+
+      if (payment.ledgerId !== targetLedgerId) {
         throw new UnauthorizedException(
-          this.i18n.t('errorMessages.credit.accessDenied'),
+          this.i18n.t('errorMessages.payment.accessDenied'),
         );
       }
-      if (transaction.ledgerId !== updateDto.ledgerId) {
+      if (transaction.ledgerId !== targetLedgerId) {
         const hasAccessToNewLedger =
           await this.ledgerAccessService.doesUserHaveAccessToTransactionAction(
-            updateDto.ledgerId,
+            targetLedgerId,
             user.id,
             'write',
           );

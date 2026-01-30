@@ -1,9 +1,12 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { TransactionType } from '../../../../../shared/constants/transaction.constants.js';
-import { TransactionEntity } from '../../../../../shared/types/transaction.type.js';
-import { Credit } from '../credit/credit.model.js';
-import { Ledger } from '../ledger/ledger.model.js';
+import { SupportedCurrencies } from '../../../../../shared/constants/currency.constants';
+import {
+  TransactionPaymentType,
+  TransactionType,
+} from '../../../../../shared/constants/transaction.constants';
+import { TransactionEntity } from '../../../../../shared/types/transaction.type';
+import { Ledger } from '../ledger/ledger.model';
 
 @Schema({
   timestamps: true,
@@ -19,8 +22,20 @@ export class Transaction implements TransactionEntity {
   @Prop({ required: true })
   amount: number;
 
-  @Prop({ type: Types.ObjectId, ref: Credit.name, required: true })
-  creditId: string;
+  @Prop({ required: true })
+  currency: SupportedCurrencies;
+
+  @Prop()
+  convertedAmount?: number;
+
+  @Prop()
+  convertedCurrency?: SupportedCurrencies;
+
+  @Prop({ type: String, required: true })
+  paymentId: string;
+
+  @Prop({ type: String, enum: TransactionPaymentType, required: true })
+  paymentType: TransactionPaymentType;
 
   @Prop({ type: Types.ObjectId, ref: Ledger.name, required: true })
   ledgerId: string;

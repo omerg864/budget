@@ -1,8 +1,8 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { LedgerAccess, LedgerAccessSchema } from './ledgerAccess.model.js';
-import { LedgerAccessProvider } from './ledgerAccess.provider.js';
-import { LedgerAccessService } from './ledgerAccess.service.js';
+import { LedgerAccess, LedgerAccessSchema } from './ledgerAccess.model';
+import { LedgerAccessProvider } from './ledgerAccess.provider';
+import { LedgerAccessService } from './ledgerAccess.service';
 
 @Module({
   imports: [

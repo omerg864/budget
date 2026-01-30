@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants.js';
-import { LedgerAccessEntity } from '../../../types/ledgerAccess.type.js';
-import { Ledger } from '../../api/ledger/ledger.model.js';
+import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
+import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
+import { Ledger } from '../../api/ledger/ledger.model';
 
 @Schema({ timestamps: true })
 export class LedgerAccess implements LedgerAccessEntity {

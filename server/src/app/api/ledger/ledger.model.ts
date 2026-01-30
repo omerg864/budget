@@ -1,10 +1,10 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument } from 'mongoose';
-import { TransactionType } from '../../../../../shared/constants/transaction.constants.js';
+import { TransactionType } from '../../../../../shared/constants/transaction.constants';
 import {
   LedgerCategory,
   LedgerEntity,
-} from '../../../../../shared/types/ledger.type.js';
+} from '../../../../../shared/types/ledger.type';
 
 @Schema({
   timestamps: true,

@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
-import { TransactionRecurringFrequency } from '../constants/transaction.constants.js';
-import type { RecurringTransactionEntity } from '../types/recurringTransaction.type.js';
-import { toLuxonDate } from '../utils/luxon.utils.js';
+import { TransactionRecurringFrequency } from '../constants/transaction.constants';
+import type { RecurringTransactionEntity } from '../types/recurringTransaction.type';
+import { toLuxonDate } from '../utils/luxon.utils';
 
 const FREQUENCY_RECURRENCE_MAP: Record<
 	TransactionRecurringFrequency,

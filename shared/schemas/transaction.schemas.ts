@@ -1,10 +1,18 @@
 import { z } from 'zod';
-import { TransactionType } from '../constants/transaction.constants.js';
+import { SupportedCurrencies } from '../constants/currency.constants';
+import {
+	TransactionPaymentType,
+	TransactionType,
+} from '../constants/transaction.constants';
 
 export const CreateTransactionSchema = z.object({
-	description: z.string().min(1, 'Description is required'),
+	description: z.string(),
 	amount: z.number(),
-	creditId: z.string().min(1, 'Credit ID is required'),
+	currency: z.enum(SupportedCurrencies),
+	convertedAmount: z.number().optional(),
+	convertedCurrency: z.enum(SupportedCurrencies).optional(),
+	paymentId: z.string().min(1, 'Payment method is required'),
+	paymentType: z.enum(TransactionPaymentType),
 	ledgerId: z.string().min(1, 'Ledger ID is required'),
 	type: z.enum(TransactionType),
 	date: z.coerce.date(),
@@ -15,9 +23,13 @@ export const CreateTransactionSchema = z.object({
 export const UpdateTransactionSchema = z
 	.object({
 		description: z.string().optional(),
-		creditId: z.string().optional(),
+		paymentId: z.string().optional(),
+		paymentType: z.enum(TransactionPaymentType).optional(),
 		ledgerId: z.string().optional(),
 		amount: z.number().optional(),
+		currency: z.enum(SupportedCurrencies).optional(),
+		convertedAmount: z.number().optional(),
+		convertedCurrency: z.enum(SupportedCurrencies).optional(),
 		type: z.enum(TransactionType).optional(),
 		date: z.coerce.date().optional(),
 		category: z.string().optional(),
@@ -26,15 +38,22 @@ export const UpdateTransactionSchema = z
 	.refine(
 		(data) => {
 			if (
-				(!!data.ledgerId && !data.creditId) ||
-				(!data.ledgerId && !!data.creditId)
+				(!!data.ledgerId && !data.paymentId) ||
+				(!data.ledgerId && !!data.paymentId)
 			) {
 				return false;
 			}
 			return true;
 		},
 		{
-			message: 'Credit ID or Ledger ID is required',
-			path: ['creditId', 'ledgerId'],
+			message: 'Payment ID or Ledger ID is required',
+			path: ['paymentId', 'ledgerId'],
 		},
 	);
+
+export type CreateTransactionSchemaType = z.infer<
+	typeof CreateTransactionSchema
+>;
+export type UpdateTransactionSchemaType = z.infer<
+	typeof UpdateTransactionSchema
+>;

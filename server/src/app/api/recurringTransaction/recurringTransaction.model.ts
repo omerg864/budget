@@ -1,12 +1,14 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
+import { SupportedCurrencies } from '../../../../../shared/constants/currency.constants';
 import {
+  TransactionPaymentType,
   TransactionRecurringFrequency,
   TransactionType,
-} from '../../../../../shared/constants/transaction.constants.js';
-import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type.js';
-import { Credit } from '../credit/credit.model.js';
-import { Ledger } from '../ledger/ledger.model.js';
+} from '../../../../../shared/constants/transaction.constants';
+import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
+import { Credit } from '../credit/credit.model';
+import { Ledger } from '../ledger/ledger.model';
 
 @Schema({
   timestamps: true,
@@ -21,6 +23,15 @@ export class RecurringTransaction implements RecurringTransactionEntity {
 
   @Prop({ required: true })
   amount: number;
+
+  @Prop({ required: true })
+  currency: SupportedCurrencies;
+
+  @Prop({ type: String, required: true })
+  paymentId: string;
+
+  @Prop({ type: String, enum: TransactionPaymentType, required: true })
+  paymentType: TransactionPaymentType;
 
   @Prop({ type: Types.ObjectId, ref: Credit.name, required: true })
   creditId: string;

@@ -1,10 +1,18 @@
-import type { TransactionType } from '../constants/transaction.constants.js';
+import { SupportedCurrencies } from '../constants/currency.constants';
+import type {
+	TransactionPaymentType,
+	TransactionType,
+} from '../constants/transaction.constants';
 
 export type TransactionEntity = {
 	id: string;
 	description: string;
 	amount: number;
-	creditId: string;
+	currency: SupportedCurrencies;
+	convertedAmount?: number;
+	convertedCurrency?: SupportedCurrencies;
+	paymentId: string;
+	paymentType: TransactionPaymentType;
 	ledgerId: string;
 	userId?: string;
 	type: TransactionType;

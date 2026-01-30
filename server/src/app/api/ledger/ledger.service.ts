@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
-import { LedgerEntity } from '../../../../../shared/types/ledger.type.js';
-import { AccountService } from '../account/account.service.js';
-import { CreditService } from '../credit/credit.service.js';
-import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service.js';
-import { TransactionService } from '../transaction/transaction.service.js';
-import { LedgerProvider } from './ledger.provider.js';
+import { LedgerEntity } from '../../../../../shared/types/ledger.type';
+import { AccountService } from '../account/account.service';
+import { CreditService } from '../credit/credit.service';
+import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service';
+import { TransactionService } from '../transaction/transaction.service';
+import { LedgerProvider } from './ledger.provider';
 
 @Injectable()
 export class LedgerService {

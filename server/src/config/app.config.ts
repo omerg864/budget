@@ -1,5 +1,5 @@
-import { NODE_ENV } from 'src/constants/app.constants';
 import { z } from 'zod';
+import { NODE_ENV } from '../constants/app.constants';
 
 export const configurationSchema = z.object({
   NODE_ENV: z.enum(NODE_ENV).default(NODE_ENV.DEVELOPMENT),

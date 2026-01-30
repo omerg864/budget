@@ -3,11 +3,11 @@ import {
   NotFoundException,
   UnprocessableEntityException,
 } from '@nestjs/common';
-import { CreditEntity } from '../../../../../shared/types/credit.type.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { UserService } from '../user/user.service.js';
-import { CreditProvider } from './credit.provider.js';
+import { CreditEntity } from '../../../../../shared/types/credit.type';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { UserService } from '../user/user.service';
+import { CreditProvider } from './credit.provider';
 
 @Injectable()
 export class CreditService {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants.js';
-import { LedgerAccessEntity } from '../../../types/ledgerAccess.type.js';
-import { LedgerAccess } from './ledgerAccess.model.js';
-import { LedgerAccessProvider } from './ledgerAccess.provider.js';
+import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
+import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
+import { LedgerAccess } from './ledgerAccess.model';
+import { LedgerAccessProvider } from './ledgerAccess.provider';
 
 @Injectable()
 export class LedgerAccessService {

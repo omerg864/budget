@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type.js';
+import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
 import {
   RecurringTransaction,
   RecurringTransactionDocument,
-} from './recurringTransaction.model.js';
+} from './recurringTransaction.model';
 
 @Injectable()
 export class RecurringTransactionProvider {

@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { AccountEntity } from '../../../../../shared/types/account.type.js';
-import { Account, AccountDocument } from './account.model.js';
+import { AccountEntity } from '../../../../../shared/types/account.type';
+import { Account, AccountDocument } from './account.model';
 
 @Injectable()
 export class AccountProvider {

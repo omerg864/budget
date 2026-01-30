@@ -15,21 +15,19 @@ import {
   UsePipes,
 } from '@nestjs/common';
 import { ZodValidationPipe } from 'nestjs-zod';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { TransactionEntity } from '../../../../../shared/types/transaction.type.js';
-import type { UserEntity } from '../../../../../shared/types/user.type.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
-import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { User } from '../auth/auth.decorator.js';
-import { AuthGuard } from '../auth/auth.guard.js';
-import { CreditService } from '../credit/credit.service.js';
-import {
-  CreateTransactionDto,
-  UpdateTransactionDto,
-} from './transaction.dto.js';
-import { TransactionService } from './transaction.service.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { TransactionEntity } from '../../../../../shared/types/transaction.type';
+import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { PaymentService } from '../../modules/payment/payment.service';
+import { User } from '../auth/auth.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { CreditService } from '../credit/credit.service';
+import { CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
+import { TransactionService } from './transaction.service';
 
 @Controller(generateLink({ route: [API_ROUTES.TRANSACTION.BASE] }))
 @UseGuards(AuthGuard)
@@ -38,6 +36,7 @@ export class TransactionController {
     private readonly transactionService: TransactionService,
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly creditService: CreditService,
+    private readonly paymentService: PaymentService,
     private readonly i18n: AppI18nService,
   ) {}
 
@@ -60,16 +59,19 @@ export class TransactionController {
       );
     }
 
-    const credit = await this.creditService.findOne(
-      createTransactionDto.creditId,
+    const payment = await this.paymentService.getPayment(
+      createTransactionDto.paymentId,
+      createTransactionDto.paymentType,
     );
-    if (!credit) {
-      throw new NotFoundException(this.i18n.t('errorMessages.credit.notFound'));
+    if (!payment) {
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.payment.notFound'),
+      );
     }
 
-    if (credit.ledgerId !== createTransactionDto.ledgerId) {
+    if (payment.ledgerId !== createTransactionDto.ledgerId) {
       throw new UnauthorizedException(
-        this.i18n.t('errorMessages.credit.accessDenied'),
+        this.i18n.t('errorMessages.payment.accessDenied'),
       );
     }
 
@@ -190,25 +192,30 @@ export class TransactionController {
       );
     }
 
-    if (updateTransactionDto.creditId) {
-      const credit = await this.creditService.findOne(
-        updateTransactionDto.creditId,
+    if (updateTransactionDto.paymentId && updateTransactionDto.paymentType) {
+      const payment = await this.paymentService.getPayment(
+        updateTransactionDto.paymentId,
+        updateTransactionDto.paymentType,
       );
-      if (!credit) {
+      if (!payment) {
         throw new NotFoundException(
-          this.i18n.t('errorMessages.credit.notFound'),
+          this.i18n.t('errorMessages.payment.notFound'),
         );
       }
 
-      if (credit.ledgerId !== updateTransactionDto.ledgerId) {
+      const targetLedgerId =
+        updateTransactionDto.ledgerId || transaction.ledgerId;
+
+      if (payment.ledgerId !== targetLedgerId) {
         throw new UnauthorizedException(
-          this.i18n.t('errorMessages.credit.accessDenied'),
+          this.i18n.t('errorMessages.payment.accessDenied'),
         );
       }
-      if (transaction.ledgerId !== updateTransactionDto.ledgerId) {
+
+      if (transaction.ledgerId !== targetLedgerId) {
         const hasAccessToNewLedger =
           await this.ledgerAccessService.doesUserHaveAccessToTransactionAction(
-            updateTransactionDto.ledgerId,
+            targetLedgerId,
             user.id,
             'write',
           );

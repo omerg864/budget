@@ -24,6 +24,10 @@
       "accessDenied": "You do not have access to this credit",
       "accountNotBelongToLedger": "Account does not belong to this ledger"
     },
+    "payment": {
+      "notFound": "Payment method not found",
+      "accessDenied": "You do not have access to this payment method"
+    },
     "recurringTransaction": {
       "notFound": "Recurring transaction not found",
       "accessDenied": "You do not have access to this recurring transaction"

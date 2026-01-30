@@ -9,18 +9,18 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import type { UserEntity } from '../../../../../shared/types/user.type.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants.js';
-import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { User } from '../auth/auth.decorator.js';
-import { CreateLedgerDto } from './ledger.dto.js';
-import { Ledger } from './ledger.model.js';
-import { LedgerService } from './ledger.service.js';
-import { AuthGuard } from '../auth/auth.guard.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils';
+import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { User } from '../auth/auth.decorator';
+import { CreateLedgerDto } from './ledger.dto';
+import { Ledger } from './ledger.model';
+import { LedgerService } from './ledger.service';
+import { AuthGuard } from '../auth/auth.guard';
 
 @Controller(generateLink({ route: [API_ROUTES.LEDGER.BASE] }))
 @UseGuards(AuthGuard)

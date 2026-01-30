@@ -1,5 +1,5 @@
-import { AccountType } from '../constants/account.constants.js';
-import type { SupportedCurrencies } from '../constants/currency.constants.js';
+import { AccountType } from '../constants/account.constants';
+import type { SupportedCurrencies } from '../constants/currency.constants';
 
 export type AccountEntity = {
 	id: string;

@@ -2,8 +2,8 @@ import { createZodDto } from 'nestjs-zod';
 import {
   CreateCreditSchema,
   UpdateCreditSchema,
-} from '../../../../../shared/schemas/credit.schemas.js';
-import { CreditEntity } from '../../../../../shared/types/credit.type.js';
+} from '../../../../../shared/schemas/credit.schemas';
+import { CreditEntity } from '../../../../../shared/types/credit.type';
 
 export class CreateCreditDto extends createZodDto(CreateCreditSchema) {}
 

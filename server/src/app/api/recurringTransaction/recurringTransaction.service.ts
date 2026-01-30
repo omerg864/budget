@@ -1,10 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { DateTime } from 'luxon';
-import { getThisMonthChargeDates } from '../../../../../shared/services/transaction.shared-service.js';
-import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type.js';
-import { TransactionEntity } from '../../../../../shared/types/transaction.type.js';
-import { TransactionService } from '../transaction/transaction.service.js';
-import { RecurringTransactionProvider } from './recurringTransaction.provider.js';
+import { getThisMonthChargeDates } from '../../../../../shared/services/transaction.shared-service';
+import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
+import { TransactionEntity } from '../../../../../shared/types/transaction.type';
+import { TransactionService } from '../transaction/transaction.service';
+import { RecurringTransactionProvider } from './recurringTransaction.provider';
 
 @Injectable()
 export class RecurringTransactionService {
@@ -21,7 +21,9 @@ export class RecurringTransactionService {
       date,
       description: recurringTransaction.description,
       amount: recurringTransaction.amount,
-      creditId: recurringTransaction.creditId,
+      currency: recurringTransaction.currency,
+      paymentId: recurringTransaction.paymentId,
+      paymentType: recurringTransaction.paymentType,
       ledgerId: recurringTransaction.ledgerId,
       type: recurringTransaction.type,
       category: recurringTransaction.category,

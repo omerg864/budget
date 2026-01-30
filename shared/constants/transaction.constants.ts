@@ -12,3 +12,8 @@ export enum TransactionRecurringFrequency {
 	SEMI_ANNUALLY = 'semi-annually',
 	YEARLY = 'yearly',
 }
+
+export enum TransactionPaymentType {
+	ACCOUNT = 'account',
+	CREDIT = 'credit',
+}

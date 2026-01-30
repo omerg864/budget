@@ -1,7 +1,7 @@
 import { All, Controller, Req, Res } from '@nestjs/common';
 import type { Request, Response } from 'express';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { generateLink } from '../../../../../shared/utils/route.utils';
 import { auth } from '../../../lib/auth';
 
 @Controller(generateLink({ route: [API_ROUTES.AUTH.BASE] }))

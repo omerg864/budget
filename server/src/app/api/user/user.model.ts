@@ -1,8 +1,8 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { HydratedDocument, Types } from 'mongoose';
-import { SupportedCurrencies } from '../../../../../shared/constants/currency.constants.js';
-import { UserEntity } from '../../../../../shared/types/user.type.js';
-import { Ledger } from '../ledger/ledger.model.js';
+import { SupportedCurrencies } from '../../../../../shared/constants/currency.constants';
+import { UserEntity } from '../../../../../shared/types/user.type';
+import { Ledger } from '../ledger/ledger.model';
 
 @Schema({
   timestamps: true,

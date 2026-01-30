@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { TransactionEntity } from '../../../../../shared/types/transaction.type.js';
-import { Transaction, TransactionDocument } from './transaction.model.js';
+import { TransactionEntity } from '../../../../../shared/types/transaction.type';
+import { Transaction, TransactionDocument } from './transaction.model';
 
 @Injectable()
 export class TransactionProvider {

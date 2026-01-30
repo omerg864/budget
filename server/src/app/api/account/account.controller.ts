@@ -10,17 +10,17 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { AccountEntity } from '../../../../../shared/types/account.type.js';
-import type { UserEntity } from '../../../../../shared/types/user.type.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
-import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { User } from '../auth/auth.decorator.js';
-import { AuthGuard } from '../auth/auth.guard.js';
-import { CreateAccountDto, UpdateAccountDto } from './account.dto.js';
-import { AccountService } from './account.service.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { AccountEntity } from '../../../../../shared/types/account.type';
+import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { User } from '../auth/auth.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { CreateAccountDto, UpdateAccountDto } from './account.dto';
+import { AccountService } from './account.service';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
 @UseGuards(AuthGuard)

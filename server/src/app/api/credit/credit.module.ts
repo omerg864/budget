@@ -1,12 +1,12 @@
 import { Module } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module.js';
-import { AccountModule } from '../account/account.module.js';
-import { UserModule } from '../user/user.module.js';
-import { CreditController } from './credit.controller.js';
-import { Credit, CreditSchema } from './credit.model.js';
-import { CreditProvider } from './credit.provider.js';
-import { CreditService } from './credit.service.js';
+import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module';
+import { AccountModule } from '../account/account.module';
+import { UserModule } from '../user/user.module';
+import { CreditController } from './credit.controller';
+import { Credit, CreditSchema } from './credit.model';
+import { CreditProvider } from './credit.provider';
+import { CreditService } from './credit.service';
 
 @Module({
   imports: [

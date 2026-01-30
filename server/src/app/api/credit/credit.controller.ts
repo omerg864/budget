@@ -10,18 +10,18 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants.js';
-import { CreditEntity } from '../../../../../shared/types/credit.type.js';
-import type { UserEntity } from '../../../../../shared/types/user.type.js';
-import { generateLink } from '../../../../../shared/utils/route.utils.js';
-import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe.js';
-import { AppI18nService } from '../../modules/i18n/app-i18n.service.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { AccountService } from '../account/account.service.js';
-import { User } from '../auth/auth.decorator.js';
-import { AuthGuard } from '../auth/auth.guard.js';
-import { CreateCreditDto, UpdateCreditDto } from './credit.dto.js';
-import { CreditService } from './credit.service.js';
+import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { CreditEntity } from '../../../../../shared/types/credit.type';
+import type { UserEntity } from '../../../../../shared/types/user.type';
+import { generateLink } from '../../../../../shared/utils/route.utils';
+import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { AccountService } from '../account/account.service';
+import { User } from '../auth/auth.decorator';
+import { AuthGuard } from '../auth/auth.guard';
+import { CreateCreditDto, UpdateCreditDto } from './credit.dto';
+import { CreditService } from './credit.service';
 
 @Controller(generateLink({ route: [API_ROUTES.CREDIT.BASE] }))
 @UseGuards(AuthGuard)

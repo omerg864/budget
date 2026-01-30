@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { CreditEntity } from '../../../../../shared/types/credit.type.js';
-import { Credit, CreditDocument } from './credit.model.js';
+import { CreditEntity } from '../../../../../shared/types/credit.type';
+import { Credit, CreditDocument } from './credit.model';
 
 @Injectable()
 export class CreditProvider {

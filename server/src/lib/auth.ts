@@ -2,7 +2,7 @@ import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient, ObjectId } from 'mongodb';
-import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants.js';
+import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants';
 
 let client: MongoClient;
 

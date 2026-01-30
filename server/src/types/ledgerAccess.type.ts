@@ -1,4 +1,4 @@
-import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants.js';
+import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants';
 
 export type LedgerAccessEntity = {
   ledgerId: string;

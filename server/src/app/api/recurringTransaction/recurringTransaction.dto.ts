@@ -2,7 +2,7 @@ import { createZodDto } from 'nestjs-zod';
 import {
   CreateRecurringTransactionSchema,
   UpdateRecurringTransactionSchema,
-} from '../../../../../shared/schemas/recurringTransaction.schemas.js';
+} from '../../../../../shared/schemas/recurringTransaction.schemas';
 
 export class CreateRecurringTransactionDto extends createZodDto(
   CreateRecurringTransactionSchema,

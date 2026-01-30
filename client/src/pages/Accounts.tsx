@@ -1,4 +1,5 @@
-import { useAccountsQuery, useCreditsQuery } from '@/api/account.api';
+import { useAccountsQuery } from '@/api/account.api';
+import { useCreditsQuery } from '@/api/credit.api.ts';
 import { useUserQuery } from '@/api/user.api';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';

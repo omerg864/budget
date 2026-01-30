@@ -1,4 +1,4 @@
-import { TransactionType } from '../constants/transaction.constants.js';
+import { TransactionType } from '../constants/transaction.constants';
 
 export type LedgerCategory = {
 	id: string;

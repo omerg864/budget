@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { AccountEntity } from '../../../../../shared/types/account.type.js';
-import { AccountProvider } from './account.provider.js';
+import { AccountEntity } from '../../../../../shared/types/account.type';
+import { AccountProvider } from './account.provider';
 
 @Injectable()
 export class AccountService {

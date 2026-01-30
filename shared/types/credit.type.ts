@@ -1,4 +1,4 @@
-import { CreditType } from '../constants/credit.constants.js';
+import { CreditType } from '../constants/credit.constants';
 
 export type CreditEntity = {
 	id: string;

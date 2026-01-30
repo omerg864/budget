@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { I18nContext, I18nService, TranslateOptions } from 'nestjs-i18n';
-import { I18nPath } from './i18n.types.js';
+import { I18nPath } from './i18n.types';
 
 @Injectable()
 export class AppI18nService {

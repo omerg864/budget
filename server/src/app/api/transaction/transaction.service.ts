@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
-import { TransactionEntity } from '../../../../../shared/types/transaction.type.js';
-import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service.js';
-import { UserService } from '../user/user.service.js';
-import { TransactionProvider } from './transaction.provider.js';
+import { TransactionEntity } from '../../../../../shared/types/transaction.type';
+import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
+import { UserService } from '../user/user.service';
+import { TransactionProvider } from './transaction.provider';
 
 @Injectable()
 export class TransactionService {

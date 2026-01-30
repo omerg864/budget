@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LedgerAccessEntity } from '../../../types/ledgerAccess.type.js';
-import { LedgerAccess, LedgerAccessDocument } from './ledgerAccess.model.js';
+import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
+import { LedgerAccess, LedgerAccessDocument } from './ledgerAccess.model';
 
 @Injectable()
 export class LedgerAccessProvider {

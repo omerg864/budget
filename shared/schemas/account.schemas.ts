@@ -1,6 +1,6 @@
 import { z } from 'zod';
-import { AccountType } from '../constants/account.constants.js';
-import { SupportedCurrencies } from '../constants/currency.constants.js';
+import { AccountType } from '../constants/account.constants';
+import { SupportedCurrencies } from '../constants/currency.constants';
 
 export const CreateAccountSchema = z.object({
 	name: z.string().min(1, 'Account name is required'),

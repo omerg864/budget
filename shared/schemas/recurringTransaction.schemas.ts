@@ -1,13 +1,17 @@
 import { z } from 'zod';
+import { SupportedCurrencies } from '../constants/currency.constants';
 import {
+	TransactionPaymentType,
 	TransactionRecurringFrequency,
 	TransactionType,
-} from '../constants/transaction.constants.js';
+} from '../constants/transaction.constants';
 
 export const CreateRecurringTransactionSchema = z.object({
 	description: z.string().min(1, 'Description is required'),
 	amount: z.number(),
-	creditId: z.string().min(1, 'Credit ID is required'),
+	currency: z.enum(SupportedCurrencies),
+	paymentId: z.string().min(1, 'Payment ID is required'),
+	paymentType: z.enum(TransactionPaymentType),
 	ledgerId: z.string().min(1, 'Ledger ID is required'),
 	type: z.enum(TransactionType),
 	startDate: z.coerce.date(),
@@ -22,7 +26,9 @@ export const UpdateRecurringTransactionSchema = z
 	.object({
 		description: z.string().optional(),
 		amount: z.number().optional(),
-		creditId: z.string().optional(),
+		currency: z.enum(SupportedCurrencies),
+		paymentId: z.string().optional(),
+		paymentType: z.enum(TransactionPaymentType).optional(),
 		ledgerId: z.string().optional(),
 		type: z.enum(TransactionType).optional(),
 		startDate: z.coerce.date().optional(),
@@ -35,8 +41,8 @@ export const UpdateRecurringTransactionSchema = z
 	.refine(
 		(data) => {
 			if (
-				(!!data.ledgerId && !data.creditId) ||
-				(!data.ledgerId && !!data.creditId)
+				(!!data.ledgerId && !data.paymentId) ||
+				(!data.ledgerId && !!data.paymentId)
 			) {
 				return false;
 			}

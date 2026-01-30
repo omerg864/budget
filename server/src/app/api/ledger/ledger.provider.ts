@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LedgerEntity } from '../../../../../shared/types/ledger.type.js';
-import { Ledger, LedgerDocument } from './ledger.model.js';
+import { LedgerEntity } from '../../../../../shared/types/ledger.type';
+import { Ledger, LedgerDocument } from './ledger.model';
 
 @Injectable()
 export class LedgerProvider {

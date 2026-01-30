@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import { CreditType } from '../constants/credit.constants.js';
+import { CreditType } from '../constants/credit.constants';
 
 export const CreateCreditSchema = z.object({
 	name: z.string().min(1, 'Name is required'),
