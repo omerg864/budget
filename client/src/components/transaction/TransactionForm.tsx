@@ -2,7 +2,7 @@ import {
 	useCreateTransactionMutation,
 	useUpdateTransactionMutation,
 } from '@/api/transaction.api';
-import { useUserQuery } from '@/api/user.api';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import {
@@ -21,6 +21,7 @@ import FormErrors from '../form/FormErrors';
 import TransactionFormBaseData from './TransactionFormBaseData.tsx';
 import TransactionFormButtons from './TransactionFormButtons';
 import TransactionFormDetails from './TransactionFormDetails.tsx';
+import { useUserQuery } from '@/api/user.api.ts';
 
 interface TransactionFormProps {
 	open: boolean;
@@ -34,8 +35,8 @@ export function TransactionForm({
 	transactionToEdit,
 }: TransactionFormProps) {
 	const { t } = useTranslation('transactions');
+	const { ledgerId } = usePreferencesStore();
 	const { data: user } = useUserQuery();
-	const ledgerId = user?.defaultLedgerId;
 	const [formState, setFormState] = useState<'base' | 'details'>('base');
 
 	const createTransactionMutation = useCreateTransactionMutation();
@@ -45,7 +46,7 @@ export function TransactionForm({
 		defaultValues: {
 			description: '',
 			amount: 0,
-			currency: SupportedCurrencies.ILS, // Default to ILS or infer from user prefs
+			currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
 			paymentId: '',
 			paymentType: 'account',
 			ledgerId: ledgerId || '',

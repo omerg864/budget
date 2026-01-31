@@ -1,6 +1,6 @@
 import { useAccountsQuery } from '@/api/account.api';
 import { useCreditsQuery } from '@/api/credit.api.ts';
-import { useUserQuery } from '@/api/user.api';
+import { useUserQuery } from '@/api/user.api.ts';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';
 import CreditCard from '@/components/credit/CreditCard.tsx';
@@ -10,6 +10,7 @@ import MenuButton from '@/components/custom/MenuButton.tsx';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter.tsx';
 import PageTitle from '@/components/layout/PageTitle.tsx';
 import { cn } from '@/lib/utils';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { AccountEntity } from '@shared/types/account.type';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
@@ -20,9 +21,10 @@ import { useTranslation } from 'react-i18next';
 
 export default function Accounts() {
 	const { t } = useTranslation('accounts');
+	const { ledgerId } = usePreferencesStore();
 	const { data: user } = useUserQuery();
-	const { data: accounts = [] } = useAccountsQuery(user?.defaultLedgerId);
-	const { data: credits = [] } = useCreditsQuery(user?.defaultLedgerId);
+	const { data: accounts = [] } = useAccountsQuery(ledgerId ?? undefined);
+	const { data: credits = [] } = useCreditsQuery(ledgerId ?? undefined);
 
 	const [isCreateOpen, setIsCreateOpen] = useState(false);
 	const [accountToEdit, setAccountToEdit] = useState<AccountEntity | null>(
@@ -70,7 +72,7 @@ export default function Accounts() {
 		setIsCreditFormOpen(true);
 	});
 
-	if (!user) return null;
+	if (!ledgerId || !user) return null;
 
 	return (
 		<div className="flex flex-col gap-6">

@@ -1,4 +1,4 @@
-import { useUserQuery } from '@/api/user.api.ts';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import type { AnyFormType } from '@/types/form.type.ts';
 import type { TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type.ts';
@@ -50,8 +50,7 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 	transactionToEdit,
 }: TransactionFormBaseDataProps) => {
 	const { t } = useTranslation('transactions');
-	const { data: user } = useUserQuery();
-	const ledgerId = user?.defaultLedgerId;
+	const { ledgerId } = usePreferencesStore();
 
 	const [input, dispatch] = useReducer(
 		keypadReducer,
@@ -101,7 +100,7 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 									required
 								>
 									<PaymentSelector
-										ledgerId={ledgerId}
+										ledgerId={ledgerId ?? undefined}
 										value={field.state.value}
 										valueType={form.getFieldValue(
 											'paymentType',

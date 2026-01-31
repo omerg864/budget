@@ -2,7 +2,7 @@ import {
 	useCreateCreditMutation,
 	useUpdateCreditMutation,
 } from '@/api/credit.api';
-import { useUserQuery } from '@/api/user.api';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import {
 	ACCOUNT_COLORS,
 	AccountType,
@@ -42,7 +42,7 @@ export function CreditForm({
 	const { t } = useTranslation('credits');
 	const { t: tAccounts } = useTranslation('accounts');
 	const { t: tGeneric } = useTranslation('generic');
-	const { data: user } = useUserQuery();
+	const { ledgerId } = usePreferencesStore();
 
 	const creditTypeOptions = useMemo(
 		() => [
@@ -76,7 +76,7 @@ export function CreditForm({
 			name: '',
 			type: CreditType.CREDIT,
 			color: ACCOUNT_COLORS[0],
-			ledgerId: user?.defaultLedgerId || '',
+			ledgerId: ledgerId || '',
 			accountId: '',
 			ownerId: undefined as string | undefined,
 		} as CreateCreditSchemaType,
@@ -115,7 +115,7 @@ export function CreditForm({
 	// Reset form when opening/closing or changing creditToEdit
 	useEffect(() => {
 		if (open) {
-			if (!user && !creditToEdit) return;
+			if (!ledgerId && !creditToEdit) return;
 
 			if (creditToEdit) {
 				form.reset({
@@ -131,13 +131,13 @@ export function CreditForm({
 					name: '',
 					type: CreditType.CREDIT,
 					color: ACCOUNT_COLORS[0],
-					ledgerId: user?.defaultLedgerId || '',
+					ledgerId: ledgerId || '',
 					accountId: '',
 					ownerId: undefined,
 				});
 			}
 		}
-	}, [open, creditToEdit, user, form]);
+	}, [open, creditToEdit, ledgerId, form]);
 
 	const isLoading =
 		createCreditMutation.isPending || updateCreditMutation.isPending;
@@ -220,7 +220,7 @@ export function CreditForm({
 											required
 										>
 											<AccountSelector
-												ledgerId={user?.defaultLedgerId}
+												ledgerId={ledgerId ?? undefined}
 												value={field.state.value}
 												filter={(account) =>
 													account.type ===
@@ -247,7 +247,7 @@ export function CreditForm({
 											label={tAccounts('owner')}
 										>
 											<UserSelector
-												ledgerId={user?.defaultLedgerId}
+												ledgerId={ledgerId ?? undefined}
 												value={field.state.value}
 												onValueChange={
 													field.handleChange

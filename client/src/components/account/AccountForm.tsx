@@ -2,7 +2,8 @@ import {
 	useCreateAccountMutation,
 	useUpdateAccountMutation,
 } from '@/api/account.api';
-import { useUserQuery } from '@/api/user.api';
+import { useUserQuery } from '@/api/user.api.ts';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import {
 	ACCOUNT_COLORS,
 	AccountType,
@@ -40,6 +41,7 @@ export function AccountForm({
 	accountToEdit,
 }: AccountFormProps) {
 	const { t } = useTranslation('accounts');
+	const { ledgerId } = usePreferencesStore();
 	const { data: user } = useUserQuery();
 
 	const accountTypeOptions = useMemo(
@@ -85,7 +87,7 @@ export function AccountForm({
 			currency: SupportedCurrencies.ILS,
 			balance: 0,
 			color: ACCOUNT_COLORS[0],
-			ledgerId: user?.defaultLedgerId || '',
+			ledgerId: ledgerId || '',
 		} as CreateAccountSchemaType,
 		validators: {
 			onSubmit: accountToEdit
@@ -122,7 +124,7 @@ export function AccountForm({
 	// Reset form when opening/closing or changing accountToEdit
 	useEffect(() => {
 		if (open) {
-			if (!user && !accountToEdit) return;
+			if (!accountToEdit) return;
 
 			if (accountToEdit) {
 				form.reset({
@@ -140,12 +142,12 @@ export function AccountForm({
 					type: AccountType.BANK,
 					balance: 0,
 					color: ACCOUNT_COLORS[0],
-					ledgerId: user?.defaultLedgerId || '',
-					currency: SupportedCurrencies.ILS,
+					ledgerId: ledgerId || '',
+					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
 				});
 			}
 		}
-	}, [open, accountToEdit, user, form]);
+	}, [open, accountToEdit, form, ledgerId, user]);
 
 	const isLoading =
 		createAccountMutation.isPending || updateAccountMutation.isPending;
@@ -259,7 +261,7 @@ export function AccountForm({
 											label={t('owner')}
 										>
 											<UserSelector
-												ledgerId={user?.defaultLedgerId}
+												ledgerId={ledgerId ?? undefined}
 												value={field.state.value}
 												onValueChange={
 													field.handleChange
