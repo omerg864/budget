@@ -7,10 +7,8 @@ import {
 
 export const CreateTransactionSchema = z.object({
 	description: z.string(),
-	amount: z.number(),
+	amount: z.number().min(0.01),
 	currency: z.enum(SupportedCurrencies),
-	convertedAmount: z.number().optional(),
-	convertedCurrency: z.enum(SupportedCurrencies).optional(),
 	paymentId: z.string().min(1, 'Payment method is required'),
 	paymentType: z.enum(TransactionPaymentType),
 	ledgerId: z.string().min(1, 'Ledger ID is required'),
@@ -26,10 +24,8 @@ export const UpdateTransactionSchema = z
 		paymentId: z.string().optional(),
 		paymentType: z.enum(TransactionPaymentType).optional(),
 		ledgerId: z.string().optional(),
-		amount: z.number().optional(),
+		amount: z.number().min(0.01).optional(),
 		currency: z.enum(SupportedCurrencies).optional(),
-		convertedAmount: z.number().optional(),
-		convertedCurrency: z.enum(SupportedCurrencies).optional(),
 		type: z.enum(TransactionType).optional(),
 		date: z.coerce.date().optional(),
 		category: z.string().optional(),

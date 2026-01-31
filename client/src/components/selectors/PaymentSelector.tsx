@@ -1,6 +1,7 @@
 import { useAccountsQuery } from '@/api/account.api.ts';
 import { useCreditsQuery } from '@/api/credit.api.ts';
-import { AccountType } from '@shared/constants/account.constants.ts';
+import { TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
+import { isAccountValidForTransaction } from '@shared/services/transaction.shared-service.ts';
 import type { AccountEntity } from '@shared/types/account.type.ts';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
@@ -8,7 +9,6 @@ import { useMemoizedFn } from 'ahooks';
 import { useMemo, type FC } from 'react';
 import type { BaseSelectorProps } from './BaseSelector.tsx';
 import BaseSelector from './BaseSelector.tsx';
-import { TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
 
 export type PaymentSelectorProps = Omit<
 	BaseSelectorProps,
@@ -54,7 +54,7 @@ const PaymentSelector: FC<PaymentSelectorProps> = ({
 		return [
 			...(accounts || [])
 				.filter((account) => {
-					if (account.type !== AccountType.CASH) {
+					if (!isAccountValidForTransaction(account)) {
 						return false;
 					}
 					if (filter) {

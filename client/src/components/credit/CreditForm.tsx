@@ -160,12 +160,7 @@ export function CreditForm({
 					disabled={isLoading}
 					onCancel={() => onOpenChange(false)}
 				>
-					<form.Subscribe
-						selector={(state) => state.errors}
-						children={(errors) => (
-							<FormErrors errors={Object.values(errors)} />
-						)}
-					/>
+					<FormErrors form={form} path={[]} />
 				</CreditFormButtons>
 			}
 		>

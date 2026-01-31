@@ -1,4 +1,12 @@
 {
+  "categories": {
+    "groceries": "Groceries",
+    "transport": "Transport",
+    "housing": "Housing",
+    "utilities": "Utilities",
+    "entertainment": "Entertainment",
+    "salary": "Salary"
+  },
   "errorMessages": {
     "common": {
       "unauthorized": "Not authenticated",

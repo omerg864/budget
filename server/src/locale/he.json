@@ -1,4 +1,12 @@
 {
+  "categories": {
+    "groceries": "קניות",
+    "transport": "תחבורה",
+    "housing": "דיור",
+    "utilities": "חשבונות",
+    "entertainment": "בילויים",
+    "salary": "משכורת"
+  },
   "errorMessages": {
     "common": {
       "unauthorized": "Not authenticated",

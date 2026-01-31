@@ -2,6 +2,8 @@ import { passkey } from '@better-auth/passkey';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient, ObjectId } from 'mongodb';
+import { I18nContext } from 'nestjs-i18n';
+import { defaultCategories } from 'src/constants/ledger.constants';
 import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants';
 
 let client: MongoClient;
@@ -24,10 +26,17 @@ export const auth = betterAuth({
       create: {
         // Runs AFTER the user is saved to MongoDB
         after: async (user) => {
+          const lang = I18nContext.current()?.lang;
           const db = getClient().db();
           const ledgerResult = await db.collection('ledgers').insertOne({
-            name: 'Default Ledger',
-            categories: [],
+            name: 'Ledger',
+            categories: defaultCategories.map((category) => ({
+              ...category,
+              name:
+                I18nContext.current()?.t(`categories.${category.name}`, {
+                  lang,
+                }) || category.name,
+            })),
             createdAt: new Date(),
             updatedAt: new Date(),
           });

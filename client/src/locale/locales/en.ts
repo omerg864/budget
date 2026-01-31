@@ -75,6 +75,7 @@ export default {
 		add: 'Add',
 		save: 'Save',
 		cancel: 'Cancel',
+		next: 'Next',
 	},
 	nav: {
 		summary: 'Summary',
@@ -143,5 +144,7 @@ export default {
 		collapse: 'Collapse',
 		category: 'Category',
 		amount: 'Amount',
+		description: 'Description',
+		notes: 'Notes',
 	},
 };

@@ -1,3 +1,4 @@
+import { useLedgerQuery } from '@/api/ledger.api.ts';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
@@ -8,23 +9,27 @@ import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
 
 interface CategorySelectorProps {
-	categories: LedgerCategory[];
+	ledgerId: string;
 	value: string | undefined;
 	onValueChange: (value: string) => void;
 	type: TransactionType;
 }
 
 export function CategorySelector({
-	categories,
+	ledgerId,
 	value,
 	onValueChange,
 	type,
 }: CategorySelectorProps) {
+	const { data: ledger } = useLedgerQuery(ledgerId);
 	const [isOpen, setIsOpen] = useState(false);
 
 	const filteredCategories = useMemo(() => {
-		return categories.filter((category) => category.type === type);
-	}, [categories, type]);
+		return (
+			ledger?.categories.filter((category) => category.type === type) ??
+			[]
+		);
+	}, [ledger, type]);
 
 	// Get first 5 categories for initial view
 	const initialCategories = filteredCategories.slice(0, 5);

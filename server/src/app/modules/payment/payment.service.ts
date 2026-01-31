@@ -23,12 +23,11 @@ export class PaymentService {
   ): Promise<PaymentTypeMap[T] | null> {
     switch (paymentType) {
       case TransactionPaymentType.CREDIT:
-        // Cast as unknown first, then to the generic return type
-        return this.creditService.findOne(paymentId) as unknown as Promise<
+        return this.creditService.findOne(paymentId) as Promise<
           PaymentTypeMap[T] | null
         >;
       case TransactionPaymentType.ACCOUNT:
-        return this.accountService.findOne(paymentId) as unknown as Promise<
+        return this.accountService.findOne(paymentId) as Promise<
           PaymentTypeMap[T] | null
         >;
     }

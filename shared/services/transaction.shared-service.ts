@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon';
+import { AccountType } from '../constants/account.constants.js';
 import { TransactionRecurringFrequency } from '../constants/transaction.constants';
+import { AccountEntity } from '../types/account.type.js';
 import type { RecurringTransactionEntity } from '../types/recurringTransaction.type';
 import { toLuxonDate } from '../utils/luxon.utils';
 
@@ -129,4 +131,13 @@ export function convertCurrency(
 	conversionRate: number = 1,
 ): number {
 	return amount * conversionRate;
+}
+
+export function isAccountValidForTransaction(
+	account: AccountEntity | null | undefined,
+): boolean {
+	return (
+		!!account &&
+		(account.type === AccountType.CASH || account.type === AccountType.BANK)
+	);
 }
