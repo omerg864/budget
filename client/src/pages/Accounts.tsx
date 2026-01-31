@@ -22,6 +22,7 @@ import { useTranslation } from 'react-i18next';
 export default function Accounts() {
 	const { t } = useTranslation('accounts');
 	const { ledgerId } = usePreferencesStore();
+	console.log(ledgerId);
 	const { data: user } = useUserQuery();
 	const { data: accounts = [] } = useAccountsQuery(ledgerId ?? undefined);
 	const { data: credits = [] } = useCreditsQuery(ledgerId ?? undefined);

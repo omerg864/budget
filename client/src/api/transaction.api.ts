@@ -5,8 +5,40 @@ import type {
 } from '@shared/schemas/transaction.schemas';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { generateLink } from '@shared/utils/route.utils';
-import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
+
+export const useTransactionsQuery = ({
+	ledgerId,
+	startDate,
+	endDate,
+}: {
+	ledgerId: string;
+	startDate: Date;
+	endDate: Date;
+}) => {
+	return useQuery({
+		queryKey: [
+			API_ROUTES.TRANSACTION.BASE,
+			API_ROUTES.TRANSACTION.FIND_ALL,
+			{ ledgerId, startDate, endDate },
+		],
+		queryFn: async () => {
+			const url = generateLink({
+				route: [
+					API_ROUTES.TRANSACTION.BASE,
+					API_ROUTES.TRANSACTION.FIND_ALL,
+				],
+				params: { ledgerId },
+			});
+			const { data } = await axios.get<TransactionEntity[]>(url, {
+				params: { startDate, endDate },
+			});
+			return data;
+		},
+		enabled: !!ledgerId,
+	});
+};
 
 export const useCreateTransactionMutation = () => {
 	const queryClient = useQueryClient();

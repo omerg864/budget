@@ -77,6 +77,7 @@ export default {
 		cancel: 'Cancel',
 		next: 'Next',
 		category: 'Category',
+		other: 'Other',
 	},
 	nav: {
 		summary: 'Summary',
@@ -147,5 +148,11 @@ export default {
 		amount: 'Amount',
 		description: 'Description',
 		notes: 'Notes',
+		list: 'List',
+		calendar: 'Calendar',
+		transactions: 'Transactions',
+		expense: 'Expense',
+		income: 'Income',
+		transfer: 'Transfer',
 	},
 };

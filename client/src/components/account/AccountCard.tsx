@@ -57,7 +57,6 @@ const AccountCard: FC<AccountCardProps> = ({
 
 	return (
 		<div
-			key={account.id}
 			className="flex items-center justify-between rounded-2xl bg-white p-4 shadow-sm transition-transform active:scale-[0.98] dark:bg-slate-900"
 			onClick={() => onCardClick(account)}
 		>

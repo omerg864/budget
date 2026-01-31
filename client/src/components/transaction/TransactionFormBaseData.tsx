@@ -82,13 +82,19 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 	}, [input, form]);
 
 	return (
-		<Tabs defaultValue="expense">
+		<Tabs defaultValue={transactionToEdit?.type ?? 'expense'}>
 			<div className="flex flex-col gap-4 items-center w-full">
-				<TabsList className="w-full">
-					<TabsTrigger value="expense">Expense</TabsTrigger>
-					<TabsTrigger value="income">Income</TabsTrigger>
-					<TabsTrigger value="transfer">Transfer</TabsTrigger>
-				</TabsList>
+				{transactionToEdit ? null : (
+					<TabsList className="w-full">
+						<TabsTrigger value="expense">
+							{t('expense')}
+						</TabsTrigger>
+						<TabsTrigger value="income">{t('income')}</TabsTrigger>
+						<TabsTrigger value="transfer">
+							{t('transfer')}
+						</TabsTrigger>
+					</TabsList>
+				)}
 				<div className="w-full h-full flex flex-col justify-between">
 					<div>
 						<form.Field

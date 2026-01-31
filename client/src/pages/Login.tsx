@@ -45,7 +45,6 @@ export default function Login() {
 			const { error, data } = await authClient.signIn.email({
 				email: value.email,
 				password: value.password,
-				callbackURL: '/',
 			});
 			if (error) {
 				toast.error(error.message || 'Failed to sign in');
@@ -63,7 +62,6 @@ export default function Login() {
 	const handleGoogleSignIn = async () => {
 		const { error, data } = await authClient.signIn.social({
 			provider: 'google',
-			callbackURL: '/', // Redirect to home after login
 		});
 		if (error) {
 			toast.error(error.message || 'Failed to sign in with Google');

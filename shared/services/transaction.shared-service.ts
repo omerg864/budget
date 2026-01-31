@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon';
 import { AccountType } from '../constants/account.constants.js';
 import { TransactionRecurringFrequency } from '../constants/transaction.constants';
-import { AccountEntity } from '../types/account.type.js';
+import type { AccountEntity } from '../types/account.type.js';
 import type { RecurringTransactionEntity } from '../types/recurringTransaction.type';
 import { toLuxonDate } from '../utils/luxon.utils';
 

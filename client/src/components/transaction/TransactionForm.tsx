@@ -2,9 +2,13 @@ import {
 	useCreateTransactionMutation,
 	useUpdateTransactionMutation,
 } from '@/api/transaction.api';
+import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
-import { TransactionType } from '@shared/constants/transaction.constants';
+import {
+	TransactionPaymentType,
+	TransactionType,
+} from '@shared/constants/transaction.constants';
 import {
 	CreateTransactionSchema,
 	UpdateTransactionSchema,
@@ -13,7 +17,7 @@ import {
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useForm } from '@tanstack/react-form';
 import { useMemoizedFn } from 'ahooks';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import AppearingModal from '../custom/AppearingModal';
@@ -21,7 +25,6 @@ import FormErrors from '../form/FormErrors';
 import TransactionFormBaseData from './TransactionFormBaseData.tsx';
 import TransactionFormButtons from './TransactionFormButtons';
 import TransactionFormDetails from './TransactionFormDetails.tsx';
-import { useUserQuery } from '@/api/user.api.ts';
 
 interface TransactionFormProps {
 	open: boolean;
@@ -103,6 +106,38 @@ export function TransactionForm({
 	const isLoading =
 		createTransactionMutation.isPending ||
 		updateTransactionMutation.isPending;
+
+	useEffect(() => {
+		if (open) {
+			if (!transactionToEdit) return;
+
+			if (transactionToEdit) {
+				form.reset({
+					description: transactionToEdit.description,
+					type: transactionToEdit.type,
+					amount: transactionToEdit.amount,
+					currency: transactionToEdit.currency,
+					ledgerId: transactionToEdit.ledgerId,
+					date: transactionToEdit.date,
+					category: transactionToEdit.category,
+					notes: transactionToEdit.notes,
+					paymentId: transactionToEdit.paymentId,
+					paymentType: transactionToEdit.paymentType,
+				});
+			} else {
+				form.reset({
+					description: '',
+					type: TransactionType.EXPENSE,
+					amount: 0,
+					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+					ledgerId: ledgerId || '',
+					date: new Date(),
+					paymentId: '',
+					paymentType: TransactionPaymentType.ACCOUNT,
+				});
+			}
+		}
+	}, [open, transactionToEdit, form, ledgerId, user]);
 
 	return (
 		<AppearingModal
