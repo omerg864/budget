@@ -76,6 +76,7 @@ export default {
 		save: 'Save',
 		cancel: 'Cancel',
 		next: 'Next',
+		category: 'Category',
 	},
 	nav: {
 		summary: 'Summary',

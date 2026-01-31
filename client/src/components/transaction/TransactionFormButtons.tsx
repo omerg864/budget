@@ -130,6 +130,7 @@ const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
 			<DrawerClose asChild>
 				<Button
 					variant="outline"
+					onClick={onCancel}
 					disabled={disabled}
 					className="w-full"
 				>

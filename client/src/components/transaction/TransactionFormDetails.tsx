@@ -15,22 +15,7 @@ const TransactionFormDetails: FC<TransactionFormDetailsProps> = ({
 }: TransactionFormDetailsProps) => {
 	const { t } = useTranslation('transactions');
 	return (
-		<>
-			{/* Category Selector */}
-			<form.Field
-				name="category"
-				children={(field) => (
-					<div className="space-y-2">
-						<CategorySelector
-							ledgerId={form.getFieldValue('ledgerId')}
-							value={field.state.value}
-							onValueChange={field.handleChange}
-							type={form.getFieldValue('type')}
-						/>
-					</div>
-				)}
-			/>
-
+		<div className="flex flex-col gap-4 w-full">
 			{/* Description */}
 			<form.Field
 				name="description"
@@ -52,6 +37,21 @@ const TransactionFormDetails: FC<TransactionFormDetailsProps> = ({
 				)}
 			/>
 
+			{/* Category Selector */}
+			<form.Field
+				name="category"
+				children={(field) => (
+					<div className="space-y-2">
+						<CategorySelector
+							ledgerId={form.getFieldValue('ledgerId')}
+							value={field.state.value}
+							onValueChange={field.handleChange}
+							type={form.getFieldValue('type')}
+						/>
+					</div>
+				)}
+			/>
+
 			{/* Notes */}
 			<form.Field
 				name="notes"
@@ -63,7 +63,7 @@ const TransactionFormDetails: FC<TransactionFormDetailsProps> = ({
 					/>
 				)}
 			/>
-		</>
+		</div>
 	);
 };
 

@@ -12,6 +12,7 @@ import {
 } from '@shared/schemas/transaction.schemas';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useForm } from '@tanstack/react-form';
+import { useMemoizedFn } from 'ahooks';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
@@ -66,6 +67,7 @@ export function TransactionForm({
 						data: value,
 					});
 					onOpenChange(false);
+					resetForm();
 				} catch (error: any) {
 					console.error('Failed to update transaction', error);
 					toast.error(
@@ -76,6 +78,7 @@ export function TransactionForm({
 				try {
 					await createTransactionMutation.mutateAsync(value);
 					onOpenChange(false);
+					resetForm();
 				} catch (error: any) {
 					console.error('Failed to create transaction', error);
 					toast.error(
@@ -84,6 +87,16 @@ export function TransactionForm({
 				}
 			}
 		},
+	});
+
+	const resetForm = useMemoizedFn(() => {
+		setFormState('base');
+		form.reset();
+	});
+
+	const closeForm = useMemoizedFn(() => {
+		onOpenChange(false);
+		resetForm();
 	});
 
 	const isLoading =
@@ -102,7 +115,7 @@ export function TransactionForm({
 					submitTitle={transactionToEdit ? t('save') : t('add')}
 					cancelTitle={t('cancel')}
 					form={form}
-					onCancel={() => onOpenChange(false)}
+					onCancel={closeForm}
 					next={formState === 'base'}
 					isLoading={isLoading}
 					onNext={() => setFormState('details')}

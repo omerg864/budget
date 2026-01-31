@@ -98,6 +98,7 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 								<FormSelectInput
 									field={field}
 									label={t('paymentMethod')}
+									required
 								>
 									<PaymentSelector
 										ledgerId={ledgerId}

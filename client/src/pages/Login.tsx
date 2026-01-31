@@ -10,6 +10,8 @@ import {
 } from '@/components/ui/card';
 import { authClient } from '@/lib/clients/auth.client';
 import { useAuthStore } from '@/stores/useAuthStore.ts';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
+import type { UserEntity } from '@shared/types/user.type.ts';
 import { useForm } from '@tanstack/react-form';
 import { SmartphoneNfc } from 'lucide-react';
 import { useState } from 'react';
@@ -26,6 +28,7 @@ const loginSchema = z.object({
 export default function Login() {
 	const { t } = useTranslation('login');
 	const [isLoading, setIsLoading] = useState(false);
+	const setLedgerId = usePreferencesStore((state) => state.setLedgerId);
 	const setAuthenticated = useAuthStore((state) => state.setAuthenticated);
 	const navigate = useNavigate();
 
@@ -39,7 +42,7 @@ export default function Login() {
 		},
 		onSubmit: async ({ value }) => {
 			setIsLoading(true);
-			const { error } = await authClient.signIn.email({
+			const { error, data } = await authClient.signIn.email({
 				email: value.email,
 				password: value.password,
 				callbackURL: '/',
@@ -47,6 +50,9 @@ export default function Login() {
 			if (error) {
 				toast.error(error.message || 'Failed to sign in');
 			} else {
+				setLedgerId(
+					(data?.user as unknown as UserEntity).defaultLedgerId,
+				);
 				setAuthenticated();
 				navigate(CLIENT_ROUTES.HOME);
 			}
@@ -55,23 +61,27 @@ export default function Login() {
 	});
 
 	const handleGoogleSignIn = async () => {
-		const { error } = await authClient.signIn.social({
+		const { error, data } = await authClient.signIn.social({
 			provider: 'google',
 			callbackURL: '/', // Redirect to home after login
 		});
 		if (error) {
 			toast.error(error.message || 'Failed to sign in with Google');
 		} else {
+			setLedgerId(
+				((data as any)?.user as unknown as UserEntity).defaultLedgerId,
+			);
 			setAuthenticated();
 			navigate(CLIENT_ROUTES.HOME);
 		}
 	};
 
 	const handlePasskeySignIn = async () => {
-		const { error } = await authClient.signIn.passkey();
+		const { error, data } = await authClient.signIn.passkey();
 		if (error) {
 			toast.error(error?.message || 'Failed to sign in with Passkey');
 		} else {
+			setLedgerId((data?.user as unknown as UserEntity).defaultLedgerId);
 			setAuthenticated();
 			navigate(CLIENT_ROUTES.HOME);
 		}

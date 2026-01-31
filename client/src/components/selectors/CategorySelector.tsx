@@ -2,11 +2,12 @@ import { useLedgerQuery } from '@/api/ledger.api.ts';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
+import { getIcon } from '@/services/ledger.service.ts';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import type { LedgerCategory } from '@shared/types/ledger.type';
-import * as LucideIcons from 'lucide-react';
 import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useMemo, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface CategorySelectorProps {
 	ledgerId: string;
@@ -21,6 +22,7 @@ export function CategorySelector({
 	onValueChange,
 	type,
 }: CategorySelectorProps) {
+	const { t } = useTranslation('generic');
 	const { data: ledger } = useLedgerQuery(ledgerId);
 	const [isOpen, setIsOpen] = useState(false);
 
@@ -36,9 +38,7 @@ export function CategorySelector({
 	const remainingCategories = filteredCategories.slice(5);
 
 	const renderCategory = (category: LedgerCategory) => {
-		const Icon = category.icon
-			? (LucideIcons[category.icon as keyof typeof LucideIcons] as any)
-			: LucideIcons.HelpCircle;
+		const Icon = getIcon(category.icon);
 
 		return (
 			<button
@@ -52,11 +52,14 @@ export function CategorySelector({
 			>
 				<div
 					className="flex h-12 w-12 items-center justify-center rounded-full text-white"
-					style={{ backgroundColor: category.color }}
+					style={{
+						color: category.color,
+						backgroundColor: `${category.color}1A`,
+					}}
 				>
 					{Icon && <Icon className="h-6 w-6" />}
 				</div>
-				{/* <span className="text-xs font-medium">{category.name}</span> */}
+				<span className="text-xs font-medium">{category.name}</span>
 			</button>
 		);
 	};
@@ -64,7 +67,7 @@ export function CategorySelector({
 	return (
 		<div className="w-full space-y-2">
 			<div className="flex items-center justify-between">
-				<span className="text-sm font-medium">Select Category</span>
+				<span className="text-sm font-medium">{t('category')}</span>
 				{remainingCategories.length > 0 && (
 					<Button
 						variant="ghost"
