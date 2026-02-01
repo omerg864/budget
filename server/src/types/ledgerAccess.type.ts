@@ -1,7 +1,7 @@
-import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 
 export type LedgerAccessEntity = {
   ledgerId: string;
   userId: string;
-  role: LEDGER_ACCESS;
+  role: LedgerAccessRole;
 };

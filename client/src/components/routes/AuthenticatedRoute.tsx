@@ -22,8 +22,10 @@ const AuthenticatedRoute: FC = () => {
 	}
 
 	return (
-		<div className="pb-28 md:ps-28 md:pb-0 py-6 px-6 flex-1">
-			<Outlet />
+		<div className="h-[100dvh] w-full pb-28 md:ps-28 md:pb-0 py-6 px-6 flex flex-col overflow-hidden">
+			<div className="flex-1 flex flex-col overflow-hidden">
+				<Outlet />
+			</div>
 			<div className="md:hidden">
 				<BottomNav />
 			</div>

@@ -3,17 +3,20 @@
 
 @custom-variant dark (&:is(.dark *));
 
+html,
+body,
 #root {
-	width: 100%;
 	height: 100%;
+	width: 100%;
+	overflow: hidden;
+	margin: 0;
+	padding: 0;
+	position: fixed; /* Prevent bouncy scrolling on mobile */
+	overscroll-behavior: none;
 }
 
 body {
-	margin: 0;
-	display: flex;
-	place-items: center;
 	min-width: 320px;
-	min-height: 100vh;
 }
 
 button {
@@ -155,4 +158,8 @@ button {
 [data-slot='drawer-content'] {
 	max-height: 90dvh;
 	height: 100%;
+}
+
+.rdp-month_caption {
+	display: none;
 }

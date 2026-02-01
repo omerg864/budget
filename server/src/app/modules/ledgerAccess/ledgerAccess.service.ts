@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
 import { LedgerAccess } from './ledgerAccess.model';
 import { LedgerAccessProvider } from './ledgerAccess.provider';
@@ -51,9 +51,9 @@ export class LedgerAccessService {
       case 'read':
         return true;
       case 'write':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
       case 'delete':
-        return ledgerAccess.role === LEDGER_ACCESS.OWNER;
+        return ledgerAccess.role === LedgerAccessRole.OWNER;
     }
   }
 
@@ -70,9 +70,9 @@ export class LedgerAccessService {
       case 'read':
         return true;
       case 'write':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
       case 'delete':
-        return ledgerAccess.role === LEDGER_ACCESS.OWNER;
+        return ledgerAccess.role === LedgerAccessRole.OWNER;
     }
   }
 
@@ -89,9 +89,9 @@ export class LedgerAccessService {
       case 'read':
         return true;
       case 'write':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
       case 'delete':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
     }
   }
 
@@ -108,9 +108,9 @@ export class LedgerAccessService {
       case 'read':
         return true;
       case 'write':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
       case 'delete':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
     }
   }
 
@@ -127,9 +127,9 @@ export class LedgerAccessService {
       case 'read':
         return true;
       case 'write':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
       case 'delete':
-        return ledgerAccess.role !== LEDGER_ACCESS.READ_ONLY;
+        return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
     }
   }
 }

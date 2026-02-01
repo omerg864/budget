@@ -1,3 +1,4 @@
+import { SupportedIcons } from '@shared/constants/ledger.constants';
 import { z } from 'zod';
 import { TransactionType } from '../constants/transaction.constants';
 
@@ -13,4 +14,6 @@ export const CreateLedgerSchema = z.object({
 			icon: z.string().optional(),
 		}),
 	),
+	icon: z.enum(SupportedIcons),
+	color: z.string().min(1, 'Color is required'),
 });

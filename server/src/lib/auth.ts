@@ -1,10 +1,13 @@
 import { passkey } from '@better-auth/passkey';
+import {
+  LedgerAccessRole,
+  SupportedIcons,
+} from '@shared/constants/ledger.constants';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient, ObjectId } from 'mongodb';
 import { I18nContext } from 'nestjs-i18n';
-import { defaultCategories } from 'src/constants/ledger.constants';
-import { LEDGER_ACCESS } from '../constants/ledgerAccess.constants';
+import { defaultCategories } from '../constants/ledger.constants';
 
 let client: MongoClient;
 
@@ -37,6 +40,8 @@ export const auth = betterAuth({
                   lang,
                 }) || category.name,
             })),
+            icon: SupportedIcons.Home,
+            color: '#FF0000',
             createdAt: new Date(),
             updatedAt: new Date(),
           });
@@ -51,7 +56,7 @@ export const auth = betterAuth({
           await db.collection('ledgeraccesses').insertOne({
             userId: user.id,
             ledgerId: ledgerResult.insertedId.toString(),
-            role: LEDGER_ACCESS.OWNER,
+            role: LedgerAccessRole.OWNER,
             createdAt: new Date(),
             updatedAt: new Date(),
           });

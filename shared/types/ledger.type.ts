@@ -1,3 +1,7 @@
+import type {
+	LedgerAccessRole,
+	SupportedIcons,
+} from '@shared/constants/ledger.constants.ts';
 import { TransactionType } from '../constants/transaction.constants';
 
 export type LedgerCategory = {
@@ -13,4 +17,7 @@ export type LedgerEntity = {
 	id: string;
 	name: string;
 	categories: LedgerCategory[];
+	icon: SupportedIcons;
+	color: string;
+	access?: LedgerAccessRole;
 };

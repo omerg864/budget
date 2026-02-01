@@ -23,6 +23,7 @@ export type BaseSelectorProps = Omit<
 	className?: string;
 	placeholder?: string;
 	clearable?: boolean;
+	containerClassName?: string;
 };
 
 const BaseSelector: FC<BaseSelectorProps> = ({
@@ -32,6 +33,7 @@ const BaseSelector: FC<BaseSelectorProps> = ({
 	className,
 	placeholder,
 	clearable = false,
+	containerClassName,
 	...porps
 }: BaseSelectorProps) => {
 	const handleClear = (e: React.MouseEvent) => {
@@ -41,7 +43,7 @@ const BaseSelector: FC<BaseSelectorProps> = ({
 
 	return (
 		<Select value={value} onValueChange={onValueChange} {...porps}>
-			<div className="flex w-full gap-1">
+			<div className={cn('flex w-full gap-1', containerClassName)}>
 				<SelectTrigger
 					className={cn(
 						'w-full bg-white dark:bg-slate-950',

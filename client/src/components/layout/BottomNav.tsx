@@ -24,7 +24,7 @@ export default function BottomNav() {
 							to={item.to}
 							className={({ isActive }) =>
 								cn(
-									'flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors hover:text-gray-900',
+									'flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors hover:text-gray-900 w-15',
 									isActive && 'text-gray-900',
 								)
 							}
@@ -64,7 +64,7 @@ export default function BottomNav() {
 							to={item.to}
 							className={({ isActive }) =>
 								cn(
-									'flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors hover:text-gray-900',
+									'flex flex-col items-center gap-1 p-2 text-gray-400 transition-colors hover:text-gray-900 w-15',
 									isActive && 'text-gray-900',
 								)
 							}

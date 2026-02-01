@@ -9,3 +9,9 @@ export enum SupportedIcons {
 	Travel = 'travel',
 	Other = 'other',
 }
+
+export enum LedgerAccessRole {
+	OWNER = 'owner',
+	FULL_ACCESS = 'fullAccess',
+	READ_ONLY = 'readOnly',
+}

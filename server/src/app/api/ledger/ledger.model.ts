@@ -1,6 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { SupportedIcons } from '@shared/constants/ledger.constants';
+import { TransactionType } from '@shared/constants/transaction.constants';
 import { HydratedDocument } from 'mongoose';
-import { TransactionType } from '../../../../../shared/constants/transaction.constants';
 import {
   LedgerCategory,
   LedgerEntity,
@@ -33,6 +34,12 @@ export class Ledger implements Omit<LedgerEntity, 'id'> {
     default: [],
   })
   categories: LedgerCategory[];
+
+  @Prop({ type: String, required: true })
+  icon: SupportedIcons;
+
+  @Prop({ type: String, required: true })
+  color: string;
 }
 
 export type LedgerDocument = HydratedDocument<Ledger>;

@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { HydratedDocument, Types } from 'mongoose';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
 import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
 import { Ledger } from '../../api/ledger/ledger.model';
 
@@ -12,8 +12,8 @@ export class LedgerAccess implements LedgerAccessEntity {
   @Prop({ type: Types.ObjectId, ref: 'User', required: true })
   userId: string;
 
-  @Prop({ required: true, enum: LEDGER_ACCESS })
-  role: LEDGER_ACCESS;
+  @Prop({ required: true, enum: LedgerAccessRole })
+  role: LedgerAccessRole;
 }
 
 export type LedgerAccessDocument = HydratedDocument<LedgerAccess>;

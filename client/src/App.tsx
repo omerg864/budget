@@ -43,7 +43,7 @@ function App() {
 			<NetworkBanner />
 			<Toaster />
 			<Suspense fallback={<Loader />}>
-				<main className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950">
+				<main className="flex h-full overflow-hidden flex-col bg-slate-50 dark:bg-slate-950">
 					<Routes>
 						{!isAuthenticated && (
 							<Route path="/" element={<Home />} />

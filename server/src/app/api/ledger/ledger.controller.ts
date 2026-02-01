@@ -12,7 +12,7 @@ import {
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
-import { LEDGER_ACCESS } from '../../../constants/ledgerAccess.constants';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
@@ -40,7 +40,7 @@ export class LedgerController {
     await this.ledgerAccessService.create({
       ledgerId: ledger.id,
       userId: user.id,
-      role: LEDGER_ACCESS.OWNER,
+      role: LedgerAccessRole.OWNER,
     });
     return ledger;
   }

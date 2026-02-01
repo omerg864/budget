@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { LedgerEntity } from '../../../../../shared/types/ledger.type';
+import { LedgerAccess } from '../../modules/ledgerAccess/ledgerAccess.model';
 import { AccountService } from '../account/account.service';
 import { CreditService } from '../credit/credit.service';
 import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service';
@@ -44,5 +45,15 @@ export class LedgerService {
       this.accountService.removeByLedgerId(id),
     ]);
     return deleted;
+  }
+
+  public resolveLedger(
+    ledger: LedgerEntity,
+    ledgerAccess: LedgerAccess,
+  ): LedgerEntity {
+    return {
+      ...ledger,
+      access: ledgerAccess.role,
+    };
   }
 }

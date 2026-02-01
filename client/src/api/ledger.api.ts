@@ -19,3 +19,16 @@ export const useLedgerQuery = (id?: string) => {
 		enabled: !!id,
 	});
 };
+
+export const useLedgersQuery = () => {
+	return useQuery({
+		queryKey: [API_ROUTES.LEDGER.BASE, API_ROUTES.LEDGER.FIND_ALL],
+		queryFn: async () => {
+			const url = generateLink({
+				route: [API_ROUTES.LEDGER.BASE, API_ROUTES.LEDGER.FIND_ALL],
+			});
+			const { data } = await axios.get<LedgerEntity[]>(url);
+			return data;
+		},
+	});
+};

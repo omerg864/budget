@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { TransactionPaymentType } from '@shared/constants/transaction.constants';
-import { AccountEntity } from '@shared/types/account.type.js';
-import { CreditEntity } from '@shared/types/credit.type.js';
+import { AccountEntity } from '@shared/types/account.type';
+import { CreditEntity } from '@shared/types/credit.type';
 import { AccountService } from '../../api/account/account.service';
 import { CreditService } from '../../api/credit/credit.service';
 

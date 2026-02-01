@@ -22,6 +22,7 @@ export default defineConfig([
 		rules: {
 			'react-refresh/only-export-components': 'warn',
 			'@typescript-eslint/no-explicit-any': 'off',
+			'react-hooks/static-components': 'off',
 		},
 	},
 ]);
