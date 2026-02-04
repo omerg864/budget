@@ -5,6 +5,7 @@ import { RecurringTransactionEntity } from '../../../../../shared/types/recurrin
 import { TransactionEntity } from '../../../../../shared/types/transaction.type';
 import { TransactionService } from '../transaction/transaction.service';
 import { RecurringTransactionProvider } from './recurringTransaction.provider';
+import { TransactionPaymentType } from '@shared/constants/transaction.constants.js';
 
 @Injectable()
 export class RecurringTransactionService {
@@ -59,10 +60,14 @@ export class RecurringTransactionService {
     return this.recurringTransactionProvider.findByLedgerId(ledgerId);
   }
 
-  async findByCreditId(
-    creditId: string,
+  async findByPaymentId(
+    paymentId: string,
+    paymentType: TransactionPaymentType,
   ): Promise<RecurringTransactionEntity[]> {
-    return this.recurringTransactionProvider.findByCreditId(creditId);
+    return this.recurringTransactionProvider.findByPaymentId(
+      paymentId,
+      paymentType,
+    );
   }
 
   async findOne(id: string): Promise<RecurringTransactionEntity | null> {

@@ -16,6 +16,7 @@ export const API_ROUTES = {
 		FIND_ALL: '/',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',
+		REMOVE_USER: '/remove/:id/:userId',
 		DELETE: '/:id',
 	},
 	ACCOUNT: {

@@ -51,7 +51,7 @@ const AppearingModal: FC<AppearingModalProps> = ({
 				<DrawerHeader>
 					<DrawerTitle>{title}</DrawerTitle>
 				</DrawerHeader>
-				{children}
+				<div className="overflow-y-auto">{children}</div>
 				{footer && <DrawerFooter>{footer}</DrawerFooter>}
 			</DrawerContent>
 		</Drawer>

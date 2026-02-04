@@ -6,6 +6,7 @@ import {
   LedgerCategory,
   LedgerEntity,
 } from '../../../../../shared/types/ledger.type';
+import { SupportedCurrencies } from '@shared/constants/currency.constants';
 
 @Schema({
   timestamps: true,
@@ -40,6 +41,9 @@ export class Ledger implements Omit<LedgerEntity, 'id'> {
 
   @Prop({ type: String, required: true })
   color: string;
+
+  @Prop({ type: String, required: true })
+  currency: SupportedCurrencies;
 }
 
 export type LedgerDocument = HydratedDocument<Ledger>;

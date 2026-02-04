@@ -49,7 +49,7 @@ export const UpdateRecurringTransactionSchema = z
 			return true;
 		},
 		{
-			message: 'Credit ID or Ledger ID is required',
-			path: ['creditId', 'ledgerId'],
+			message: 'Payment ID or Ledger ID is required',
+			path: ['paymentId', 'ledgerId'],
 		},
 	);

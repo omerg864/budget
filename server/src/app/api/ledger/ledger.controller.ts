@@ -4,23 +4,26 @@ import {
   Delete,
   ForbiddenException,
   Get,
+  NotFoundException,
   Param,
   Patch,
   Post,
   UseGuards,
 } from '@nestjs/common';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
+import { LedgerCategory } from '@shared/types/ledger.type.js';
+import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
-import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
-import { CreateLedgerDto } from './ledger.dto';
+import { AuthGuard } from '../auth/auth.guard';
+import { CreateLedgerDto, UpdateLedgerDto } from './ledger.dto';
 import { Ledger } from './ledger.model';
 import { LedgerService } from './ledger.service';
-import { AuthGuard } from '../auth/auth.guard';
 
 @Controller(generateLink({ route: [API_ROUTES.LEDGER.BASE] }))
 @UseGuards(AuthGuard)
@@ -36,13 +39,20 @@ export class LedgerController {
     @User() user: UserEntity,
     @Body() createLedgerDto: CreateLedgerDto,
   ): Promise<Ledger> {
-    const ledger = await this.ledgerService.create(createLedgerDto);
+    const ledger = await this.ledgerService.create({
+      ...createLedgerDto,
+      categories: createLedgerDto.categories as LedgerCategory[],
+    });
     await this.ledgerAccessService.create({
       ledgerId: ledger.id,
       userId: user.id,
       role: LedgerAccessRole.OWNER,
     });
-    return ledger;
+    return this.ledgerService.resolveLedger(ledger, {
+      ledgerId: ledger.id,
+      userId: user.id,
+      role: LedgerAccessRole.OWNER,
+    });
   }
 
   @Get(API_ROUTES.LEDGER.FIND_ALL)
@@ -50,8 +60,18 @@ export class LedgerController {
     const userLedgerAccesses = await this.ledgerAccessService.findByUserId(
       user.id,
     );
-    return this.ledgerService.findByIds(
+    const keyedUserLedgerAccesses = keyBy(
+      userLedgerAccesses,
+      (l) => l.ledgerId,
+    );
+    const ledgers = await this.ledgerService.findByIds(
       userLedgerAccesses.map((l) => l.ledgerId),
+    );
+    return ledgers.map((ledger) =>
+      this.ledgerService.resolveLedger(
+        ledger,
+        keyedUserLedgerAccesses[ledger.id],
+      ),
     );
   }
 
@@ -71,14 +91,23 @@ export class LedgerController {
         this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
-    return this.ledgerService.findOne(ledgerId);
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+    const ledger = await this.ledgerService.findOne(ledgerId);
+    if (!ledger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(ledger, ledgerAccess);
   }
 
   @Patch(API_ROUTES.LEDGER.UPDATE)
   async update(
     @User() user: UserEntity,
     @Param('id', ParseObjectIdPipe) ledgerId: string,
-    @Body() updateData: Partial<CreateLedgerDto>,
+    @Body() updateData: Partial<UpdateLedgerDto>,
   ): Promise<Ledger | null> {
     const writeAccess =
       await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
@@ -91,7 +120,20 @@ export class LedgerController {
         this.i18n.t('errorMessages.ledger.accessDenied'),
       );
     }
-    return this.ledgerService.update(ledgerId, updateData);
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+
+    const updatedLedger = await this.ledgerService.update(ledgerId, {
+      ...updateData,
+      categories: updateData.categories as LedgerCategory[],
+    });
+    if (!updatedLedger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(updatedLedger, ledgerAccess);
   }
 
   @Delete(API_ROUTES.LEDGER.DELETE)
@@ -110,6 +152,61 @@ export class LedgerController {
         this.i18n.t('errorMessages.ledger.deleteForbidden'),
       );
     }
-    return this.ledgerService.remove(ledgerId);
+    const removed = await this.ledgerService.remove(ledgerId);
+    if (!removed) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(removed, {
+      ledgerId: removed.id,
+      userId: user.id,
+      role: LedgerAccessRole.OWNER,
+    });
+  }
+
+  @Delete(API_ROUTES.LEDGER.REMOVE_USER)
+  async removeUser(
+    @User() user: UserEntity,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
+    @Param('userId', ParseObjectIdPipe) userId: string,
+  ): Promise<Ledger | null> {
+    const ledgerAccess =
+      await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
+        ledgerId,
+        user.id,
+        'write',
+      );
+    if (!ledgerAccess) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.deleteForbidden'),
+      );
+    }
+    const access = await this.ledgerAccessService.findByLedgerIdAndUserId(
+      ledgerId,
+      userId,
+    );
+    if (!access) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    if (access.role !== LedgerAccessRole.OWNER && user.id !== userId) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.deleteForbidden'),
+      );
+    }
+    const removed = await this.ledgerAccessService.removeByLedgerIdAndUserId(
+      ledgerId,
+      userId,
+    );
+    if (!removed) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    const ledger = await this.ledgerService.findOne(ledgerId);
+    if (!ledger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(ledger, {
+      ledgerId: ledger.id,
+      userId: user.id,
+      role: access.role,
+    });
   }
 }

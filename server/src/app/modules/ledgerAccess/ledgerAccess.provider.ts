@@ -41,4 +41,11 @@ export class LedgerAccessProvider {
   async delete(id: string): Promise<LedgerAccess | null> {
     return this.ledgerAccessModel.findByIdAndDelete(id);
   }
+
+  async deleteByLedgerIdAndUserId(
+    ledgerId: string,
+    userId: string,
+  ): Promise<LedgerAccess | null> {
+    return this.ledgerAccessModel.findOneAndDelete({ ledgerId, userId });
+  }
 }

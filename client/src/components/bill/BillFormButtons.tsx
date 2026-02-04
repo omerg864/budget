@@ -1,12 +1,12 @@
-import { useBreakpoint } from '@/hooks/useBreakpoint';
+import { useBreakpoint } from '@/hooks/useBreakpoint.ts';
 import type { AnyFormType } from '@/types/form.type.ts';
 import { useMemoizedFn } from 'ahooks';
 import type { FC, PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../ui/button';
-import { DrawerClose } from '../ui/drawer';
+import { Button } from '../ui/button.tsx';
+import { DrawerClose } from '../ui/drawer.tsx';
 
-export type TransactionFormButtonsProps = PropsWithChildren & {
+export type BillFormButtonsProps = PropsWithChildren & {
 	form: AnyFormType;
 	onCancel: () => void;
 	submitTitle: string;
@@ -17,7 +17,7 @@ export type TransactionFormButtonsProps = PropsWithChildren & {
 	onNext: () => void;
 };
 
-const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
+const BillFormButtons: FC<BillFormButtonsProps> = ({
 	onCancel,
 	submitTitle,
 	cancelTitle,
@@ -26,7 +26,7 @@ const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
 	onNext,
 	form,
 	children,
-}: TransactionFormButtonsProps) => {
+}: BillFormButtonsProps) => {
 	const { t } = useTranslation('generic');
 	const { isLargerThan } = useBreakpoint();
 	const isLargerThanMd = isLargerThan('md');
@@ -104,11 +104,7 @@ const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
 					>
 						{cancelTitle}
 					</Button>
-					<Button
-						type="submit"
-						form="transaction-form"
-						disabled={disabled}
-					>
+					<Button type="submit" form="bill-form" disabled={disabled}>
 						{submitTitle}
 					</Button>
 				</div>
@@ -121,7 +117,7 @@ const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
 			{children}
 			<Button
 				type="submit"
-				form="transaction-form"
+				form="bill-form"
 				disabled={disabled}
 				className="w-full"
 			>
@@ -141,4 +137,4 @@ const TransactionFormButtons: FC<TransactionFormButtonsProps> = ({
 	);
 };
 
-export default TransactionFormButtons;
+export default BillFormButtons;

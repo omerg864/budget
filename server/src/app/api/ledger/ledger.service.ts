@@ -5,6 +5,7 @@ import { AccountService } from '../account/account.service';
 import { CreditService } from '../credit/credit.service';
 import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service';
 import { TransactionService } from '../transaction/transaction.service';
+import { LedgerDocument } from './ledger.model.js';
 import { LedgerProvider } from './ledger.provider';
 
 @Injectable()
@@ -52,7 +53,9 @@ export class LedgerService {
     ledgerAccess: LedgerAccess,
   ): LedgerEntity {
     return {
-      ...ledger,
+      ...(((ledger as LedgerDocument).toJSON
+        ? (ledger as LedgerDocument).toJSON()
+        : ledger) as LedgerEntity),
       access: ledgerAccess.role,
     };
   }

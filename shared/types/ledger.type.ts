@@ -1,3 +1,4 @@
+import type { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
 import type {
 	LedgerAccessRole,
 	SupportedIcons,
@@ -19,5 +20,6 @@ export type LedgerEntity = {
 	categories: LedgerCategory[];
 	icon: SupportedIcons;
 	color: string;
+	currency: SupportedCurrencies;
 	access?: LedgerAccessRole;
 };

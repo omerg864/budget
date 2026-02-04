@@ -43,7 +43,7 @@ const TransactionCalendar: FC<TransactionCalendarProps> = ({
 					formatters={{
 						formatCaption: () => '',
 					}}
-					className="rounded-md border-0 w-full"
+					className="rounded-md border-0 w-full no-month-caption"
 					modifiers={{
 						hasTransaction: datesWithTransactions,
 					}}

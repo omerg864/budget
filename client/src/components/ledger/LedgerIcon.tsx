@@ -13,13 +13,12 @@ const LedgerIcon = ({ icon, color }: LedgerIconProps) => {
 
 	return (
 		<div
-			className="p-1.5 rounded-full"
+			className="p-2 rounded-full"
 			style={{
-				backgroundColor: `${color}20`,
-				color: color,
+				backgroundColor: `${color}1A`,
 			}}
 		>
-			<Icon className="w-4 h-4" />
+			<Icon className="w-5 h-5" style={{ color: color }} />
 		</div>
 	);
 };

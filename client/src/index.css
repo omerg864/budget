@@ -160,6 +160,6 @@ button {
 	height: 100%;
 }
 
-.rdp-month_caption {
+.no-month-caption > .rdp-months > .rdp-month > .rdp-month_caption {
 	display: none;
 }

@@ -4,7 +4,7 @@ import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { TransactionType } from '@shared/constants/transaction.constants.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemo, type FC } from 'react';
-import { useTranslation } from 'react-i18next';
+import CategoryNameFormatter from '../formatters/CategoryNameFormatter.tsx';
 import CurrencyFormatter from '../formatters/CurrencyFormatter.tsx';
 import CategoryIcon from '../ledger/CategoryIcon.tsx';
 
@@ -17,7 +17,6 @@ const TransactionCard: FC<TransactionCardProps> = ({
 	transaction,
 	onCardClick,
 }) => {
-	const { t } = useTranslation('generic');
 	const isExpense = transaction.type === TransactionType.EXPENSE;
 	const amountColor = isExpense ? 'text-red-500' : 'text-green-500';
 	const { ledgerId } = usePreferencesStore();
@@ -39,7 +38,7 @@ const TransactionCard: FC<TransactionCardProps> = ({
 						{transaction.description}
 					</h3>
 					<p className="text-sm text-gray-500">
-						{category?.name || t('other')}
+						<CategoryNameFormatter value={category?.name} />
 					</p>
 				</div>
 			</div>

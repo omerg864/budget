@@ -8,6 +8,7 @@ import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { MongoClient, ObjectId } from 'mongodb';
 import { I18nContext } from 'nestjs-i18n';
 import { defaultCategories } from '../constants/ledger.constants';
+import { SupportedCurrencies } from '@shared/constants/currency.constants';
 
 let client: MongoClient;
 
@@ -42,6 +43,7 @@ export const auth = betterAuth({
             })),
             icon: SupportedIcons.Home,
             color: '#FF0000',
+            currency: SupportedCurrencies.USD,
             createdAt: new Date(),
             updatedAt: new Date(),
           });

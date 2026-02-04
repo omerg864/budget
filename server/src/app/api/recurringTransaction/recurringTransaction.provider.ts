@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
+import { TransactionPaymentType } from '@shared/constants/transaction.constants.js';
 import { Model } from 'mongoose';
 import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
 import {
@@ -27,10 +28,11 @@ export class RecurringTransactionProvider {
     return this.recurringTransactionModel.find({ ledgerId });
   }
 
-  async findByCreditId(
-    creditId: string,
+  async findByPaymentId(
+    paymentId: string,
+    paymentType: TransactionPaymentType,
   ): Promise<RecurringTransactionEntity[]> {
-    return this.recurringTransactionModel.find({ creditId });
+    return this.recurringTransactionModel.find({ paymentId, paymentType });
   }
 
   async findOne(id: string): Promise<RecurringTransactionEntity | null> {

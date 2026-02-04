@@ -25,7 +25,7 @@ export default function LedgerSelector({
 				label: (
 					<div className="flex items-center gap-2">
 						<LedgerIcon icon={ledger.icon} color={ledger.color} />
-						<span className="font-medium text-base truncate">
+						<span className="text-base truncate">
 							{ledger.name}
 						</span>
 					</div>

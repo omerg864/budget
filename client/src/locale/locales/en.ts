@@ -1,5 +1,56 @@
 export default {
-	translation: {},
+	enums: {
+		SupportedIcons: {
+			home: 'Home',
+			car: 'Car',
+			food: 'Food',
+			shopping: 'Shopping',
+			health: 'Health',
+			education: 'Education',
+			entertainment: 'Entertainment',
+			travel: 'Travel',
+			other: 'Other',
+		},
+		AccountType: {
+			bank: 'Bank',
+			cash: 'Cash',
+			stock: 'Stock',
+		},
+		CreditType: {
+			credit: 'Credit Card',
+			debit: 'Debit Card',
+		},
+		Currency: {
+			ILS: 'Israeli Shekel',
+			USD: 'US Dollar',
+			EUR: 'Euro',
+			GBP: 'British Pound',
+			CHF: 'Swiss Franc',
+			JPY: 'Japanese Yen',
+		},
+		LedgerAccessRole: {
+			owner: 'Owner',
+			fullAccess: 'Full Access',
+			readOnly: 'Read Only',
+		},
+		TransactionRecurringFrequency: {
+			daily: 'Daily',
+			weekly: 'Weekly',
+			'bi-weekly': 'Bi-weekly',
+			monthly: 'Monthly',
+			quarterly: 'Quarterly',
+			'semi-annually': 'Semi-annually',
+			yearly: 'Yearly',
+		},
+		TransactionType: {
+			expense: 'Expense',
+			income: 'Income',
+		},
+		TransactionPaymentType: {
+			account: 'Account',
+			credit: 'Credit',
+		},
+	},
 	home: {
 		header: {
 			title: 'Budget',
@@ -154,6 +205,12 @@ export default {
 		expense: 'Expense',
 		income: 'Income',
 		transfer: 'Transfer',
+		editBill: 'Edit Bill',
+		addBill: 'Add Bill',
+		frequency: 'Frequency',
+		nextCharges: 'Next Charges',
+		startDate: 'Start Date',
+		endDate: 'End Date',
 	},
 	settings: {
 		title: 'Settings',
@@ -173,6 +230,19 @@ export default {
 		ledger: 'Ledger',
 		manageLedger: 'Manage {{ledgerName}}',
 		manage: 'Manage',
+		noLedgers: 'No ledgers found',
+		categories: 'Categories',
+		editLedger: 'Edit Ledger',
+		addLedger: 'Add Ledger',
+		ledgerCreated: 'Ledger created',
+		ledgerUpdated: 'Ledger updated',
+		ledgerName: 'Ledger Name',
+		icon: 'Icon',
+		color: 'Color',
+		save: 'Save',
+		add: 'Add',
+		cancel: 'Cancel',
+		currency: 'Currency',
 	},
 	summary: {
 		title: 'Summary',
@@ -184,5 +254,9 @@ export default {
 		topExpenses: 'Top Expenses',
 		recentActivity: 'Recent Activity',
 		seeAll: 'See All',
+	},
+	bills: {
+		title: 'Bills',
+		noBillsFound: 'No bills found',
 	},
 };

@@ -1,20 +1,21 @@
 import {
-	useCreateTransactionMutation,
-	useUpdateTransactionMutation,
-} from '@/api/transaction.api';
+	useCreateRecurringTransactionMutation,
+	useUpdateRecurringTransactionMutation,
+	type CreateRecurringTransactionDto,
+} from '@/api/recurring-transaction.api';
 import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import {
 	TransactionPaymentType,
+	TransactionRecurringFrequency,
 	TransactionType,
 } from '@shared/constants/transaction.constants';
 import {
-	CreateTransactionSchema,
-	UpdateTransactionSchema,
-	type CreateTransactionSchemaType,
-} from '@shared/schemas/transaction.schemas';
-import type { TransactionEntity } from '@shared/types/transaction.type';
+	CreateRecurringTransactionSchema,
+	UpdateRecurringTransactionSchema,
+} from '@shared/schemas/recurringTransaction.schemas';
+import type { RecurringTransactionEntity } from '@shared/types/recurringTransaction.type';
 import { useForm } from '@tanstack/react-form';
 import { useMemoizedFn } from 'ahooks';
 import { useEffect, useState } from 'react';
@@ -22,29 +23,25 @@ import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import AppearingModal from '../custom/AppearingModal';
 import FormErrors from '../form/FormErrors';
-import { Button } from '../ui/button.tsx';
-import TransactionFormBaseData from './TransactionFormBaseData.tsx';
-import TransactionFormButtons from './TransactionFormButtons';
-import TransactionFormDetails from './TransactionFormDetails.tsx';
+import { Button } from '../ui/button';
+import BillFormBaseData from './BillFormBaseData';
+import BillFormButtons from './BillFormButtons';
+import BillFormDetails from './BillFormDetails';
 
-interface TransactionFormProps {
+interface BillFormProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
-	transactionToEdit?: TransactionEntity | null;
+	billToEdit?: RecurringTransactionEntity | null;
 }
 
-export function TransactionForm({
-	open,
-	onOpenChange,
-	transactionToEdit,
-}: TransactionFormProps) {
+export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 	const { t } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
 	const { data: user } = useUserQuery();
 	const [formState, setFormState] = useState<'base' | 'details'>('base');
 
-	const createTransactionMutation = useCreateTransactionMutation();
-	const updateTransactionMutation = useUpdateTransactionMutation();
+	const createMutation = useCreateRecurringTransactionMutation();
+	const updateMutation = useUpdateRecurringTransactionMutation();
 
 	const form = useForm({
 		defaultValues: {
@@ -54,38 +51,39 @@ export function TransactionForm({
 			paymentId: '',
 			paymentType: 'account',
 			ledgerId: ledgerId || '',
-			date: new Date(),
+			startDate: new Date(),
 			type: TransactionType.EXPENSE,
 			category: '',
 			notes: '',
-		} as CreateTransactionSchemaType,
+			frequency: TransactionRecurringFrequency.MONTHLY,
+		} as CreateRecurringTransactionDto,
 		validators: {
-			onSubmit: transactionToEdit
-				? UpdateTransactionSchema
-				: (CreateTransactionSchema as any),
+			onSubmit: billToEdit
+				? UpdateRecurringTransactionSchema
+				: (CreateRecurringTransactionSchema as any),
 		},
 		onSubmit: async ({ value }) => {
-			if (transactionToEdit) {
+			if (billToEdit) {
 				try {
-					await updateTransactionMutation.mutateAsync({
-						id: transactionToEdit.id,
+					await updateMutation.mutateAsync({
+						id: billToEdit.id,
 						data: value,
 					});
 					onOpenChange(false);
 					resetForm();
 				} catch (error: any) {
-					console.error('Failed to update transaction', error);
+					console.error('Failed to update bill', error);
 					toast.error(
 						error?.response?.data?.message || error.message,
 					);
 				}
 			} else {
 				try {
-					await createTransactionMutation.mutateAsync(value);
+					await createMutation.mutateAsync(value);
 					onOpenChange(false);
 					resetForm();
 				} catch (error: any) {
-					console.error('Failed to create transaction', error);
+					console.error('Failed to create bill', error);
 					toast.error(
 						error?.response?.data?.message || error.message,
 					);
@@ -111,26 +109,26 @@ export function TransactionForm({
 		onOpenChange(open);
 	});
 
-	const isLoading =
-		createTransactionMutation.isPending ||
-		updateTransactionMutation.isPending;
+	const isLoading = createMutation.isPending || updateMutation.isPending;
 
 	useEffect(() => {
 		if (open) {
-			if (!transactionToEdit) return;
-
-			if (transactionToEdit) {
+			if (billToEdit) {
 				form.reset({
-					description: transactionToEdit.description,
-					type: transactionToEdit.type,
-					amount: transactionToEdit.amount,
-					currency: transactionToEdit.currency,
-					ledgerId: transactionToEdit.ledgerId,
-					date: transactionToEdit.date,
-					category: transactionToEdit.category,
-					notes: transactionToEdit.notes,
-					paymentId: transactionToEdit.paymentId,
-					paymentType: transactionToEdit.paymentType,
+					description: billToEdit.description,
+					type: billToEdit.type,
+					amount: billToEdit.amount,
+					currency: billToEdit.currency,
+					ledgerId: billToEdit.ledgerId,
+					startDate: new Date(billToEdit.startDate),
+					endDate: billToEdit.endDate
+						? new Date(billToEdit.endDate)
+						: undefined,
+					category: billToEdit.category,
+					notes: billToEdit.notes,
+					paymentId: billToEdit.paymentId,
+					paymentType: billToEdit.paymentType,
+					frequency: billToEdit.frequency,
 				});
 			} else {
 				form.reset({
@@ -139,13 +137,15 @@ export function TransactionForm({
 					amount: 0,
 					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
 					ledgerId: ledgerId || '',
-					date: new Date(),
+					startDate: new Date(),
+					endDate: undefined,
 					paymentId: '',
 					paymentType: TransactionPaymentType.ACCOUNT,
+					frequency: TransactionRecurringFrequency.MONTHLY,
 				});
 			}
 		}
-	}, [open, transactionToEdit, form, ledgerId, user]);
+	}, [open, billToEdit, form, ledgerId, user]);
 
 	return (
 		<AppearingModal
@@ -161,14 +161,12 @@ export function TransactionForm({
 							Back
 						</Button>
 					) : null}
-					{transactionToEdit
-						? t('editTransaction')
-						: t('addTransaction')}
+					{billToEdit ? t('editBill') : t('addBill')}
 				</div>
 			}
 			footer={
-				<TransactionFormButtons
-					submitTitle={transactionToEdit ? t('save') : t('add')}
+				<BillFormButtons
+					submitTitle={billToEdit ? t('save') : t('add')}
 					cancelTitle={t('cancel')}
 					form={form}
 					onCancel={closeForm}
@@ -177,29 +175,23 @@ export function TransactionForm({
 					onNext={() => setFormState('details')}
 				>
 					<FormErrors form={form} path={[]} />
-				</TransactionFormButtons>
+				</BillFormButtons>
 			}
 		>
-			<div className="py-6">
-				<form
-					id="transaction-form"
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						form.handleSubmit();
-					}}
-				>
-					{formState === 'base' && (
-						<TransactionFormBaseData
-							form={form}
-							transactionToEdit={transactionToEdit}
-						/>
-					)}
-					{formState === 'details' && (
-						<TransactionFormDetails form={form} />
-					)}
-				</form>
-			</div>
+			<form
+				id="bill-form"
+				onSubmit={(e) => {
+					e.preventDefault();
+					e.stopPropagation();
+					form.handleSubmit();
+				}}
+				className="pt-6"
+			>
+				{formState === 'base' && (
+					<BillFormBaseData form={form} billToEdit={billToEdit} />
+				)}
+				{formState === 'details' && <BillFormDetails form={form} />}
+			</form>
 		</AppearingModal>
 	);
 }

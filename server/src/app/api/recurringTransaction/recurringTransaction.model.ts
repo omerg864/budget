@@ -7,7 +7,6 @@ import {
   TransactionType,
 } from '../../../../../shared/constants/transaction.constants';
 import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
-import { Credit } from '../credit/credit.model';
 import { Ledger } from '../ledger/ledger.model';
 
 @Schema({
@@ -32,9 +31,6 @@ export class RecurringTransaction implements RecurringTransactionEntity {
 
   @Prop({ type: String, enum: TransactionPaymentType, required: true })
   paymentType: TransactionPaymentType;
-
-  @Prop({ type: Types.ObjectId, ref: Credit.name, required: true })
-  creditId: string;
 
   @Prop({ type: Types.ObjectId, ref: Ledger.name, required: true })
   ledgerId: string;
@@ -74,5 +70,5 @@ export const RecurringTransactionSchema =
 
 // index
 RecurringTransactionSchema.index({ ledgerId: 1 });
-RecurringTransactionSchema.index({ creditId: 1 });
+RecurringTransactionSchema.index({ paymentId: 1, paymentType: 1 });
 RecurringTransactionSchema.index({ userId: 1 });

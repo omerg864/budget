@@ -20,7 +20,7 @@ export class LedgerAccessService {
     return this.ledgerAccessProvider.findByLedgerId(ledgerId);
   }
 
-  private async findByLedgerIdAndUserId(
+  async findByLedgerIdAndUserId(
     ledgerId: string,
     userId: string,
   ): Promise<LedgerAccess | null> {
@@ -36,6 +36,16 @@ export class LedgerAccessService {
 
   async remove(id: string): Promise<LedgerAccess | null> {
     return this.ledgerAccessProvider.delete(id);
+  }
+
+  async removeByLedgerIdAndUserId(
+    ledgerId: string,
+    userId: string,
+  ): Promise<LedgerAccess | null> {
+    return this.ledgerAccessProvider.deleteByLedgerIdAndUserId(
+      ledgerId,
+      userId,
+    );
   }
 
   async doesUserHaveAccessToUserAction(

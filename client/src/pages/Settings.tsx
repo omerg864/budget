@@ -1,3 +1,4 @@
+import { useLedgerQuery } from '@/api/ledger.api.ts';
 import { useUserQuery } from '@/api/user.api';
 import PageTitle from '@/components/layout/PageTitle';
 import SettingsItem from '@/components/settings/SettingsItem.tsx';
@@ -5,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { authClient } from '@/lib/clients/auth.client';
 import { useAuthStore } from '@/stores/useAuthStore';
+import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { useQueryClient } from '@tanstack/react-query';
 import { CreditCard, LogOut, NotebookPen, Pencil, User } from 'lucide-react';
 import type { FC } from 'react';
@@ -18,6 +20,8 @@ const Settings: FC = () => {
 	const navigate = useNavigate();
 	const queryClient = useQueryClient();
 	const { removeAuthenticated } = useAuthStore();
+	const { ledgerId } = usePreferencesStore();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 
 	const handleLogout = async () => {
 		try {
@@ -74,17 +78,21 @@ const Settings: FC = () => {
 				<div className="flex flex-col gap-4 justify-between flex-1">
 					<div className="space-y-3">
 						<h3 className="text-xs font-bold text-gray-500 uppercase tracking-wider mb-4 px-2">
-							{t('preferences', { ledgerName: 'My Ledger' })}
+							{t('preferences', {
+								ledgerName: ledger?.name || 'Ledger',
+							})}
 						</h3>
 						<SettingsItem
 							icon={CreditCard} // Using CreditCard as proxy for Apple Pay icon
 							title={t('bills')}
 							subtitle={t('manageBills')}
+							onClick={() => navigate('/settings/bills')}
 						/>
 						<SettingsItem
 							icon={NotebookPen}
-							title={t('ledger')}
-							subtitle={t('manageLedger')}
+							title={t('ledgers')}
+							subtitle={t('manageLedgers')}
+							onClick={() => navigate('/settings/ledgers')}
 						/>
 					</div>
 
@@ -98,11 +106,6 @@ const Settings: FC = () => {
 								icon={CreditCard} // Using CreditCard as proxy for Apple Pay icon
 								title={t('applePay')}
 								subtitle={t('connectedAndReady')}
-							/>
-							<SettingsItem
-								icon={NotebookPen}
-								title={t('ledgers')}
-								subtitle={t('manageLedgers')}
 							/>
 						</div>
 					</div>

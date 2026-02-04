@@ -19,6 +19,7 @@ const Transactions = lazy(() => import('./pages/Transactions'));
 const Bills = lazy(() => import('./pages/Bills'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Settings = lazy(() => import('./pages/Settings'));
+const Ledgers = lazy(() => import('./pages/Ledgers'));
 
 function App() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -60,9 +61,13 @@ function App() {
 								path="/transactions"
 								element={<Transactions />}
 							/>
-							<Route path="/bills" element={<Bills />} />
 							<Route path="/accounts" element={<Accounts />} />
 							<Route path="/settings" element={<Settings />} />
+							<Route
+								path="/settings/ledgers"
+								element={<Ledgers />}
+							/>
+							<Route path="/settings/bills" element={<Bills />} />
 						</Route>
 					</Routes>
 				</main>
