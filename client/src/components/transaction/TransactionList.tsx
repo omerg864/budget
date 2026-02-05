@@ -1,7 +1,7 @@
 import { useUserQuery } from '@/api/user.api.ts';
 import { convertCurrency } from '@shared/services/transaction.shared-service.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
-import { format, isToday, isYesterday } from 'date-fns';
+import { DateTime } from 'luxon';
 import type { FC } from 'react';
 import CurrencyFormatter from '../formatters/CurrencyFormatter.tsx';
 import TransactionCard from './TransactionCard';
@@ -19,8 +19,8 @@ const TransactionList: FC<TransactionListProps> = ({
 	// Group transactions by date
 	const groupedTransactions = transactions.reduce(
 		(groups, transaction) => {
-			const date = new Date(transaction.date);
-			const dateKey = format(date, 'yyyy-MM-dd');
+			const date = DateTime.fromJSDate(new Date(transaction.date));
+			const dateKey = date.toFormat('yyyy-MM-dd');
 			if (!groups[dateKey]) {
 				groups[dateKey] = [];
 			}
@@ -36,10 +36,12 @@ const TransactionList: FC<TransactionListProps> = ({
 	);
 
 	const getDateHeader = (dateString: string) => {
-		const date = new Date(dateString);
-		if (isToday(date)) return 'TODAY';
-		if (isYesterday(date)) return 'YESTERDAY';
-		return format(date, 'MMM d').toUpperCase();
+		const date = DateTime.fromISO(dateString);
+		const now = DateTime.now();
+
+		if (date.hasSame(now, 'day')) return 'TODAY';
+		if (date.hasSame(now.minus({ days: 1 }), 'day')) return 'YESTERDAY';
+		return date.toFormat('MMM d').toUpperCase();
 	};
 
 	if (!user) return null;

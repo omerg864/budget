@@ -6,8 +6,8 @@ import {
 	PopoverTrigger,
 } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
 import { Calendar as CalendarIcon } from 'lucide-react';
+import { DateTime } from 'luxon';
 
 interface DatePickerProps {
 	date: Date | undefined;
@@ -31,7 +31,13 @@ export function DatePicker({
 					)}
 				>
 					<CalendarIcon className="mr-2 h-4 w-4" />
-					{date ? format(date, 'PPP') : <span>{placeholder}</span>}
+					{date ? (
+						DateTime.fromJSDate(date).toLocaleString(
+							DateTime.DATE_MED,
+						)
+					) : (
+						<span>{placeholder}</span>
+					)}
 				</Button>
 			</PopoverTrigger>
 			<PopoverContent className="w-auto p-0" align="start">

@@ -96,3 +96,22 @@ export const useUpdateAccountMutation = () => {
 		},
 	});
 };
+
+export const useDeleteAccountMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+mutationFn: async (id: string) => {
+			const url = generateLink({
+route: [API_ROUTES.ACCOUNT.BASE, API_ROUTES.ACCOUNT.DELETE],
+params: { id },
+});
+			const { data: response } = await axios.delete<AccountEntity>(url);
+			return response;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+queryKey: [API_ROUTES.ACCOUNT.BASE],
+});
+		},
+	});
+};

@@ -1,5 +1,6 @@
 import { useLedgersQuery } from '@/api/ledger.api';
 import AddButton from '@/components/custom/AddButton.tsx';
+import BackButton from '@/components/custom/BackButton';
 import ListRenderer from '@/components/custom/ListRenderer';
 import PageDisplay from '@/components/layout/PageDisplay';
 import PageTitle from '@/components/layout/PageTitle';
@@ -9,8 +10,10 @@ import type { LedgerEntity } from '@shared/types/ledger.type';
 import { useMemoizedFn } from 'ahooks';
 import { useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 const Ledgers: FC = () => {
+	const navigate = useNavigate();
 	const { t } = useTranslation('settings');
 	const { data: ledgers = [], isLoading } = useLedgersQuery();
 	const [isFormOpen, setIsFormOpen] = useState(false);
@@ -32,7 +35,16 @@ const Ledgers: FC = () => {
 				isLoading={isLoading}
 				fixed={
 					<div className="shrink-0 mb-4">
-						<PageTitle title={t('ledgers')}>
+						<PageTitle
+							title={
+								<div className="flex items-center gap-2">
+									<BackButton onClick={() => navigate(-1)} />
+									<h1 className="text-2xl font-bold">
+										{t('ledgers')}
+									</h1>
+								</div>
+							}
+						>
 							<AddButton onAdd={handleCreateLedger} />
 						</PageTitle>
 					</div>

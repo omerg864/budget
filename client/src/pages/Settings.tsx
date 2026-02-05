@@ -8,7 +8,16 @@ import { authClient } from '@/lib/clients/auth.client';
 import { useAuthStore } from '@/stores/useAuthStore';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { useQueryClient } from '@tanstack/react-query';
-import { CreditCard, LogOut, NotebookPen, Pencil, User } from 'lucide-react';
+import {
+	CreditCard,
+	LogOut,
+	Nfc,
+	NotebookPen,
+	Pencil,
+	Shapes,
+	Share,
+	User,
+} from 'lucide-react';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router';
@@ -83,16 +92,22 @@ const Settings: FC = () => {
 							})}
 						</h3>
 						<SettingsItem
-							icon={CreditCard} // Using CreditCard as proxy for Apple Pay icon
+							icon={CreditCard}
 							title={t('bills')}
 							subtitle={t('manageBills')}
 							onClick={() => navigate('/settings/bills')}
 						/>
 						<SettingsItem
-							icon={NotebookPen}
-							title={t('ledgers')}
-							subtitle={t('manageLedgers')}
-							onClick={() => navigate('/settings/ledgers')}
+							icon={Shapes}
+							title={t('categories')}
+							subtitle={t('manageCategories')}
+							onClick={() => navigate('/settings/categories')}
+						/>
+						<SettingsItem
+							icon={Share}
+							title={t('sharing')}
+							subtitle={t('manageSharing')}
+							onClick={() => navigate('/settings/sharing')}
 						/>
 					</div>
 
@@ -103,7 +118,13 @@ const Settings: FC = () => {
 						</h3>
 						<div className="space-y-3">
 							<SettingsItem
-								icon={CreditCard} // Using CreditCard as proxy for Apple Pay icon
+								icon={NotebookPen}
+								title={t('ledgers')}
+								subtitle={t('manageLedgers')}
+								onClick={() => navigate('/settings/ledgers')}
+							/>
+							<SettingsItem
+								icon={Nfc} // Using CreditCard as proxy for Apple Pay icon
 								title={t('applePay')}
 								subtitle={t('connectedAndReady')}
 							/>

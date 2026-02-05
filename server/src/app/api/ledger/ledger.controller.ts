@@ -11,9 +11,9 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LedgerAccessRole } from '@shared/constants/ledger.constants';
-import { LedgerCategory } from '@shared/types/ledger.type.js';
 import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
+import { LedgerCategory } from '../../../../../shared/types/ledger.type';
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
@@ -21,7 +21,12 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreateLedgerDto, UpdateLedgerDto } from './ledger.dto';
+import {
+  CreateCategoryDto,
+  CreateLedgerDto,
+  UpdateCategoryDto,
+  UpdateLedgerDto,
+} from './ledger.dto';
 import { Ledger } from './ledger.model';
 import { LedgerService } from './ledger.service';
 
@@ -41,7 +46,7 @@ export class LedgerController {
   ): Promise<Ledger> {
     const ledger = await this.ledgerService.create({
       ...createLedgerDto,
-      categories: createLedgerDto.categories as LedgerCategory[],
+      categories: [],
     });
     await this.ledgerAccessService.create({
       ledgerId: ledger.id,
@@ -128,8 +133,111 @@ export class LedgerController {
 
     const updatedLedger = await this.ledgerService.update(ledgerId, {
       ...updateData,
-      categories: updateData.categories as LedgerCategory[],
     });
+    if (!updatedLedger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(updatedLedger, ledgerAccess);
+  }
+
+  @Post(API_ROUTES.LEDGER.CREATE_CATEGORY)
+  async createCategory(
+    @User() user: UserEntity,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
+    @Body() createCategoryDto: CreateCategoryDto,
+  ): Promise<Ledger | null> {
+    const writeAccess =
+      await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
+        ledgerId,
+        user.id,
+        'write',
+      );
+    if (!writeAccess) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
+    }
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+
+    const updatedLedger = await this.ledgerService.addCategory(
+      ledgerId,
+      createCategoryDto as LedgerCategory,
+    );
+
+    if (!updatedLedger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(updatedLedger, ledgerAccess);
+  }
+
+  @Patch(API_ROUTES.LEDGER.UPDATE_CATEGORY)
+  async updateCategory(
+    @User() user: UserEntity,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
+    @Param('categoryId') categoryId: string,
+    @Body() updateCategoryDto: UpdateCategoryDto,
+  ): Promise<Ledger | null> {
+    const writeAccess =
+      await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
+        ledgerId,
+        user.id,
+        'write',
+      );
+    if (!writeAccess) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
+    }
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+
+    const updatedLedger = await this.ledgerService.updateCategory(
+      ledgerId,
+      categoryId,
+      updateCategoryDto as Partial<LedgerCategory>,
+    );
+
+    if (!updatedLedger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(updatedLedger, ledgerAccess);
+  }
+
+  @Delete(API_ROUTES.LEDGER.DELETE_CATEGORY)
+  async deleteCategory(
+    @User() user: UserEntity,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
+    @Param('categoryId') categoryId: string,
+  ): Promise<Ledger | null> {
+    const writeAccess =
+      await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
+        ledgerId,
+        user.id,
+        'write',
+      );
+    if (!writeAccess) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
+    }
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+
+    const updatedLedger = await this.ledgerService.removeCategory(
+      ledgerId,
+      categoryId,
+    );
+
     if (!updatedLedger) {
       throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
     }

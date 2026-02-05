@@ -6,6 +6,8 @@ import {
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
+import { LedgerUser } from '@shared/types/ledger.type.js';
+import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
@@ -40,7 +42,7 @@ export class UserController {
   async getUsersByLedger(
     @User() user: UserEntity,
     @Param('ledgerId', ParseObjectIdPipe) ledgerId: string,
-  ): Promise<{ users: Partial<UserEntity>[] }> {
+  ): Promise<{ users: LedgerUser[] }> {
     const hasAccess =
       await this.ledgerAccessService.doesUserHaveAccessToUserAction(
         ledgerId,
@@ -56,10 +58,13 @@ export class UserController {
 
     const ledgerAccesses =
       await this.ledgerAccessService.getByLedgerId(ledgerId);
+    const keyedAccess = keyBy(ledgerAccesses, 'userId');
     const userIds = ledgerAccesses.map((ledgerAccess) => ledgerAccess.userId);
     const users = await this.userService.findAll(userIds);
     return {
-      users: users.map((user) => this.userService.resolveUser(user)),
+      users: users.map((user) =>
+        this.userService.resolveUser(user, keyedAccess[user.id].role),
+      ),
     };
   }
 }

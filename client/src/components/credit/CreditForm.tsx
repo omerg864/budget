@@ -1,5 +1,6 @@
 import {
 	useCreateCreditMutation,
+	useDeleteCreditMutation,
 	useUpdateCreditMutation,
 } from '@/api/credit.api';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
@@ -15,24 +16,25 @@ import {
 } from '@shared/schemas/credit.schemas';
 import type { CreditEntity } from '@shared/types/credit.type';
 import { useForm } from '@tanstack/react-form';
+import { useMemoizedFn } from 'ahooks';
 import { CreditCard, Landmark } from 'lucide-react';
 import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import AppearingModal from '../custom/AppearingModal.tsx';
-import FormErrors from '../form/FormErrors.tsx';
+import AppearingModalForm from '../form/AppearingModalForm';
 import FormInput from '../form/FormInput.tsx';
 import FormSelectInput from '../form/FormSelectInput.tsx';
 import ColorRadio from '../radio/ColorRadio.tsx';
 import AccountSelector from '../selectors/AccountSelector.tsx';
 import UserSelector from '../selectors/UserSelector.tsx';
-import CreditFormButtons from './CreditFormButtons.tsx';
 
 interface CreditFormProps {
 	open: boolean;
 	onOpenChange: (open: boolean) => void;
 	creditToEdit?: CreditEntity | null;
 }
+
+const formName = 'credit-form';
 
 export function CreditForm({
 	open,
@@ -70,6 +72,7 @@ export function CreditForm({
 
 	const createCreditMutation = useCreateCreditMutation();
 	const updateCreditMutation = useUpdateCreditMutation();
+	const deleteCreditMutation = useDeleteCreditMutation();
 
 	const form = useForm({
 		defaultValues: {
@@ -92,6 +95,8 @@ export function CreditForm({
 						id: creditToEdit.id,
 						data: value,
 					});
+					toast.success(t('creditUpdated'));
+					onOpenChange(false);
 				} catch (error: any) {
 					console.error('Failed to update credit', error);
 					toast.error(
@@ -101,6 +106,8 @@ export function CreditForm({
 			} else {
 				try {
 					await createCreditMutation.mutateAsync(value);
+					toast.success(t('creditCreated'));
+					onOpenChange(false);
 				} catch (error: any) {
 					console.error('Failed to create credit', error);
 					toast.error(
@@ -108,7 +115,6 @@ export function CreditForm({
 					);
 				}
 			}
-			onOpenChange(false);
 		},
 	});
 
@@ -139,11 +145,25 @@ export function CreditForm({
 		}
 	}, [open, creditToEdit, ledgerId, form]);
 
+	const handleDelete = useMemoizedFn(async () => {
+		if (!creditToEdit) return;
+		try {
+			await deleteCreditMutation.mutateAsync(creditToEdit.id);
+			onOpenChange(false);
+			toast.success(t('creditDeleted'));
+		} catch (error: any) {
+			console.error('Failed to delete credit', error);
+			toast.error(error?.response?.data?.message || error.message);
+		}
+	});
+
 	const isLoading =
-		createCreditMutation.isPending || updateCreditMutation.isPending;
+		createCreditMutation.isPending ||
+		updateCreditMutation.isPending ||
+		deleteCreditMutation.isPending;
 
 	return (
-		<AppearingModal
+		<AppearingModalForm
 			open={open}
 			onOpenChange={onOpenChange}
 			title={
@@ -151,139 +171,114 @@ export function CreditForm({
 					? t('editCredit', { defaultValue: 'Edit Credit' })
 					: tGeneric('addCredit')
 			}
-			footer={
-				<CreditFormButtons
-					submitTitle={
-						creditToEdit ? tGeneric('save') : tGeneric('add')
-					}
-					cancelTitle={tGeneric('cancel')}
-					disabled={isLoading}
-					onCancel={() => onOpenChange(false)}
-				>
-					<FormErrors form={form} path={[]} />
-				</CreditFormButtons>
-			}
+			form={form}
+			formName={formName}
+			submitTitle={creditToEdit ? tGeneric('save') : tGeneric('add')}
+			cancelTitle={tGeneric('cancel')}
+			disabled={isLoading}
+			onCancel={() => onOpenChange(false)}
+			deleteButton={!!creditToEdit}
+			onDelete={handleDelete}
+			formClassName="py-6"
 		>
-			<div className="py-6">
-				<form
-					id="credit-form"
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						form.handleSubmit();
-					}}
-				>
-					<div className="space-y-6">
-						<div className="space-y-4">
-							<form.Field
-								name="name"
-								children={(field) => (
-									<div className="space-y-2">
-										<FormInput
-											field={field}
-											label={tAccounts('accountName')}
-											placeholder={'Credit Card Name'}
-											required
-										/>
-									</div>
-								)}
-							/>
-
-							{creditToEdit ? null : (
-								<form.Field
-									name="type"
-									children={(field) => (
-										<div className="space-y-2">
-											<FormSelectInput
-												field={field}
-												label={tAccounts('accountType')}
-												options={creditTypeOptions}
-												placeholder={tAccounts(
-													'accountType',
-												)}
-												required
-											/>
-										</div>
-									)}
+			<div className="space-y-6">
+				<div className="space-y-4">
+					<form.Field
+						name="name"
+						children={(field) => (
+							<div className="space-y-2">
+								<FormInput
+									field={field}
+									label={tAccounts('accountName')}
+									placeholder={'Credit Card Name'}
+									required
 								/>
+							</div>
+						)}
+					/>
+
+					{creditToEdit ? null : (
+						<form.Field
+							name="type"
+							children={(field) => (
+								<div className="space-y-2">
+									<FormSelectInput
+										field={field}
+										label={tAccounts('accountType')}
+										options={creditTypeOptions}
+										placeholder={tAccounts('accountType')}
+										required
+									/>
+								</div>
 							)}
+						/>
+					)}
 
-							<form.Field
-								name="accountId"
-								children={(field) => (
-									<div className="space-y-2">
-										<FormSelectInput
-											field={field}
-											label={t('linkedAccount', {
-												defaultValue: 'Linked Account',
-											})}
-											required
-										>
-											<AccountSelector
-												ledgerId={ledgerId ?? undefined}
-												value={field.state.value}
-												filter={(account) =>
-													account.type ===
-													AccountType.BANK
-												}
-												onValueChange={
-													field.handleChange
-												}
-												placeholder={tAccounts(
-													'accountName',
-												)}
-											/>
-										</FormSelectInput>
-									</div>
-								)}
-							/>
+					<form.Field
+						name="accountId"
+						children={(field) => (
+							<div className="space-y-2">
+								<FormSelectInput
+									field={field}
+									label={t('linkedAccount', {
+										defaultValue: 'Linked Account',
+									})}
+									required
+								>
+									<AccountSelector
+										ledgerId={ledgerId ?? undefined}
+										value={field.state.value}
+										filter={(account) =>
+											account.type === AccountType.BANK
+										}
+										onValueChange={field.handleChange}
+										placeholder={tAccounts('accountName')}
+									/>
+								</FormSelectInput>
+							</div>
+						)}
+					/>
 
-							<form.Field
-								name="ownerId"
-								children={(field) => (
-									<div className="space-y-2">
-										<FormSelectInput
-											field={field}
-											label={tAccounts('owner')}
-										>
-											<UserSelector
-												ledgerId={ledgerId ?? undefined}
-												value={field.state.value}
-												onValueChange={
-													field.handleChange
-												}
-												placeholder={tAccounts('owner')}
-												clearable
-											/>
-										</FormSelectInput>
-									</div>
-								)}
-							/>
+					<form.Field
+						name="ownerId"
+						children={(field) => (
+							<div className="space-y-2">
+								<FormSelectInput
+									field={field}
+									label={tAccounts('owner')}
+								>
+									<UserSelector
+										ledgerId={ledgerId ?? undefined}
+										value={field.state.value}
+										onValueChange={field.handleChange}
+										placeholder={tAccounts('owner')}
+										clearable
+									/>
+								</FormSelectInput>
+							</div>
+						)}
+					/>
 
-							<form.Field
-								name="color"
-								children={(field) => (
-									<div className="space-y-2">
-										<FormInput
-											field={field}
-											label={tAccounts('color')}
-											required
-										>
-											<ColorRadio
-												value={field.state.value}
-												onValueChange={
-													field.handleChange
-												}
-												className="mt-2"
-											/>
-										</FormInput>
-									</div>
-								)}
-							/>
-						</div>
-					</div>
-				</form>
+					<form.Field
+						name="color"
+						children={(field) => (
+							<div className="space-y-2">
+								<FormInput
+									field={field}
+									label={tAccounts('color')}
+									required
+								>
+									<ColorRadio
+										value={field.state.value}
+										onValueChange={field.handleChange}
+										className="mt-2"
+									/>
+								</FormInput>
+							</div>
+						)}
+					/>
+				</div>
 			</div>
-		</AppearingModal>
+		</AppearingModalForm>
 	);
 }

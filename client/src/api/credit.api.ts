@@ -81,3 +81,22 @@ export const useUpdateCreditMutation = () => {
 		},
 	});
 };
+
+export const useDeleteCreditMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (id: string) => {
+			const url = generateLink({
+				route: [API_ROUTES.CREDIT.BASE, API_ROUTES.CREDIT.DELETE],
+				params: { id },
+			});
+			const { data: response } = await axios.delete<CreditEntity>(url);
+			return response;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.CREDIT.BASE],
+			});
+		},
+	});
+};

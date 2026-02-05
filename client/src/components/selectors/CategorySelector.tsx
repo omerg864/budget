@@ -1,8 +1,8 @@
 import { useLedgerQuery } from '@/api/ledger.api.ts';
+import CategoryIcon from '@/components/ledger/CategoryIcon';
 import { Button } from '@/components/ui/button';
 import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
-import { getIcon } from '@/services/ledger.service.ts';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import type { LedgerCategory } from '@shared/types/ledger.type';
 import { ChevronDown, ChevronRight } from 'lucide-react';
@@ -38,34 +38,30 @@ export function CategorySelector({
 	const remainingCategories = filteredCategories.slice(5);
 
 	const renderCategory = (category: LedgerCategory) => {
-		const Icon = getIcon(category.icon);
-
 		return (
 			<button
 				key={category.id}
 				type="button"
 				onClick={() => onValueChange(category.id)}
 				className={cn(
-					'flex flex-col items-center gap-2 p-2 transition-opacity hover:opacity-80',
-					value === category.id ? 'opacity-100' : 'opacity-50',
+					'flex flex-col items-center gap-2 p-2 transition-opacity hover:opacity-80 rounded-xl',
+					value === category.id
+						? 'opacity-100 ring-2 ring-primary ring-offset-2'
+						: 'opacity-50',
 				)}
 			>
-				<div
-					className="flex h-12 w-12 items-center justify-center rounded-full text-white"
-					style={{
-						color: category.color,
-						backgroundColor: `${category.color}1A`,
-					}}
-				>
-					{Icon && <Icon className="h-6 w-6" />}
-				</div>
+				<CategoryIcon
+					category={category}
+					className="h-12 w-12 flex items-center justify-center p-0"
+				/>
+
 				<span className="text-xs font-medium">{category.name}</span>
 			</button>
 		);
 	};
 
 	return (
-		<div className="w-full space-y-2">
+		<div className="w-full space-y-2 p-2">
 			<div className="flex items-center justify-between">
 				<span className="text-sm font-medium">{t('category')}</span>
 				{remainingCategories.length > 0 && (

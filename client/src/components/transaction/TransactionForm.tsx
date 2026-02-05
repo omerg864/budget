@@ -1,5 +1,6 @@
 import {
 	useCreateTransactionMutation,
+	useDeleteTransactionMutation,
 	useUpdateTransactionMutation,
 } from '@/api/transaction.api';
 import { useUserQuery } from '@/api/user.api.ts';
@@ -20,11 +21,8 @@ import { useMemoizedFn } from 'ahooks';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import AppearingModal from '../custom/AppearingModal';
-import FormErrors from '../form/FormErrors';
-import { Button } from '../ui/button.tsx';
+import AppearingModalForm from '../form/AppearingModalForm';
 import TransactionFormBaseData from './TransactionFormBaseData.tsx';
-import TransactionFormButtons from './TransactionFormButtons';
 import TransactionFormDetails from './TransactionFormDetails.tsx';
 
 interface TransactionFormProps {
@@ -32,6 +30,8 @@ interface TransactionFormProps {
 	onOpenChange: (open: boolean) => void;
 	transactionToEdit?: TransactionEntity | null;
 }
+
+const formName = 'transaction-form';
 
 export function TransactionForm({
 	open,
@@ -45,6 +45,7 @@ export function TransactionForm({
 
 	const createTransactionMutation = useCreateTransactionMutation();
 	const updateTransactionMutation = useUpdateTransactionMutation();
+	const deleteTransactionMutation = useDeleteTransactionMutation();
 
 	const form = useForm({
 		defaultValues: {
@@ -104,6 +105,18 @@ export function TransactionForm({
 		resetForm();
 	});
 
+	const handleDelete = useMemoizedFn(async () => {
+		if (!transactionToEdit) return;
+		try {
+			await deleteTransactionMutation.mutateAsync(transactionToEdit.id);
+			onOpenChange(false);
+			resetForm();
+		} catch (error: any) {
+			console.error('Failed to delete transaction', error);
+			toast.error(error?.response?.data?.message || error.message);
+		}
+	});
+
 	const onChangeOpen = useMemoizedFn((open: boolean) => {
 		if (!open) {
 			resetForm();
@@ -111,9 +124,16 @@ export function TransactionForm({
 		onOpenChange(open);
 	});
 
+	const validateNext = useMemoizedFn(
+		(values: CreateTransactionSchemaType) => {
+			return !!values.paymentId && !!values.amount;
+		},
+	);
+
 	const isLoading =
 		createTransactionMutation.isPending ||
-		updateTransactionMutation.isPending;
+		updateTransactionMutation.isPending ||
+		deleteTransactionMutation.isPending;
 
 	useEffect(() => {
 		if (open) {
@@ -148,58 +168,34 @@ export function TransactionForm({
 	}, [open, transactionToEdit, form, ledgerId, user]);
 
 	return (
-		<AppearingModal
+		<AppearingModalForm
+			form={form}
+			formName={formName}
 			open={open}
 			onOpenChange={onChangeOpen}
 			title={
-				<div className="relative">
-					{formState === 'details' ? (
-						<Button
-							className="absolute left-0 top-1/2 -translate-y-1/2"
-							onClick={() => setFormState('base')}
-						>
-							Back
-						</Button>
-					) : null}
-					{transactionToEdit
-						? t('editTransaction')
-						: t('addTransaction')}
-				</div>
+				transactionToEdit ? t('editTransaction') : t('addTransaction')
 			}
-			footer={
-				<TransactionFormButtons
-					submitTitle={transactionToEdit ? t('save') : t('add')}
-					cancelTitle={t('cancel')}
-					form={form}
-					onCancel={closeForm}
-					next={formState === 'base'}
-					isLoading={isLoading}
-					onNext={() => setFormState('details')}
-				>
-					<FormErrors form={form} path={[]} />
-				</TransactionFormButtons>
-			}
+			cancelTitle={t('cancel')}
+			submitTitle={transactionToEdit ? t('save') : t('add')}
+			onCancel={closeForm}
+			next={formState === 'base'}
+			onNext={() => setFormState('details')}
+			onBack={() => setFormState('base')}
+			backButton={formState === 'details'}
+			deleteButton={!!transactionToEdit}
+			onDelete={handleDelete}
+			disabled={isLoading}
+			validateNext={validateNext}
+			formClassName="py-6"
 		>
-			<div className="py-6">
-				<form
-					id="transaction-form"
-					onSubmit={(e) => {
-						e.preventDefault();
-						e.stopPropagation();
-						form.handleSubmit();
-					}}
-				>
-					{formState === 'base' && (
-						<TransactionFormBaseData
-							form={form}
-							transactionToEdit={transactionToEdit}
-						/>
-					)}
-					{formState === 'details' && (
-						<TransactionFormDetails form={form} />
-					)}
-				</form>
-			</div>
-		</AppearingModal>
+			{formState === 'base' && (
+				<TransactionFormBaseData
+					form={form}
+					transactionToEdit={transactionToEdit}
+				/>
+			)}
+			{formState === 'details' && <TransactionFormDetails form={form} />}
+		</AppearingModalForm>
 	);
 }

@@ -19,7 +19,7 @@ const ColorRadio: FC<ColorRadioProps> = ({
 		<RadioGroup
 			value={value}
 			onValueChange={onValueChange}
-			className={cn('flex flex-wrap gap-4', className)}
+			className={cn('flex flex-wrap gap-4 px-2', className)}
 		>
 			{ACCOUNT_COLORS.map((color) => (
 				<div key={color} className="flex items-center space-x-0">

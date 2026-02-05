@@ -5,10 +5,12 @@ import { useMemo, type FC } from 'react';
 
 export type CategoryIconProps = {
 	category: LedgerCategory | undefined;
+	className?: string;
 };
 
 const CategoryIcon: FC<CategoryIconProps> = ({
 	category,
+	className,
 }: CategoryIconProps) => {
 	const { Icon } = useMemo(
 		() => ({ Icon: getIcon(category?.icon ?? 'other')! }),
@@ -17,7 +19,7 @@ const CategoryIcon: FC<CategoryIconProps> = ({
 
 	return (
 		<div
-			className={cn('p-3 rounded-full')}
+			className={cn('p-3 rounded-full', className)}
 			style={{
 				color: category?.color,
 				backgroundColor: `${category?.color}1A`,

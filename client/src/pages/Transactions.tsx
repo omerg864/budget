@@ -7,20 +7,15 @@ import PageTitle from '@/components/layout/PageTitle';
 import TransactionCalendar from '@/components/transaction/TransactionCalendar';
 import { TransactionForm } from '@/components/transaction/TransactionForm';
 import TransactionList from '@/components/transaction/TransactionList';
+import UpcomingTransactions from '@/components/transaction/UpcomingTransactions';
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import { convertCurrency } from '@shared/services/transaction.shared-service.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
-import {
-	addMonths,
-	endOfMonth,
-	format,
-	startOfMonth,
-	subMonths,
-} from 'date-fns';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -32,8 +27,10 @@ const Transactions = () => {
 	const [editingTransaction, setEditingTransaction] =
 		useState<TransactionEntity | null>(null);
 
-	const startDate = startOfMonth(currentDate);
-	const endDate = endOfMonth(currentDate);
+	const startDate = DateTime.fromJSDate(currentDate)
+		.startOf('month')
+		.toJSDate();
+	const endDate = DateTime.fromJSDate(currentDate).endOf('month').toJSDate();
 
 	const { data: transactions = [], isLoading } = useTransactionsQuery({
 		ledgerId: ledgerId || '',
@@ -53,8 +50,14 @@ const Transactions = () => {
 		}, 0);
 	}, [transactions]);
 
-	const handlePrevMonth = () => setCurrentDate((prev) => subMonths(prev, 1));
-	const handleNextMonth = () => setCurrentDate((prev) => addMonths(prev, 1));
+	const handlePrevMonth = () =>
+		setCurrentDate((prev) =>
+			DateTime.fromJSDate(prev).minus({ months: 1 }).toJSDate(),
+		);
+	const handleNextMonth = () =>
+		setCurrentDate((prev) =>
+			DateTime.fromJSDate(prev).plus({ months: 1 }).toJSDate(),
+		);
 
 	const handleAddTransaction = useMemoizedFn(() => {
 		setEditingTransaction(null);
@@ -86,7 +89,9 @@ const Transactions = () => {
 						</Button>
 						<div className="font-semibold text-lg text-center">
 							<span className="block">
-								{format(currentDate, 'MMMM yyyy')}
+								{DateTime.fromJSDate(currentDate).toFormat(
+									'MMMM yyyy',
+								)}
 							</span>
 							<CurrencyFormatter amount={total} currency="ILS" />
 						</div>
@@ -106,10 +111,13 @@ const Transactions = () => {
 					defaultValue="list"
 					className="w-full flex-1 flex flex-col h-full"
 				>
-					<TabsList className="grid w-full grid-cols-2 mb-6 shrink-0">
+					<TabsList className="grid w-full grid-cols-3 mb-6 shrink-0">
 						<TabsTrigger value="list">{t('list')}</TabsTrigger>
 						<TabsTrigger value="calendar">
 							{t('calendar')}
+						</TabsTrigger>
+						<TabsTrigger value="upcoming">
+							{t('upcoming')}
 						</TabsTrigger>
 					</TabsList>
 					<TabsContent
@@ -138,6 +146,12 @@ const Transactions = () => {
 								month={currentDate}
 							/>
 						)}
+					</TabsContent>
+					<TabsContent
+						value="upcoming"
+						className="flex-1 overflow-y-auto pb-24"
+					>
+						<UpcomingTransactions month={currentDate} />
 					</TabsContent>
 				</Tabs>
 			</div>

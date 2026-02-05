@@ -7,8 +7,8 @@ import TransactionCard from '@/components/transaction/TransactionCard';
 import { Card } from '@/components/ui/card';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
-import { endOfMonth, startOfMonth } from 'date-fns';
 import { ArrowUpRight } from 'lucide-react';
+import { DateTime } from 'luxon';
 import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router';
@@ -21,8 +21,10 @@ const Summary: FC = () => {
 	const { data: user } = useUserQuery();
 
 	const currentDate = new Date();
-	const startDate = startOfMonth(currentDate);
-	const endDate = endOfMonth(currentDate);
+	const startDate = DateTime.fromJSDate(currentDate)
+		.startOf('month')
+		.toJSDate();
+	const endDate = DateTime.fromJSDate(currentDate).endOf('month').toJSDate();
 
 	const { data: transactions = [] } = useTransactionsQuery({
 		ledgerId: ledgerId || '',

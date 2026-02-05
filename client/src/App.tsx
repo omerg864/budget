@@ -20,6 +20,8 @@ const Bills = lazy(() => import('./pages/Bills'));
 const Accounts = lazy(() => import('./pages/Accounts'));
 const Settings = lazy(() => import('./pages/Settings'));
 const Ledgers = lazy(() => import('./pages/Ledgers'));
+const Categories = lazy(() => import('./pages/Categories'));
+const Sharing = lazy(() => import('./pages/Sharing'));
 
 function App() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -38,7 +40,7 @@ function App() {
 			client={queryClient}
 			persistOptions={{
 				persister: idbPersister,
-				maxAge: 1000 * 60 * 60 * 2, // 2 hours
+				maxAge: 1000 * 60 * 60 * 2,
 			}}
 		>
 			<NetworkBanner />
@@ -68,6 +70,14 @@ function App() {
 								element={<Ledgers />}
 							/>
 							<Route path="/settings/bills" element={<Bills />} />
+							<Route
+								path="/settings/categories"
+								element={<Categories />}
+							/>
+							<Route
+								path="/settings/sharing"
+								element={<Sharing />}
+							/>
 						</Route>
 					</Routes>
 				</main>

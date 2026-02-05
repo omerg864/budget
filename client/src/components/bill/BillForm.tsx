@@ -1,5 +1,6 @@
 import {
 	useCreateRecurringTransactionMutation,
+	useDeleteRecurringTransactionMutation,
 	useUpdateRecurringTransactionMutation,
 	type CreateRecurringTransactionDto,
 } from '@/api/recurring-transaction.api';
@@ -21,11 +22,8 @@ import { useMemoizedFn } from 'ahooks';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
-import AppearingModal from '../custom/AppearingModal';
-import FormErrors from '../form/FormErrors';
-import { Button } from '../ui/button';
+import AppearingModalForm from '../form/AppearingModalForm';
 import BillFormBaseData from './BillFormBaseData';
-import BillFormButtons from './BillFormButtons';
 import BillFormDetails from './BillFormDetails';
 
 interface BillFormProps {
@@ -33,6 +31,8 @@ interface BillFormProps {
 	onOpenChange: (open: boolean) => void;
 	billToEdit?: RecurringTransactionEntity | null;
 }
+
+const formName = 'bill-form';
 
 export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 	const { t } = useTranslation('transactions');
@@ -42,6 +42,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 
 	const createMutation = useCreateRecurringTransactionMutation();
 	const updateMutation = useUpdateRecurringTransactionMutation();
+	const deleteMutation = useDeleteRecurringTransactionMutation();
 
 	const form = useForm({
 		defaultValues: {
@@ -69,6 +70,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 						id: billToEdit.id,
 						data: value,
 					});
+					toast.success(t('billUpdated'));
 					onOpenChange(false);
 					resetForm();
 				} catch (error: any) {
@@ -80,6 +82,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 			} else {
 				try {
 					await createMutation.mutateAsync(value);
+					toast.success(t('billCreated'));
 					onOpenChange(false);
 					resetForm();
 				} catch (error: any) {
@@ -102,6 +105,18 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 		resetForm();
 	});
 
+	const handleDelete = useMemoizedFn(async () => {
+		if (!billToEdit) return;
+		try {
+			await deleteMutation.mutateAsync(billToEdit.id);
+			onOpenChange(false);
+			toast.success(t('billDeleted'));
+		} catch (error: any) {
+			console.error('Failed to delete bill', error);
+			toast.error(error?.response?.data?.message || error.message);
+		}
+	});
+
 	const onChangeOpen = useMemoizedFn((open: boolean) => {
 		if (!open) {
 			resetForm();
@@ -109,7 +124,16 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 		onOpenChange(open);
 	});
 
-	const isLoading = createMutation.isPending || updateMutation.isPending;
+	const validateNext = useMemoizedFn(
+		(values: CreateRecurringTransactionDto) => {
+			return !!values.paymentId && !!values.amount;
+		},
+	);
+
+	const isLoading =
+		createMutation.isPending ||
+		updateMutation.isPending ||
+		deleteMutation.isPending;
 
 	useEffect(() => {
 		if (open) {
@@ -148,50 +172,29 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 	}, [open, billToEdit, form, ledgerId, user]);
 
 	return (
-		<AppearingModal
+		<AppearingModalForm
+			form={form}
+			formName={formName}
 			open={open}
 			onOpenChange={onChangeOpen}
-			title={
-				<div className="relative">
-					{formState === 'details' ? (
-						<Button
-							className="absolute left-0 top-1/2 -translate-y-1/2"
-							onClick={() => setFormState('base')}
-						>
-							Back
-						</Button>
-					) : null}
-					{billToEdit ? t('editBill') : t('addBill')}
-				</div>
-			}
-			footer={
-				<BillFormButtons
-					submitTitle={billToEdit ? t('save') : t('add')}
-					cancelTitle={t('cancel')}
-					form={form}
-					onCancel={closeForm}
-					next={formState === 'base'}
-					isLoading={isLoading}
-					onNext={() => setFormState('details')}
-				>
-					<FormErrors form={form} path={[]} />
-				</BillFormButtons>
-			}
+			title={billToEdit ? t('editBill') : t('addBill')}
+			cancelTitle={t('cancel')}
+			submitTitle={billToEdit ? t('save') : t('add')}
+			onCancel={closeForm}
+			next={formState === 'base'}
+			onNext={() => setFormState('details')}
+			onBack={() => setFormState('base')}
+			backButton={formState === 'details'}
+			deleteButton={!!billToEdit}
+			onDelete={handleDelete}
+			disabled={isLoading}
+			validateNext={validateNext}
+			formClassName="pt-6"
 		>
-			<form
-				id="bill-form"
-				onSubmit={(e) => {
-					e.preventDefault();
-					e.stopPropagation();
-					form.handleSubmit();
-				}}
-				className="pt-6"
-			>
-				{formState === 'base' && (
-					<BillFormBaseData form={form} billToEdit={billToEdit} />
-				)}
-				{formState === 'details' && <BillFormDetails form={form} />}
-			</form>
-		</AppearingModal>
+			{formState === 'base' && (
+				<BillFormBaseData form={form} billToEdit={billToEdit} />
+			)}
+			{formState === 'details' && <BillFormDetails form={form} />}
+		</AppearingModalForm>
 	);
 }

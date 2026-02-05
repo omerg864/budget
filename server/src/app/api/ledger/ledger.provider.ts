@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
-import { LedgerEntity } from '../../../../../shared/types/ledger.type';
+import {
+  LedgerCategory,
+  LedgerEntity,
+} from '../../../../../shared/types/ledger.type';
 import { Ledger, LedgerDocument } from './ledger.model';
 
 @Injectable()
@@ -31,6 +34,17 @@ export class LedgerProvider {
     data: Partial<LedgerEntity>,
   ): Promise<LedgerEntity | null> {
     return this.ledgerModel.findByIdAndUpdate(id, data, { new: true });
+  }
+
+  async addCategory(
+    id: LedgerEntity['id'],
+    data: Partial<LedgerCategory>,
+  ): Promise<LedgerEntity | null> {
+    return this.ledgerModel.findByIdAndUpdate(
+      id,
+      { $push: { categories: data } },
+      { new: true },
+    );
   }
 
   async delete(id: string): Promise<LedgerEntity | null> {

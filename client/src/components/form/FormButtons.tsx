@@ -1,57 +1,57 @@
-import { useBreakpoint } from '@/hooks/useBreakpoint.ts';
+import { useBreakpoint } from '@/hooks/useBreakpoint';
 import type { AnyFormType } from '@/types/form.type.ts';
 import { useMemoizedFn } from 'ahooks';
-import type { FC, PropsWithChildren } from 'react';
+import { type FC, type PropsWithChildren } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Button } from '../ui/button.tsx';
-import { DrawerClose } from '../ui/drawer.tsx';
+import { Button } from '../ui/button';
+import { DrawerClose } from '../ui/drawer';
+import FormErrors from './FormErrors';
 
-export type BillFormButtonsProps = PropsWithChildren & {
+export type FormButtonsProps = PropsWithChildren & {
 	form: AnyFormType;
+	formName: string;
 	onCancel: () => void;
 	submitTitle: string;
 	cancelTitle: string;
 	disabled?: boolean;
-	next: boolean;
-	isLoading: boolean;
-	onNext: () => void;
+	next?: boolean;
+	validateNext?: (values: any) => boolean;
+	onNext?: () => void;
 };
 
-const BillFormButtons: FC<BillFormButtonsProps> = ({
+const FormButtons: FC<FormButtonsProps> = ({
 	onCancel,
 	submitTitle,
 	cancelTitle,
-	disabled,
-	next,
+	disabled = false,
+	next = false,
+	validateNext,
 	onNext,
 	form,
+	formName,
 	children,
-}: BillFormButtonsProps) => {
+}: FormButtonsProps) => {
 	const { t } = useTranslation('generic');
 	const { isLargerThan } = useBreakpoint();
 	const isLargerThanMd = isLargerThan('md');
 
 	const onNextClick = useMemoizedFn(() => {
-		if (!form.state.values.paymentId || !form.state.values.amount) {
+		if (validateNext && !validateNext(form.state.values)) {
 			form.validate('submit');
 		} else {
-			onNext();
+			onNext?.();
 		}
 	});
 
 	if (next) {
 		if (isLargerThanMd)
 			return (
-				<form.Subscribe
-					selector={(state) => ({
-						paymentId: state.values.paymentId,
-						amount: state.values.amount,
-					})}
-				>
+				<form.Subscribe selector={(state) => state.values}>
 					{() => {
 						return (
 							<div className="mb-2">
 								{children}
+								<FormErrors form={form} path={[]} />
 								<Button
 									type="button"
 									onClick={onNextClick}
@@ -66,16 +66,12 @@ const BillFormButtons: FC<BillFormButtonsProps> = ({
 			);
 
 		return (
-			<form.Subscribe
-				selector={(state) => ({
-					paymentId: state.values.paymentId,
-					amount: state.values.amount,
-				})}
-			>
+			<form.Subscribe selector={(state) => state.values}>
 				{() => {
 					return (
 						<div className="mb-2">
 							{children}
+							<FormErrors form={form} path={[]} />
 							<Button
 								type="button"
 								onClick={onNextClick}
@@ -96,6 +92,7 @@ const BillFormButtons: FC<BillFormButtonsProps> = ({
 		return (
 			<>
 				{children}
+				<FormErrors form={form} path={[]} />
 				<div className="flex w-full justify-end gap-2">
 					<Button
 						variant="outline"
@@ -104,7 +101,7 @@ const BillFormButtons: FC<BillFormButtonsProps> = ({
 					>
 						{cancelTitle}
 					</Button>
-					<Button type="submit" form="bill-form" disabled={disabled}>
+					<Button type="submit" form={formName} disabled={disabled}>
 						{submitTitle}
 					</Button>
 				</div>
@@ -115,9 +112,10 @@ const BillFormButtons: FC<BillFormButtonsProps> = ({
 	return (
 		<div className="flex w-full flex-col gap-2">
 			{children}
+			<FormErrors form={form} path={[]} />
 			<Button
 				type="submit"
-				form="bill-form"
+				form={formName}
 				disabled={disabled}
 				className="w-full"
 			>
@@ -137,4 +135,4 @@ const BillFormButtons: FC<BillFormButtonsProps> = ({
 	);
 };
 
-export default BillFormButtons;
+export default FormButtons;

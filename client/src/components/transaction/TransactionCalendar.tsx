@@ -1,6 +1,6 @@
 import { Calendar } from '@/components/ui/calendar';
 import type { TransactionEntity } from '@shared/types/transaction.type';
-import { format } from 'date-fns';
+import { DateTime } from 'luxon';
 import type { FC } from 'react';
 import { useState } from 'react';
 import TransactionList from './TransactionList';
@@ -22,7 +22,7 @@ const TransactionCalendar: FC<TransactionCalendarProps> = ({
 	const handleDateSelect = (newDate: Date | undefined) => {
 		setDate(newDate);
 		if (newDate) {
-			const dateKey = format(newDate, 'yyyy-MM-dd');
+			const dateKey = DateTime.fromJSDate(newDate).toFormat('yyyy-MM-dd');
 			const element = document.getElementById(`date-${dateKey}`);
 			if (element) {
 				element.scrollIntoView({ behavior: 'smooth', block: 'start' });

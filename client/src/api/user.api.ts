@@ -3,6 +3,7 @@ import type { UserEntity } from '@shared/types/user.type';
 import { generateLink } from '@shared/utils/route.utils.ts';
 import { useQuery } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
+import type { LedgerUser } from '@shared/types/ledger.type';
 
 export const useUserQuery = () => {
 	return useQuery({
@@ -25,7 +26,7 @@ export const useUsersByLedgerQuery = (ledgerId: string | undefined) => {
 			if (!ledgerId) {
 				return [];
 			}
-			const { data } = await axios.get<{ users: UserEntity[] }>(
+			const { data } = await axios.get<{ users: LedgerUser[] }>(
 				generateLink({
 					route: [API_ROUTES.USER.BASE, API_ROUTES.USER.LEDGER],
 					params: { ledgerId },

@@ -107,3 +107,32 @@ export const useUpdateTransactionMutation = () => {
 		},
 	});
 };
+
+export const useDeleteTransactionMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (id: string) => {
+			const url = generateLink({
+				route: [
+					API_ROUTES.TRANSACTION.BASE,
+					API_ROUTES.TRANSACTION.DELETE,
+				],
+				params: { id },
+			});
+			const { data: response } =
+				await axios.delete<TransactionEntity>(url);
+			return response;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.TRANSACTION.BASE],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.ACCOUNT.BASE],
+			});
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.CREDIT.BASE],
+			});
+		},
+	});
+};

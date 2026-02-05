@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { UserEntity } from '../../../../../shared/types/user.type';
 import { UserProvider } from './user.provider';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants.js';
+import { LedgerUser } from '@shared/types/ledger.type.js';
 
 @Injectable()
 export class UserService {
@@ -14,11 +16,12 @@ export class UserService {
     return this.userProvider.list(ids);
   }
 
-  resolveUser(user: UserEntity): Partial<UserEntity> {
+  resolveUser(user: UserEntity, role: LedgerAccessRole): LedgerUser {
     return {
       name: user.name,
       email: user.email,
       id: user.id,
+      role,
     };
   }
 }

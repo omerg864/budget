@@ -1,6 +1,7 @@
 import { useRecurringTransactionsQuery } from '@/api/recurring-transaction.api';
 import { BillForm } from '@/components/bill/BillForm.tsx';
 import AddButton from '@/components/custom/AddButton.tsx';
+import BackButton from '@/components/custom/BackButton.tsx';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter.tsx';
 import PageDisplay from '@/components/layout/PageDisplay.tsx';
 import PageTitle from '@/components/layout/PageTitle';
@@ -9,9 +10,11 @@ import type { RecurringTransactionEntity } from '@shared/types/recurringTransact
 import { useMemoizedFn } from 'ahooks';
 import { useState, type FC } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useNavigate } from 'react-router';
 
 const Bills: FC = () => {
 	const { t } = useTranslation('bills');
+	const navigate = useNavigate();
 	const { ledgerId } = usePreferencesStore();
 	const { data: bills = [], isLoading } = useRecurringTransactionsQuery(
 		ledgerId || '',
@@ -36,7 +39,16 @@ const Bills: FC = () => {
 				isLoading={isLoading}
 				fixed={
 					<div className="shrink-0 mb-4">
-						<PageTitle title={t('title')}>
+						<PageTitle
+							title={
+								<div className="flex items-center gap-2">
+									<BackButton onClick={() => navigate(-1)} />
+									<h1 className="text-2xl font-bold">
+										{t('title')}
+									</h1>
+								</div>
+							}
+						>
 							<AddButton onAdd={handleCreateBill} />
 						</PageTitle>
 					</div>

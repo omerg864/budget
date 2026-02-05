@@ -14,6 +14,13 @@ export type LedgerCategory = {
 	icon?: string;
 };
 
+export type LedgerUser = {
+	id: string;
+	name: string;
+	email: string;
+	role: LedgerAccessRole;
+};
+
 export type LedgerEntity = {
 	id: string;
 	name: string;
