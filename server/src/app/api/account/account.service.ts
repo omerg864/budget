@@ -1,12 +1,17 @@
 import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { convertCurrency } from '@shared/services/transaction.shared-service';
+import { parallel } from 'async';
+import { CurrencyService } from 'src/app/modules/currency/currency.service';
 import { AccountEntity } from '../../../../../shared/types/account.type';
 import { AccountProvider } from './account.provider';
 
 @Injectable()
 export class AccountService {
-  constructor(private readonly accountProvider: AccountProvider) {}
+  constructor(
+    private readonly accountProvider: AccountProvider,
+    private readonly currencyService: CurrencyService,
+  ) {}
 
   async create(
     data: Omit<AccountEntity, 'id' | 'createdAt' | 'updatedAt'>,
@@ -41,22 +46,59 @@ export class AccountService {
     await this.accountProvider.deleteByLedgerId(ledgerId);
   }
 
+  async updateBalance(
+    id: string,
+    operation: 'increment' | 'decrement',
+    amount: number,
+  ): Promise<AccountEntity | null> {
+    return this.accountProvider.updateBalance(id, operation, amount);
+  }
+
   async transfer(
     fromAccount: AccountEntity,
     toAccount: AccountEntity,
     amount: number,
     currency: SupportedCurrencies,
   ): Promise<AccountEntity> {
-    const amountInFromAccountCurrency = convertCurrency(amount);
-    const amountInToAccountCurrency = convertCurrency(amount);
-    const updatedFromAccount = await this.accountProvider.update(
-      fromAccount.id,
+    const { fromAccountExchangeRate, toAccountExchangeRate } = await parallel<
+      void,
       {
-        balance: fromAccount.balance - amountInFromAccountCurrency,
-      },
+        fromAccountExchangeRate: number;
+        toAccountExchangeRate: number;
+      }
+    >({
+      fromAccountExchangeRate: async () =>
+        this.currencyService.getExchangeRate(fromAccount.currency, currency),
+      toAccountExchangeRate: async () =>
+        this.currencyService.getExchangeRate(toAccount.currency, currency),
+    });
+    const amountInFromAccountCurrency = convertCurrency(
+      amount,
+      fromAccountExchangeRate,
     );
-    const updatedToAccount = await this.accountProvider.update(toAccount.id, {
-      balance: toAccount.balance + amountInToAccountCurrency,
+    const amountInToAccountCurrency = convertCurrency(
+      amount,
+      toAccountExchangeRate,
+    );
+    const { updatedFromAccount, updatedToAccount } = await parallel<
+      void,
+      {
+        updatedFromAccount: AccountEntity | null;
+        updatedToAccount: AccountEntity | null;
+      }
+    >({
+      updatedFromAccount: async () =>
+        this.accountProvider.updateBalance(
+          fromAccount.id,
+          'decrement',
+          amountInFromAccountCurrency,
+        ),
+      updatedToAccount: async () =>
+        this.accountProvider.updateBalance(
+          toAccount.id,
+          'increment',
+          amountInToAccountCurrency,
+        ),
     });
     if (!updatedFromAccount || !updatedToAccount) {
       throw new UnprocessableEntityException('Failed to update accounts');

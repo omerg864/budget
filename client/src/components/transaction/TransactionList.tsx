@@ -1,6 +1,8 @@
+import { useGetAllReversedExchangeRates } from '@/api/currency.api';
 import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences';
+import type { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
@@ -22,10 +24,12 @@ const TransactionList: FC<TransactionListProps> = ({
 	const { t } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
 	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
+	const { data: exchangeRates = {} as Record<SupportedCurrencies, number> } =
+		useGetAllReversedExchangeRates(ledger?.currency);
 	const { data: user } = useUserQuery();
 
 	// Group transactions by date
-	const { groupedTransactions, sortedDates } = useMemo(() => {
+	const { groupedTransactions, sortedDates, totalPerDate } = useMemo(() => {
 		const groupedTransactions = transactions.reduce(
 			(groups, transaction) => {
 				const date = DateTime.fromJSDate(new Date(transaction.date));
@@ -41,8 +45,27 @@ const TransactionList: FC<TransactionListProps> = ({
 		const sortedDates = Object.keys(groupedTransactions).sort(
 			(a, b) => new Date(b).getTime() - new Date(a).getTime(),
 		);
-		return { groupedTransactions, sortedDates };
-	}, [transactions]);
+		const totalPerDate = sortedDates.reduce(
+			(acc, dateKey) => {
+				const total = groupedTransactions[dateKey].reduce(
+					(acc, transaction) => {
+						const exchangeRate =
+							exchangeRates[transaction.currency];
+						const amount = convertCurrency(
+							transaction.amount,
+							exchangeRate,
+						);
+						return acc + amount;
+					},
+					0,
+				);
+				acc[dateKey] = total;
+				return acc;
+			},
+			{} as Record<string, number>,
+		);
+		return { groupedTransactions, sortedDates, totalPerDate };
+	}, [transactions, exchangeRates]);
 
 	const getDateHeader = useMemoizedFn((dateString: string) => {
 		const date = DateTime.fromISO(dateString);
@@ -69,11 +92,7 @@ const TransactionList: FC<TransactionListProps> = ({
 							{getDateHeader(dateKey)}
 						</h4>
 						<CurrencyFormatter
-							amount={groupedTransactions[dateKey].reduce(
-								(acc, transaction) =>
-									acc + convertCurrency(transaction.amount),
-								0,
-							)}
+							amount={totalPerDate[dateKey] ?? 0}
 							currency={ledger.currency}
 							className="text-sm font-medium text-gray-500 mb-3"
 						/>

@@ -1,6 +1,10 @@
+import { TransactionEntity } from '@shared/types/transaction.type';
 import { DateTime } from 'luxon';
 import { AccountType } from '../constants/account.constants';
-import { TransactionRecurringFrequency } from '../constants/transaction.constants';
+import {
+	TransactionRecurringFrequency,
+	TransactionType,
+} from '../constants/transaction.constants';
 import type { AccountEntity } from '../types/account.type';
 import type { RecurringTransactionEntity } from '../types/recurringTransaction.type';
 import { toLuxonDate } from '../utils/luxon.utils';
@@ -131,6 +135,13 @@ export function convertCurrency(
 	conversionRate: number = 1,
 ): number {
 	return amount * conversionRate;
+}
+
+export function getTransactionActualAmount(transaction: TransactionEntity) {
+	return (
+		transaction.amount *
+		(transaction.type === TransactionType.EXPENSE ? -1 : 1)
+	);
 }
 
 export function isAccountValidForTransaction(

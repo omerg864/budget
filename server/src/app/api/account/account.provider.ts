@@ -43,6 +43,39 @@ export class AccountProvider {
     );
   }
 
+  async updateBalance(
+    id: string,
+    operation: 'increment' | 'decrement',
+    amount: number,
+  ): Promise<AccountEntity | null> {
+    if (operation === 'increment') {
+      return this.incrementBalance(id, amount);
+    }
+    return this.decrementBalance(id, amount);
+  }
+
+  private async decrementBalance(
+    id: string,
+    amount: number,
+  ): Promise<AccountEntity | null> {
+    return this.accountModel.findByIdAndUpdate(
+      id,
+      { $inc: { balance: -amount } },
+      { new: true },
+    );
+  }
+
+  private async incrementBalance(
+    id: string,
+    amount: number,
+  ): Promise<AccountEntity | null> {
+    return this.accountModel.findByIdAndUpdate(
+      id,
+      { $inc: { balance: amount } },
+      { new: true },
+    );
+  }
+
   async delete(id: string): Promise<AccountEntity | null> {
     return this.accountModel.findByIdAndUpdate(
       id,

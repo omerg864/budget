@@ -26,6 +26,7 @@ import { PaymentService } from '../../modules/payment/payment.service';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
 import { CreditService } from '../credit/credit.service';
+import { LedgerService } from '../ledger/ledger.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';
 import { TransactionService } from './transaction.service';
 
@@ -37,6 +38,7 @@ export class TransactionController {
     private readonly ledgerAccessService: LedgerAccessService,
     private readonly creditService: CreditService,
     private readonly paymentService: PaymentService,
+    private readonly ledgerService: LedgerService,
     private readonly i18n: AppI18nService,
   ) {}
 
@@ -74,11 +76,17 @@ export class TransactionController {
         this.i18n.t('errorMessages.payment.accessDenied'),
       );
     }
+    const ledger = (await this.ledgerService.findOne(
+      createTransactionDto.ledgerId,
+    ))!;
 
-    return this.transactionService.create({
-      ...createTransactionDto,
-      userId: user.id,
-    });
+    return this.transactionService.create(
+      {
+        ...createTransactionDto,
+        userId: user.id,
+      },
+      ledger,
+    );
   }
 
   @Get(API_ROUTES.TRANSACTION.FIND_ALL)
@@ -226,10 +234,13 @@ export class TransactionController {
         }
       }
     }
+    const ledger = (await this.ledgerService.findOne(transaction.ledgerId))!;
 
     const updatedTransaction = await this.transactionService.update(
       id,
       updateTransactionDto,
+      transaction,
+      ledger,
     );
 
     if (!updatedTransaction) {

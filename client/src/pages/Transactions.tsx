@@ -1,3 +1,5 @@
+import { useGetAllReversedExchangeRates } from '@/api/currency.api';
+import { useLedgerQuery } from '@/api/ledger.api';
 import { useTransactionsQuery } from '@/api/transaction.api';
 import AddButton from '@/components/custom/AddButton.tsx';
 import { Loader } from '@/components/custom/Loader.tsx';
@@ -11,7 +13,11 @@ import UpcomingTransactions from '@/components/transaction/UpcomingTransactions'
 import { Button } from '@/components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePreferencesStore } from '@/stores/usePreferences';
-import { convertCurrency } from '@shared/services/transaction.shared-service.ts';
+import type { SupportedCurrencies } from '@shared/constants/currency.constants';
+import {
+	convertCurrency,
+	getTransactionActualAmount,
+} from '@shared/services/transaction.shared-service.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
@@ -22,6 +28,9 @@ import { useTranslation } from 'react-i18next';
 const Transactions = () => {
 	const { t } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
+	const { data: exchangeRates = {} as Record<SupportedCurrencies, number> } =
+		useGetAllReversedExchangeRates(ledger?.currency);
 	const [currentDate, setCurrentDate] = useState(new Date());
 	const [isFormOpen, setIsFormOpen] = useState(false);
 	const [editingTransaction, setEditingTransaction] =
@@ -40,15 +49,13 @@ const Transactions = () => {
 
 	const total = useMemo(() => {
 		return transactions.reduce((acc, transaction) => {
+			const rate = exchangeRates[transaction.currency];
 			return (
 				acc +
-				convertCurrency(
-					transaction.amount *
-						(transaction.type === 'expense' ? -1 : 1),
-				)
+				convertCurrency(getTransactionActualAmount(transaction), rate)
 			);
 		}, 0);
-	}, [transactions]);
+	}, [transactions, exchangeRates]);
 
 	const handlePrevMonth = () =>
 		setCurrentDate((prev) =>
