@@ -1,10 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import {
   TransactionPaymentType,
   TransactionType,
 } from '@shared/constants/transaction.constants';
-import { convertCurrency } from '@shared/services/transaction.shared-service';
+import {
+  convertCurrency,
+  getTransactionActualAmount,
+} from '@shared/services/transaction.shared-service';
+import { AccountEntity } from '@shared/types/account.type';
 import { LedgerEntity } from '@shared/types/ledger.type';
+import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
 import { TransactionEntity } from '../../../../../shared/types/transaction.type';
 import { CurrencyService } from '../../modules/currency/currency.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
@@ -20,6 +25,7 @@ export class TransactionService {
     private readonly accountService: AccountService,
     private readonly currencyService: CurrencyService,
     private readonly userService: UserService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   async create(
@@ -132,10 +138,74 @@ export class TransactionService {
   }
 
   async remove(id: string): Promise<TransactionEntity | null> {
+    const transaction = await this.transactionProvider.findOne(id);
+    if (!transaction) {
+      return null;
+    }
+    if (
+      transaction.paymentType === TransactionPaymentType.ACCOUNT &&
+      !!transaction.paymentId
+    ) {
+      const operation =
+        transaction.type === TransactionType.EXPENSE
+          ? 'increment'
+          : 'decrement';
+      const account = await this.accountService.findOne(transaction.paymentId);
+      if (!account) {
+        throw new UnprocessableEntityException(
+          this.i18n.t('errorMessages.account.notFound'),
+        );
+      }
+      const exchangeRate = await this.currencyService.getExchangeRate(
+        transaction.currency,
+        account.currency,
+      );
+      await this.accountService.updateBalance(
+        transaction.paymentId,
+        operation,
+        convertCurrency(transaction.amount, exchangeRate),
+      );
+    }
     return this.transactionProvider.delete(id);
   }
 
   async removeMany(ids: string[]): Promise<TransactionEntity[] | null> {
+    const transactions = await this.transactionProvider.findByIds(ids);
+    const accountsAffected = transactions
+      .filter(
+        (transaction) =>
+          transaction.paymentType === TransactionPaymentType.ACCOUNT &&
+          !!transaction.paymentId,
+      )
+      .map((transaction) => transaction.paymentId);
+    const accounts = await this.accountService.findByIds(accountsAffected);
+    const promises: Promise<AccountEntity | null>[] = [];
+    for (const account of accounts) {
+      const accountTransactions = transactions.filter(
+        (transaction) =>
+          transaction.paymentId === account.id &&
+          transaction.paymentType === TransactionPaymentType.ACCOUNT,
+      );
+      let totalInAccountCurrency = 0;
+      for (const transaction of accountTransactions) {
+        const exchangeRate = await this.currencyService.getExchangeRate(
+          transaction.currency,
+          account.currency,
+        );
+        totalInAccountCurrency += convertCurrency(
+          getTransactionActualAmount(transaction),
+          exchangeRate,
+        );
+      }
+      promises.push(
+        this.accountService.updateBalance(
+          account.id,
+          'increment',
+          totalInAccountCurrency,
+        ),
+      );
+    }
+    await Promise.all(promises);
     return this.transactionProvider.deleteMany(ids);
   }
 

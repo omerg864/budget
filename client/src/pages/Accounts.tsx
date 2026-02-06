@@ -5,6 +5,7 @@ import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';
+import { TransferForm } from '@/components/account/TransferForm.tsx';
 import CreditCard from '@/components/credit/CreditCard.tsx';
 import { CreditForm } from '@/components/credit/CreditForm';
 import ListRenderer from '@/components/custom/ListRenderer.tsx';
@@ -12,6 +13,7 @@ import MenuButton from '@/components/custom/MenuButton.tsx';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter.tsx';
 import PageDisplay from '@/components/layout/PageDisplay.tsx';
 import PageTitle from '@/components/layout/PageTitle.tsx';
+import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
@@ -19,7 +21,13 @@ import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { AccountEntity } from '@shared/types/account.type';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
 import { useMemoizedFn } from 'ahooks';
-import { Coins, CreditCardIcon, Landmark, Plus } from 'lucide-react';
+import {
+	ArrowRightLeft,
+	Coins,
+	CreditCardIcon,
+	Landmark,
+	Plus,
+} from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -45,6 +53,8 @@ export default function Accounts() {
 
 	const [isCreditFormOpen, setIsCreditFormOpen] = useState(false);
 	const [creditToEdit, setCreditToEdit] = useState<CreditEntity | null>(null);
+
+	const [isTransferOpen, setIsTransferOpen] = useState(false);
 
 	const totalAccountsBalance = useMemo(
 		() =>
@@ -73,6 +83,10 @@ export default function Accounts() {
 	const handleEditCredit = useMemoizedFn((credit: CreditEntity) => {
 		setCreditToEdit(credit);
 		setIsCreditFormOpen(true);
+	});
+
+	const handleTransfer = useMemoizedFn(() => {
+		setIsTransferOpen(true);
 	});
 
 	const isLoading =
@@ -127,6 +141,11 @@ export default function Accounts() {
 							onOpenChange={setIsCreditFormOpen}
 							creditToEdit={creditToEdit}
 						/>
+
+						<TransferForm
+							open={isTransferOpen}
+							onOpenChange={setIsTransferOpen}
+						/>
 					</>
 				}
 			>
@@ -166,9 +185,15 @@ export default function Accounts() {
 
 					{/* Your Accounts List */}
 					<div className="flex flex-col gap-4">
-						<h3 className="text-lg font-semibold">
-							{t('yourAccounts')}
-						</h3>
+						<div className="flex items-center justify-between">
+							<h3 className="text-lg font-semibold">
+								{t('yourAccounts')}
+							</h3>
+							<Button variant="outline" onClick={handleTransfer}>
+								<ArrowRightLeft className="w-5 h-5" />
+								{t('transfer')}
+							</Button>
+						</div>
 
 						<div className="flex flex-col gap-3">
 							{/* Bank Accounts */}

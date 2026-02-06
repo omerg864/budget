@@ -69,6 +69,15 @@ export class TransactionProvider {
     return this.transactionModel.findByIdAndDelete(id);
   }
 
+  async findByIds(ids: string[]): Promise<TransactionEntity[]> {
+    if (ids.length === 0) {
+      return [];
+    }
+    return this.transactionModel.find({
+      _id: { $in: ids },
+    });
+  }
+
   async deleteMany(ids: string[]): Promise<TransactionEntity[] | null> {
     if (ids.length === 0) {
       return [];

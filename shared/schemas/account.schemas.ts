@@ -32,3 +32,4 @@ export const UpdateAccountSchema = z.object({
 
 export type CreateAccountSchemaType = z.infer<typeof CreateAccountSchema>;
 export type UpdateAccountSchemaType = z.infer<typeof UpdateAccountSchema>;
+export type TransferSchemaType = z.infer<typeof TransferSchema>;

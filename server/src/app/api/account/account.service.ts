@@ -68,9 +68,9 @@ export class AccountService {
       }
     >({
       fromAccountExchangeRate: async () =>
-        this.currencyService.getExchangeRate(fromAccount.currency, currency),
+        this.currencyService.getExchangeRate(currency, fromAccount.currency),
       toAccountExchangeRate: async () =>
-        this.currencyService.getExchangeRate(toAccount.currency, currency),
+        this.currencyService.getExchangeRate(currency, toAccount.currency),
     });
     const amountInFromAccountCurrency = convertCurrency(
       amount,

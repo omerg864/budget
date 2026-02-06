@@ -1,6 +1,7 @@
 import { API_ROUTES } from '@shared/constants/routes.constants';
 import type {
 	CreateAccountSchemaType,
+	TransferSchemaType,
 	UpdateAccountSchemaType,
 } from '@shared/schemas/account.schemas.ts';
 import type { AccountEntity } from '@shared/types/account.type';
@@ -100,18 +101,39 @@ export const useUpdateAccountMutation = () => {
 export const useDeleteAccountMutation = () => {
 	const queryClient = useQueryClient();
 	return useMutation({
-mutationFn: async (id: string) => {
+		mutationFn: async (id: string) => {
 			const url = generateLink({
-route: [API_ROUTES.ACCOUNT.BASE, API_ROUTES.ACCOUNT.DELETE],
-params: { id },
-});
+				route: [API_ROUTES.ACCOUNT.BASE, API_ROUTES.ACCOUNT.DELETE],
+				params: { id },
+			});
 			const { data: response } = await axios.delete<AccountEntity>(url);
 			return response;
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-queryKey: [API_ROUTES.ACCOUNT.BASE],
-});
+				queryKey: [API_ROUTES.ACCOUNT.BASE],
+			});
+		},
+	});
+};
+
+export const useTransferMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (data: TransferSchemaType) => {
+			const url = generateLink({
+				route: [API_ROUTES.ACCOUNT.BASE, API_ROUTES.ACCOUNT.TRANSFER],
+			});
+			const { data: response } = await axios.post<AccountEntity>(
+				url,
+				data,
+			);
+			return response;
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.ACCOUNT.BASE],
+			});
 		},
 	});
 };
