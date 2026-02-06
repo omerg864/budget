@@ -19,7 +19,7 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreateAccountDto, UpdateAccountDto } from './account.dto';
+import { CreateAccountDto, TransferDto, UpdateAccountDto } from './account.dto';
 import { AccountService } from './account.service';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
@@ -50,6 +50,50 @@ export class AccountController {
     }
 
     return this.accountService.create(createAccountDto);
+  }
+
+  @Post(API_ROUTES.ACCOUNT.TRANSFER)
+  async transfer(
+    @User() user: UserEntity,
+    @Body() transferDto: TransferDto,
+  ): Promise<AccountEntity> {
+    const { fromAccountId, toAccountId } = transferDto;
+    const [fromAccount, toAccount] = await Promise.all([
+      this.accountService.findOne(fromAccountId),
+      this.accountService.findOne(toAccountId),
+    ]);
+
+    if (!fromAccount || !toAccount) {
+      throw new NotFoundException(
+        this.i18n.t('errorMessages.account.notFound'),
+      );
+    }
+
+    const [hasAccess, hasAccessToToAccount] = await Promise.all([
+      this.ledgerAccessService.doesUserHaveAccessToAccountAction(
+        fromAccount.ledgerId,
+        user.id,
+        'write',
+      ),
+      this.ledgerAccessService.doesUserHaveAccessToAccountAction(
+        toAccount.ledgerId,
+        user.id,
+        'write',
+      ),
+    ]);
+
+    if (!hasAccess || !hasAccessToToAccount) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
+    }
+
+    return this.accountService.transfer(
+      fromAccount,
+      toAccount,
+      transferDto.amount,
+      transferDto.currency,
+    );
   }
 
   @Get(API_ROUTES.ACCOUNT.FIND_ALL)

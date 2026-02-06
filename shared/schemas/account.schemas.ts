@@ -2,6 +2,15 @@ import { z } from 'zod';
 import { AccountType } from '../constants/account.constants';
 import { SupportedCurrencies } from '../constants/currency.constants';
 
+export const TransferSchema = z.object({
+	fromAccountId: z.string().min(1, 'From account ID is required'),
+	toAccountId: z.string().min(1, 'To account ID is required'),
+	amount: z.number().min(0.01),
+	currency: z.enum(SupportedCurrencies),
+	date: z.coerce.date(),
+	notes: z.string().optional(),
+});
+
 export const CreateAccountSchema = z.object({
 	name: z.string().min(1, 'Account name is required'),
 	type: z.enum(AccountType),

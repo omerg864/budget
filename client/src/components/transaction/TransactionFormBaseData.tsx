@@ -1,6 +1,7 @@
+import { getTransactionTypeIcon } from '@/services/transaction.service';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import type { AnyFormType } from '@/types/form.type.ts';
-import type { TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
+import { type TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type.ts';
 import { useMemoizedFn } from 'ahooks';
 import { useEffect, useReducer, type FC } from 'react';
@@ -9,8 +10,11 @@ import { NumericKeypad } from '../custom/NumericKeypad.tsx';
 import FormErrors from '../form/FormErrors.tsx';
 import FormSelectInput from '../form/FormSelectInput.tsx';
 import CurrencyFormatter from '../formatters/CurrencyFormatter.tsx';
+import TransactionTypeFormatter from '../formatters/TransactionTypeFormatter';
 import PaymentSelector from '../selectors/PaymentSelector.tsx';
-import { Tabs, TabsList, TabsTrigger } from '../ui/tabs.tsx';
+import { Card } from '../ui/card';
+import { Tabs } from '../ui/tabs.tsx';
+import TransactionTypeTabs from './TransactionTypeTabs';
 
 export type TransactionFormBaseDataProps = {
 	form: AnyFormType;
@@ -84,16 +88,22 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 	return (
 		<Tabs defaultValue={transactionToEdit?.type ?? 'expense'}>
 			<div className="flex flex-col gap-4 items-center w-full">
-				{transactionToEdit ? null : (
-					<TabsList className="w-full">
-						<TabsTrigger value="expense">
-							{t('expense')}
-						</TabsTrigger>
-						<TabsTrigger value="income">{t('income')}</TabsTrigger>
-						<TabsTrigger value="transfer">
-							{t('transfer')}
-						</TabsTrigger>
-					</TabsList>
+				{transactionToEdit ? (
+					<form.Field
+						name="type"
+						children={(field) => (
+							<Card className="w-full flex flex-row gap-2 p-2 items-center">
+								{getTransactionTypeIcon(field.state.value)}
+								<TransactionTypeFormatter
+									value={field.state.value}
+								/>
+							</Card>
+						)}
+					/>
+				) : (
+					<TransactionTypeTabs
+						onChange={(type) => form.setFieldValue('type', type)}
+					/>
 				)}
 				<div className="w-full h-full flex flex-col justify-between">
 					<div>

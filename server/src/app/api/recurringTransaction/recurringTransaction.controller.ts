@@ -24,7 +24,6 @@ import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.ser
 import { PaymentService } from '../../modules/payment/payment.service';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
-import { CreditService } from '../credit/credit.service';
 import {
   CreateRecurringTransactionDto,
   UpdateRecurringTransactionDto,
@@ -37,7 +36,6 @@ export class RecurringTransactionController {
   constructor(
     private readonly recurringTransactionService: RecurringTransactionService,
     private readonly ledgerAccessService: LedgerAccessService,
-    private readonly creditService: CreditService,
     private readonly paymentService: PaymentService,
     private readonly i18n: AppI18nService,
   ) {}

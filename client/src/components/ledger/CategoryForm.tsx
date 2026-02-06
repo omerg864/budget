@@ -13,13 +13,13 @@ import {
 import type { LedgerCategory } from '@shared/types/ledger.type';
 import { useForm } from '@tanstack/react-form';
 import { useMemoizedFn } from 'ahooks';
-import { TrendingDown, TrendingUp } from 'lucide-react';
-import { useEffect, useMemo } from 'react';
+import { useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import AppearingModalForm from '../form/AppearingModalForm';
 import ColorRadio from '../radio/ColorRadio';
 import IconSelector from '../selectors/IconSelector';
+import TransactionTypeSelector from '../selectors/TransactionTypeSelector';
 
 interface CategoryFormProps {
 	open: boolean;
@@ -40,30 +40,6 @@ export default function CategoryForm({
 	const createCategoryMutation = useCreateCategoryMutation();
 	const updateCategoryMutation = useUpdateCategoryMutation();
 	const deleteCategoryMutation = useDeleteCategoryMutation();
-
-	const typeOptions = useMemo(
-		() => [
-			{
-				value: TransactionType.EXPENSE,
-				label: (
-					<div className="flex items-center gap-2">
-						<TrendingDown className="h-4 w-4 text-red-500" />
-						<span>{t('expense')}</span>
-					</div>
-				),
-			},
-			{
-				value: TransactionType.INCOME,
-				label: (
-					<div className="flex items-center gap-2">
-						<TrendingUp className="h-4 w-4 text-green-500" />
-						<span>{t('income')}</span>
-					</div>
-				),
-			},
-		],
-		[t],
-	);
 
 	const form = useForm({
 		defaultValues: {
@@ -185,24 +161,26 @@ export default function CategoryForm({
 						field={field}
 						label={t('categoryName')}
 						placeholder={t('categoryName')}
+						required
 					/>
 				)}
 			/>
 			<form.Field
 				name="type"
 				children={(field) => (
-					<FormSelectInput
-						field={field}
-						label={t('type')}
-						options={typeOptions}
-						placeholder={t('selectType')}
-					/>
+					<FormSelectInput field={field} label={t('type')} required>
+						<TransactionTypeSelector
+							value={field.state.value}
+							onValueChange={(val) => field.handleChange(val)}
+							placeholder={t('selectType')}
+						/>
+					</FormSelectInput>
 				)}
 			/>
 			<form.Field
 				name="icon"
 				children={(field) => (
-					<FormSelectInput field={field} label={t('icon')}>
+					<FormSelectInput field={field} label={t('icon')} required>
 						<IconSelector
 							value={field.state.value}
 							onValueChange={(val) => field.handleChange(val)}
@@ -214,7 +192,7 @@ export default function CategoryForm({
 			<form.Field
 				name="color"
 				children={(field) => (
-					<FormInput field={field} label={t('color')}>
+					<FormInput field={field} label={t('color')} required>
 						<ColorRadio
 							value={field.state.value}
 							onValueChange={(val) => field.handleChange(val)}

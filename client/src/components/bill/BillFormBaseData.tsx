@@ -1,3 +1,4 @@
+import { getTransactionTypeIcon } from '@/services/transaction.service';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import type { AnyFormType } from '@/types/form.type';
 import type { TransactionPaymentType } from '@shared/constants/transaction.constants';
@@ -9,8 +10,11 @@ import { NumericKeypad } from '../custom/NumericKeypad';
 import FormErrors from '../form/FormErrors';
 import FormSelectInput from '../form/FormSelectInput';
 import CurrencyFormatter from '../formatters/CurrencyFormatter';
+import TransactionTypeFormatter from '../formatters/TransactionTypeFormatter';
 import PaymentSelector from '../selectors/PaymentSelector';
-import { Tabs, TabsList, TabsTrigger } from '../ui/tabs';
+import TransactionTypeTabs from '../transaction/TransactionTypeTabs';
+import { Card } from '../ui/card';
+import { Tabs } from '../ui/tabs';
 
 export type BillFormBaseDataProps = {
 	form: AnyFormType;
@@ -84,16 +88,22 @@ const BillFormBaseData: FC<BillFormBaseDataProps> = ({
 	return (
 		<Tabs defaultValue={billToEdit?.type ?? 'expense'}>
 			<div className="flex flex-col gap-4 items-center w-full">
-				{billToEdit ? null : (
-					<TabsList className="w-full">
-						<TabsTrigger value="expense">
-							{t('expense')}
-						</TabsTrigger>
-						<TabsTrigger value="income">{t('income')}</TabsTrigger>
-						<TabsTrigger value="transfer">
-							{t('transfer')}
-						</TabsTrigger>
-					</TabsList>
+				{billToEdit ? (
+					<form.Field
+						name="type"
+						children={(field) => (
+							<Card className="w-full flex flex-row gap-2 p-2 items-center">
+								{getTransactionTypeIcon(field.state.value)}
+								<TransactionTypeFormatter
+									value={field.state.value}
+								/>
+							</Card>
+						)}
+					/>
+				) : (
+					<TransactionTypeTabs
+						onChange={(type) => form.setFieldValue('type', type)}
+					/>
 				)}
 				<div className="w-full h-full flex flex-col justify-between">
 					<div>

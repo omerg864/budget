@@ -1,4 +1,6 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnprocessableEntityException } from '@nestjs/common';
+import { SupportedCurrencies } from '@shared/constants/currency.constants';
+import { convertCurrency } from '@shared/services/transaction.shared-service';
 import { AccountEntity } from '../../../../../shared/types/account.type';
 import { AccountProvider } from './account.provider';
 
@@ -37,5 +39,28 @@ export class AccountService {
 
   async removeByLedgerId(ledgerId: string): Promise<void> {
     await this.accountProvider.deleteByLedgerId(ledgerId);
+  }
+
+  async transfer(
+    fromAccount: AccountEntity,
+    toAccount: AccountEntity,
+    amount: number,
+    currency: SupportedCurrencies,
+  ): Promise<AccountEntity> {
+    const amountInFromAccountCurrency = convertCurrency(amount);
+    const amountInToAccountCurrency = convertCurrency(amount);
+    const updatedFromAccount = await this.accountProvider.update(
+      fromAccount.id,
+      {
+        balance: fromAccount.balance - amountInFromAccountCurrency,
+      },
+    );
+    const updatedToAccount = await this.accountProvider.update(toAccount.id, {
+      balance: toAccount.balance + amountInToAccountCurrency,
+    });
+    if (!updatedFromAccount || !updatedToAccount) {
+      throw new UnprocessableEntityException('Failed to update accounts');
+    }
+    return updatedToAccount;
   }
 }

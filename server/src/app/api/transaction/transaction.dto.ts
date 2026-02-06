@@ -1,8 +1,8 @@
-import { createZodDto } from 'nestjs-zod';
 import {
   CreateTransactionSchema,
   UpdateTransactionSchema,
-} from '../../../../../shared/schemas/transaction.schemas';
+} from '@shared/schemas/transaction.schemas';
+import { createZodDto } from 'nestjs-zod';
 
 export class CreateTransactionDto extends createZodDto(
   CreateTransactionSchema,

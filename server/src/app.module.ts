@@ -1,6 +1,7 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { WinstonModule } from 'nest-winston';
 import {
   AcceptLanguageResolver,
   HeaderResolver,
@@ -8,6 +9,7 @@ import {
   QueryResolver,
 } from 'nestjs-i18n';
 import * as path from 'path';
+import * as winston from 'winston';
 import { AccountModule } from './app/api/account/account.module';
 import { AuthModule } from './app/api/auth/auth.module';
 import { CreditModule } from './app/api/credit/credit.module';
@@ -15,6 +17,7 @@ import { LedgerModule } from './app/api/ledger/ledger.module';
 import { RecurringTransactionModule } from './app/api/recurringTransaction/recurringTransaction.module';
 import { TransactionModule } from './app/api/transaction/transaction.module';
 import { UserModule } from './app/api/user/user.module';
+import { EmailModule } from './app/modules/email/email.module';
 import { AppI18nModule } from './app/modules/i18n/app-i18n.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
@@ -27,6 +30,28 @@ import emailConfig from './config/email.config';
     ConfigModule.forRoot({
       isGlobal: true,
       load: [appConfig, authConfig, cloudConfig, dbConfig, emailConfig],
+    }),
+    WinstonModule.forRoot({
+      transports: [
+        new winston.transports.Console({
+          format: winston.format.combine(
+            winston.format.timestamp(),
+            winston.format.ms(),
+            winston.format.colorize(),
+            winston.format.printf(
+              ({
+                timestamp,
+                level,
+                message,
+                context,
+                ms,
+              }: Record<string, any>) => {
+                return `[${timestamp}] ${level}: [${context || 'App'}] ${message} ${ms}`;
+              },
+            ),
+          ),
+        }),
+      ],
     }),
     MongooseModule.forRootAsync({
       imports: [ConfigModule],
@@ -58,6 +83,7 @@ import emailConfig from './config/email.config';
     CreditModule,
     TransactionModule,
     RecurringTransactionModule,
+    EmailModule,
   ],
 })
 export class AppModule {}

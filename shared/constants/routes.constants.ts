@@ -25,6 +25,7 @@ export const API_ROUTES = {
 	ACCOUNT: {
 		BASE: '/v1/account',
 		CREATE: '/',
+		TRANSFER: '/transfer',
 		FIND_ALL: '/ledger/:ledgerId',
 		FIND_ONE: '/:id',
 		UPDATE: '/:id',

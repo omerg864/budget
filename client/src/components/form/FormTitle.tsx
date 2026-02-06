@@ -33,26 +33,18 @@ const FormTitle: FC<FormTitleProps> = ({
 
 	return (
 		<div className="grid grid-cols-3 items-center gap-2">
-			{backButton && <BackButton onClick={onBack} disabled={disabled} />}
-			<span
-				className={cn(
-					'text-start',
-					backButton
-						? deleteButton
-							? 'text-center'
-							: 'col-span-2'
-						: deleteButton
-							? 'col-span-2 text-end'
-							: 'col-span-3 text-center',
-				)}
-			>
-				{title}
-			</span>
-			{deleteButton && (
-				<div
-					ref={deleteContainerRef}
-					className={cn(backButton ? 'text-end' : 'text-end')}
-				>
+			{backButton ? (
+				<BackButton
+					onClick={onBack}
+					disabled={disabled}
+					className="w-9 h-9"
+				/>
+			) : (
+				<div></div>
+			)}
+			<span className={cn('text-center')}>{title}</span>
+			{deleteButton ? (
+				<div ref={deleteContainerRef} className={cn('text-end')}>
 					{showDeleteConfirm ? (
 						<Button
 							variant="destructive"
@@ -75,6 +67,8 @@ const FormTitle: FC<FormTitleProps> = ({
 						</Button>
 					)}
 				</div>
+			) : (
+				<div></div>
 			)}
 		</div>
 	);
