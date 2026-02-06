@@ -14,19 +14,25 @@ import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import { LedgerCategory } from '../../../../../shared/types/ledger.type';
+
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
+import { EmailService } from '../../modules/email/email.service';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
+import { UserService } from '../user/user.service';
+
 import { AuthGuard } from '../auth/auth.guard';
 import {
+  AddUserDto,
   CreateCategoryDto,
   CreateLedgerDto,
   UpdateCategoryDto,
   UpdateLedgerDto,
 } from './ledger.dto';
+
 import { Ledger } from './ledger.model';
 import { LedgerService } from './ledger.service';
 
@@ -36,6 +42,8 @@ export class LedgerController {
   constructor(
     private readonly ledgerService: LedgerService,
     private readonly ledgerAccessService: LedgerAccessService,
+    private readonly userService: UserService,
+    private readonly emailService: EmailService,
     private readonly i18n: AppI18nService,
   ) {}
 
@@ -316,5 +324,67 @@ export class LedgerController {
       userId: user.id,
       role: access.role,
     });
+  }
+
+  @Post(API_ROUTES.LEDGER.ADD_USER)
+  async addUser(
+    @User() user: UserEntity,
+    @Param('id', ParseObjectIdPipe) ledgerId: string,
+    @Body() addUserDto: AddUserDto,
+  ): Promise<Ledger | null> {
+    const writeAccess =
+      await this.ledgerAccessService.doesUserHaveAccessToLedgerAction(
+        ledgerId,
+        user.id,
+        'write',
+      );
+    if (!writeAccess) {
+      throw new ForbiddenException(
+        this.i18n.t('errorMessages.ledger.accessDenied'),
+      );
+    }
+    const targetUser = await this.userService.findByEmail(addUserDto.email);
+    if (!targetUser) {
+      throw new NotFoundException(this.i18n.t('errorMessages.user.notFound'));
+    }
+
+    const existingAccess =
+      await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        targetUser.id,
+      );
+    if (existingAccess) {
+      // User already has access
+    } else {
+      await this.ledgerAccessService.create({
+        ledgerId,
+        userId: targetUser.id,
+        role: LedgerAccessRole.REQUESTED,
+      });
+
+      const ledger = await this.ledgerService.findOne(ledgerId);
+      if (ledger) {
+        await this.emailService.sendLedgerShareEmail(
+          targetUser.email,
+          ledger.name,
+          generateLink({
+            route: [API_ROUTES.LEDGER.BASE, ledgerId],
+            params: { id: ledgerId },
+          }),
+          targetUser.name,
+        );
+      }
+    }
+
+    const ledgerAccess =
+      (await this.ledgerAccessService.findByLedgerIdAndUserId(
+        ledgerId,
+        user.id,
+      ))!;
+    const ledger = await this.ledgerService.findOne(ledgerId);
+    if (!ledger) {
+      throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
+    }
+    return this.ledgerService.resolveLedger(ledger, ledgerAccess);
   }
 }

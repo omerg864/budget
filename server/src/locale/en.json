@@ -42,6 +42,19 @@
     },
     "user": {
       "notFound": "User not found"
+    },
+    "currency": {
+      "invalidCurrency": "Invalid currency"
+    }
+  },
+  "templates": {
+    "shareLedger": {
+      "title": "Ledger Sharing Invitation",
+      "greeting": "Hello {{name}},",
+      "body": "You have been invited to join the ledger <strong>{{ledgerName}}</strong>.",
+      "action": "Access Ledger",
+      "ignore": "If you did not expect this invitation, you can safely ignore this email.",
+      "subject": "You have been invited to join {{ledgerName}}"
     }
   }
 }

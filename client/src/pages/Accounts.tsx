@@ -1,5 +1,7 @@
 import { useAccountsQuery } from '@/api/account.api';
 import { useCreditsQuery } from '@/api/credit.api.ts';
+import { useGetAllReversedExchangeRates } from '@/api/currency.api';
+import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';
@@ -25,6 +27,11 @@ export default function Accounts() {
 	const { t } = useTranslation('accounts');
 	const { ledgerId } = usePreferencesStore();
 	const { data: user, isLoading: isLoadingUser } = useUserQuery();
+	const { data: ledger, isLoading: isLoadingLedger } = useLedgerQuery(
+		ledgerId ?? undefined,
+	);
+	const { data: exchangeRates, isLoading: isLoadingExchangeRates } =
+		useGetAllReversedExchangeRates(ledger?.currency);
 	const { data: accounts = [], isLoading: isLoadingAccounts } =
 		useAccountsQuery(ledgerId ?? undefined);
 	const { data: credits = [], isLoading: isLoadingCredits } = useCreditsQuery(
@@ -41,11 +48,11 @@ export default function Accounts() {
 
 	const totalAccountsBalance = useMemo(
 		() =>
-			accounts.reduce(
-				(sum, account) => sum + convertCurrency(account.balance),
-				0,
-			),
-		[accounts],
+			accounts.reduce((sum, account) => {
+				const rate = exchangeRates?.[account.currency];
+				return sum + convertCurrency(account.balance, rate);
+			}, 0),
+		[accounts, exchangeRates],
 	);
 
 	const handleEditAccount = useMemoizedFn((account: AccountEntity) => {
@@ -68,7 +75,12 @@ export default function Accounts() {
 		setIsCreditFormOpen(true);
 	});
 
-	const isLoading = isLoadingUser || isLoadingAccounts || isLoadingCredits;
+	const isLoading =
+		isLoadingUser ||
+		isLoadingAccounts ||
+		isLoadingCredits ||
+		isLoadingExchangeRates ||
+		isLoadingLedger;
 
 	if (!ledgerId) return null;
 

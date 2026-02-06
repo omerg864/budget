@@ -1,14 +1,16 @@
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { API_ROUTES } from '@shared/constants/routes.constants';
 import type {
 	CreateCategoryDto,
 	CreateLedgerDto,
 	UpdateCategoryDto,
 	UpdateLedgerDto,
-} from '@shared/schemas/ledger.schemas'; // Assuming schemas export DTO types or can be inferred
+} from '@shared/schemas/ledger.schemas';
 import type { LedgerEntity } from '@shared/types/ledger.type';
 import { generateLink } from '@shared/utils/route.utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
+import { usePreferencesStore } from '../stores/usePreferences';
 
 export const useLedgerQuery = (id?: string) => {
 	return useQuery({
@@ -212,6 +214,51 @@ export const useDeleteCategoryMutation = () => {
 					API_ROUTES.LEDGER.FIND_ONE,
 					variables.ledgerId,
 				],
+			});
+		},
+	});
+};
+
+export const useAddUserMutation = () => {
+	const { ledgerId } = usePreferencesStore();
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (values: {
+			email: string;
+			role: LedgerAccessRole;
+		}) => {
+			if (!ledgerId) throw new Error('No ledger selected');
+			await axios.post(
+				API_ROUTES.LEDGER.ADD_USER.replace(':id', ledgerId),
+				values,
+			);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['ledgerUsers', ledgerId],
+			});
+		},
+	});
+};
+
+export const useRemoveUserMutation = () => {
+	const { ledgerId } = usePreferencesStore();
+	const queryClient = useQueryClient();
+
+	return useMutation({
+		mutationFn: async (userId: string) => {
+			if (!ledgerId) throw new Error('No ledger selected');
+			await axios.delete(
+				API_ROUTES.LEDGER.REMOVE_USER.replace(':id', ledgerId).replace(
+					':userId',
+					userId,
+				),
+			);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ['ledgerUsers', ledgerId],
 			});
 		},
 	});

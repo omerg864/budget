@@ -12,6 +12,10 @@ export class UserProvider {
     return this.userModel.findById(userId);
   }
 
+  async findByEmail(email: string): Promise<UserEntity | null> {
+    return this.userModel.findOne({ email });
+  }
+
   async list(ids?: string[]): Promise<UserEntity[]> {
     const query: any = {};
     if (ids) {

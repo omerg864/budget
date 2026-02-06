@@ -1,4 +1,7 @@
-import { SupportedIcons } from '@shared/constants/ledger.constants';
+import {
+	LedgerAccessRole,
+	SupportedIcons,
+} from '@shared/constants/ledger.constants';
 import { z } from 'zod';
 import { SupportedCurrencies } from '../constants/currency.constants.js';
 import { TransactionType } from '../constants/transaction.constants';
@@ -26,6 +29,11 @@ export const UpdateLedgerSchema = z.object({
 	name: z.string().min(1, 'Ledger name is required').optional(),
 	icon: z.enum(SupportedIcons).optional(),
 	currency: z.enum(SupportedCurrencies).optional(),
+});
+
+export const AddUserSchema = z.object({
+	email: z.email(),
+	role: z.enum(LedgerAccessRole),
 });
 
 export type CategoryDto = z.infer<typeof CategorySchema>;

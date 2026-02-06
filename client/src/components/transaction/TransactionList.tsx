@@ -1,9 +1,13 @@
+import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
-import { convertCurrency } from '@shared/services/transaction.shared-service.ts';
+import { usePreferencesStore } from '@/stores/usePreferences';
+import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { TransactionEntity } from '@shared/types/transaction.type';
+import { useMemoizedFn } from 'ahooks';
 import { DateTime } from 'luxon';
-import type { FC } from 'react';
-import CurrencyFormatter from '../formatters/CurrencyFormatter.tsx';
+import { useMemo, type FC } from 'react';
+import { useTranslation } from 'react-i18next';
+import CurrencyFormatter from '../formatters/CurrencyFormatter';
 import TransactionCard from './TransactionCard';
 
 interface TransactionListProps {
@@ -15,36 +19,42 @@ const TransactionList: FC<TransactionListProps> = ({
 	transactions,
 	onCardClick,
 }) => {
+	const { t } = useTranslation('transactions');
+	const { ledgerId } = usePreferencesStore();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 	const { data: user } = useUserQuery();
+
 	// Group transactions by date
-	const groupedTransactions = transactions.reduce(
-		(groups, transaction) => {
-			const date = DateTime.fromJSDate(new Date(transaction.date));
-			const dateKey = date.toFormat('yyyy-MM-dd');
-			if (!groups[dateKey]) {
-				groups[dateKey] = [];
-			}
-			groups[dateKey].push(transaction);
-			return groups;
-		},
-		{} as Record<string, TransactionEntity[]>,
-	);
+	const { groupedTransactions, sortedDates } = useMemo(() => {
+		const groupedTransactions = transactions.reduce(
+			(groups, transaction) => {
+				const date = DateTime.fromJSDate(new Date(transaction.date));
+				const dateKey = date.toFormat('yyyy-MM-dd');
+				if (!groups[dateKey]) {
+					groups[dateKey] = [];
+				}
+				groups[dateKey].push(transaction);
+				return groups;
+			},
+			{} as Record<string, TransactionEntity[]>,
+		);
+		const sortedDates = Object.keys(groupedTransactions).sort(
+			(a, b) => new Date(b).getTime() - new Date(a).getTime(),
+		);
+		return { groupedTransactions, sortedDates };
+	}, [transactions]);
 
-	// Sort dates descending
-	const sortedDates = Object.keys(groupedTransactions).sort(
-		(a, b) => new Date(b).getTime() - new Date(a).getTime(),
-	);
-
-	const getDateHeader = (dateString: string) => {
+	const getDateHeader = useMemoizedFn((dateString: string) => {
 		const date = DateTime.fromISO(dateString);
 		const now = DateTime.now();
 
-		if (date.hasSame(now, 'day')) return 'TODAY';
-		if (date.hasSame(now.minus({ days: 1 }), 'day')) return 'YESTERDAY';
+		if (date.hasSame(now, 'day')) return t('today').toUpperCase();
+		if (date.hasSame(now.minus({ days: 1 }), 'day'))
+			return t('yesterday').toUpperCase();
 		return date.toFormat('MMM d').toUpperCase();
-	};
+	});
 
-	if (!user) return null;
+	if (!user || !ledger) return null;
 
 	return (
 		<div className="space-y-6">
@@ -64,7 +74,7 @@ const TransactionList: FC<TransactionListProps> = ({
 									acc + convertCurrency(transaction.amount),
 								0,
 							)}
-							currency={user.defaultCurrency}
+							currency={ledger.currency}
 							className="text-sm font-medium text-gray-500 mb-3"
 						/>
 					</div>
@@ -81,7 +91,7 @@ const TransactionList: FC<TransactionListProps> = ({
 			))}
 			{transactions.length === 0 && (
 				<div className="text-center text-gray-500 py-10">
-					No transactions found.
+					{t('noTransactionsFound')}
 				</div>
 			)}
 		</div>

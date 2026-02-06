@@ -1,6 +1,10 @@
 import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
+import * as ejs from 'ejs';
+import { AppI18nService } from '../i18n/app-i18n.service';
+
 import { createTransport } from 'nodemailer';
+import * as path from 'path';
 
 type SendEmailOptions = {
   receiver: string | string[];
@@ -13,7 +17,10 @@ type SendEmailOptions = {
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
 
-  constructor(private readonly configService: ConfigService) {}
+  constructor(
+    private readonly configService: ConfigService,
+    private readonly i18n: AppI18nService,
+  ) {}
 
   private async sendEmail({
     receiver,
@@ -68,5 +75,30 @@ export class EmailService {
     }
 
     return success;
+  }
+  async sendLedgerShareEmail(
+    email: string,
+    ledgerName: string,
+    link: string,
+    name: string,
+  ): Promise<boolean> {
+    const templatePath = path.join(
+      process.cwd(),
+      'dist/server/src/templates/share-ledger.ejs',
+    );
+
+    const html = await ejs.renderFile(templatePath, {
+      ledgerName,
+      link,
+      name,
+      t: (key: string, args?: any) => this.i18n.t(key as any, { args }),
+    });
+    return this.sendEmail({
+      receiver: email,
+      subject: this.i18n.t('templates.shareLedger.subject', {
+        args: { ledgerName },
+      }),
+      html,
+    });
   }
 }

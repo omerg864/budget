@@ -20,6 +20,7 @@ export const API_ROUTES = {
 		UPDATE_CATEGORY: '/:id/category/:categoryId',
 		DELETE_CATEGORY: '/:id/category/:categoryId',
 		REMOVE_USER: '/remove/:id/:userId',
+		ADD_USER: '/add/:id',
 		DELETE: '/:id',
 	},
 	ACCOUNT: {
@@ -57,10 +58,17 @@ export const API_ROUTES = {
 		UPDATE: '/:id',
 		DELETE: '/:id',
 	},
+	CURRENCY: {
+		BASE: '/v1/currency',
+		GET_EXCHANGE_RATE: '/exchange-rate',
+		GET_ALL_EXCHANGE_RATES: '/exchange-rates',
+		GET_ALL_REVERSED_EXCHANGE_RATES: '/exchange-rates/reversed',
+	},
 };
 
 export const CLIENT_ROUTES = {
 	HOME: '/',
 	LOGIN: '/login',
 	REGISTER: '/register',
+	SHARING: '/sharing',
 };

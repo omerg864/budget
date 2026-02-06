@@ -32,6 +32,7 @@ export default {
 			owner: 'Owner',
 			fullAccess: 'Full Access',
 			readOnly: 'Read Only',
+			requested: 'Requested',
 		},
 		TransactionRecurringFrequency: {
 			daily: 'Daily',
@@ -223,6 +224,9 @@ export default {
 		billCreated: 'Bill created',
 		billUpdated: 'Bill updated',
 		billDeleted: 'Bill deleted',
+		noTransactionsFound: 'No transactions found',
+		today: 'Today',
+		yesterday: 'Yesterday',
 	},
 	settings: {
 		title: 'Settings',
@@ -293,5 +297,17 @@ export default {
 		categoryCreated: 'Category created',
 		categoryUpdated: 'Category updated',
 		categoryDeleted: 'Category deleted',
+	},
+	sharing: {
+		title: 'Sharing',
+		addUser: 'Add User',
+		invite: 'Invite',
+		remove: 'Remove',
+		cancel: 'Cancel',
+		userAdded: 'User invited successfully',
+		userRemoved: 'User removed successfully',
+		confirmDelete: 'Are you sure you want to remove this user?',
+		email: 'Email Address',
+		role: 'Access Level',
 	},
 };

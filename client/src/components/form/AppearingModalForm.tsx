@@ -18,7 +18,7 @@ export type AppearingModalFormProps = Omit<
 		footerChildren?: ReactNode;
 	};
 
-const ApprearingModalForm: FC<AppearingModalFormProps> = ({
+const AppearingModalForm: FC<AppearingModalFormProps> = ({
 	form,
 	formName,
 	children,
@@ -51,4 +51,4 @@ const ApprearingModalForm: FC<AppearingModalFormProps> = ({
 	);
 };
 
-export default ApprearingModalForm;
+export default AppearingModalForm;

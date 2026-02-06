@@ -1,8 +1,8 @@
-import type { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
+import type { SupportedCurrencies } from '../constants/currency.constants.ts';
 import type {
 	LedgerAccessRole,
 	SupportedIcons,
-} from '@shared/constants/ledger.constants.ts';
+} from '../constants/ledger.constants.ts';
 import { TransactionType } from '../constants/transaction.constants';
 
 export type LedgerCategory = {
