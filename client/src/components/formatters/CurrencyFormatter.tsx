@@ -17,6 +17,7 @@ const CurrencyFormatter: FC<CurrencyFormatterProps> = ({
 		<span className={cn('text-lg font-bold', className)}>
 			{new Intl.NumberFormat(undefined, {
 				style: 'currency',
+				currencyDisplay: 'narrowSymbol',
 				currency,
 				...props,
 			}).format(amount)}

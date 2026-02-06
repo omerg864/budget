@@ -1,4 +1,4 @@
-import { TransactionEntity } from '@shared/types/transaction.type';
+import type { TransactionEntity } from '@shared/types/transaction.type';
 import { DateTime } from 'luxon';
 import { AccountType } from '../constants/account.constants';
 import {

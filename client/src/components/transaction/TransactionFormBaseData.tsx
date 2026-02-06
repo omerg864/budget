@@ -11,6 +11,7 @@ import FormErrors from '../form/FormErrors.tsx';
 import FormSelectInput from '../form/FormSelectInput.tsx';
 import CurrencyFormatter from '../formatters/CurrencyFormatter.tsx';
 import TransactionTypeFormatter from '../formatters/TransactionTypeFormatter';
+import CurrencySelector from '../selectors/CurrencySelector';
 import PaymentSelector from '../selectors/PaymentSelector.tsx';
 import { Card } from '../ui/card';
 import { Tabs } from '../ui/tabs.tsx';
@@ -107,34 +108,58 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 				)}
 				<div className="w-full h-full flex flex-col justify-between">
 					<div>
-						<form.Field
-							name="paymentId"
-							children={(field) => (
-								<FormSelectInput
-									field={field}
-									label={t('paymentMethod')}
-									required
-								>
-									<PaymentSelector
-										ledgerId={ledgerId ?? undefined}
-										value={field.state.value}
-										valueType={form.getFieldValue(
-											'paymentType',
-										)}
-										onValueChange={onPaymentChange}
-									/>
-								</FormSelectInput>
-							)}
-						/>
+						<div className="grid grid-cols-2 gap-2">
+							<form.Field
+								name="paymentId"
+								children={(field) => (
+									<FormSelectInput
+										field={field}
+										label={t('paymentMethod')}
+										required
+									>
+										<PaymentSelector
+											ledgerId={ledgerId ?? undefined}
+											value={field.state.value}
+											valueType={form.getFieldValue(
+												'paymentType',
+											)}
+											onValueChange={onPaymentChange}
+										/>
+									</FormSelectInput>
+								)}
+							/>
+
+							<form.Field
+								name="currency"
+								children={(field) => (
+									<FormSelectInput
+										field={field}
+										label={t('currency')}
+										required
+									>
+										<CurrencySelector
+											value={field.state.value}
+											onValueChange={field.handleChange}
+										/>
+									</FormSelectInput>
+								)}
+							/>
+						</div>
 
 						<form.Field
 							name="amount"
 							children={(field) => (
-								<CurrencyFormatter
-									amount={field.state.value}
-									currency={form.getFieldValue('currency')}
-									className="text-4xl font-bold my-4 block text-center"
-								/>
+								<form.Subscribe
+									selector={(state) => state.values.currency}
+								>
+									{(currency) => (
+										<CurrencyFormatter
+											amount={field.state.value}
+											currency={currency}
+											className="text-4xl font-bold my-4 block text-center"
+										/>
+									)}
+								</form.Subscribe>
 							)}
 						/>
 					</div>

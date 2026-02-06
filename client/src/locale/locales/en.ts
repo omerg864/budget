@@ -132,6 +132,7 @@ export default {
 		other: 'Other',
 		delete: 'Delete',
 		confirmDelete: 'Are you sure?',
+		pickDate: 'Pick a Date',
 	},
 	nav: {
 		summary: 'Summary',
@@ -236,6 +237,7 @@ export default {
 		noTransactionsFound: 'No transactions found',
 		today: 'Today',
 		yesterday: 'Yesterday',
+		currency: 'Currency',
 	},
 	settings: {
 		title: 'Settings',
@@ -318,5 +320,21 @@ export default {
 		confirmDelete: 'Are you sure you want to remove this user?',
 		email: 'Email Address',
 		role: 'Access Level',
+	},
+	profile: {
+		cancel: 'Cancel',
+		title: 'Profile',
+		personalInfo: 'Personal Information',
+		fields: {
+			name: 'Name',
+			email: 'Email',
+		},
+		successMessages: {
+			update: 'Profile updated successfully',
+		},
+		errorMessages: {
+			update: 'Failed to update profile',
+		},
+		save: 'Save',
 	},
 };

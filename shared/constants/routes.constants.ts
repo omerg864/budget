@@ -8,6 +8,7 @@ export const API_ROUTES = {
 	USER: {
 		BASE: '/v1/user',
 		ME: '/me',
+		UPDATE: '/',
 		LEDGER: '/:ledgerId',
 	},
 	LEDGER: {

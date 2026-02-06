@@ -2,6 +2,8 @@ import { useGetAllReversedExchangeRates } from '@/api/currency.api';
 import { useLedgerQuery } from '@/api/ledger.api';
 import { useTransactionsQuery } from '@/api/transaction.api';
 import AddButton from '@/components/custom/AddButton.tsx';
+import BackArrow from '@/components/custom/BackArrow';
+import ForwardArrow from '@/components/custom/ForwardArrow';
 import { Loader } from '@/components/custom/Loader.tsx';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter.tsx';
 import PageDisplay from '@/components/layout/PageDisplay.tsx';
@@ -20,7 +22,6 @@ import {
 } from '@shared/services/transaction.shared-service.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -92,7 +93,7 @@ const Transactions = () => {
 							size="icon"
 							onClick={handlePrevMonth}
 						>
-							<ChevronLeft className="h-4 w-4" />
+							<BackArrow className="h-4 w-4" />
 						</Button>
 						<div className="font-semibold text-lg text-center">
 							<span className="block">
@@ -107,7 +108,7 @@ const Transactions = () => {
 							size="icon"
 							onClick={handleNextMonth}
 						>
-							<ChevronRight className="h-4 w-4" />
+							<ForwardArrow className="h-4 w-4" />
 						</Button>
 					</div>
 				</>

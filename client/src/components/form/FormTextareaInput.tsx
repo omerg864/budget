@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import { useMemoizedFn } from 'ahooks';
 import type { FC, PropsWithChildren, TextareaHTMLAttributes } from 'react';
@@ -24,6 +25,9 @@ const FormTextareaInput: FC<FormTextareaInputProps> = ({
 		},
 	);
 
+	const hasErrors =
+		!!field.state.meta.errors && field.state.meta.errors.length > 0;
+
 	return (
 		<div className="grid gap-2">
 			<div>
@@ -43,9 +47,13 @@ const FormTextareaInput: FC<FormTextareaInputProps> = ({
 					onBlur={field.handleBlur}
 					onChange={handleChange}
 					required={required}
+					className={cn(
+						hasErrors ? 'border-red-500' : undefined,
+						props.className,
+					)}
 				/>
 			)}
-			{field.state.meta.errors ? (
+			{hasErrors ? (
 				<p className="text-xs text-red-500">
 					{field.state.meta.errors
 						.map((error) => error.message)

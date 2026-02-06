@@ -3,13 +3,13 @@ import {
 	useDeleteAccountMutation,
 	useUpdateAccountMutation,
 } from '@/api/account.api';
-import { useUserQuery } from '@/api/user.api.ts';
-import { usePreferencesStore } from '@/stores/usePreferences.ts';
+import { useLedgerQuery } from '@/api/ledger.api';
+import { usePreferencesStore } from '@/stores/usePreferences';
 import {
 	ACCOUNT_COLORS,
 	AccountType,
 } from '@shared/constants/account.constants';
-import { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
+import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import {
 	CreateAccountSchema,
 	UpdateAccountSchema,
@@ -23,11 +23,11 @@ import { useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { toast } from 'sonner';
 import AppearingModalForm from '../form/AppearingModalForm';
-import FormInput from '../form/FormInput.tsx';
-import FormSelectInput from '../form/FormSelectInput.tsx';
-import ColorRadio from '../radio/ColorRadio.tsx';
-import CurrencySelector from '../selectors/CurrencySelector.tsx';
-import UserSelector from '../selectors/UserSelector.tsx';
+import FormInput from '../form/FormInput';
+import FormSelectInput from '../form/FormSelectInput';
+import ColorRadio from '../radio/ColorRadio';
+import CurrencySelector from '../selectors/CurrencySelector';
+import UserSelector from '../selectors/UserSelector';
 
 interface AccountFormProps {
 	open: boolean;
@@ -44,7 +44,7 @@ export function AccountForm({
 }: AccountFormProps) {
 	const { t } = useTranslation('accounts');
 	const { ledgerId } = usePreferencesStore();
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 
 	const accountTypeOptions = useMemo(
 		() => [
@@ -149,11 +149,11 @@ export function AccountForm({
 					balance: 0,
 					color: ACCOUNT_COLORS[0],
 					ledgerId: ledgerId || '',
-					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+					currency: ledger?.currency ?? SupportedCurrencies.ILS,
 				});
 			}
 		}
-	}, [open, accountToEdit, form, ledgerId, user]);
+	}, [open, accountToEdit, form, ledgerId, ledger]);
 
 	const handleDelete = useMemoizedFn(async () => {
 		if (!accountToEdit) return;

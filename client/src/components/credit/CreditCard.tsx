@@ -1,5 +1,6 @@
 import { useAccountQuery } from '@/api/account.api.ts';
-import { useUserQuery, useUsersByLedgerQuery } from '@/api/user.api.ts';
+import { useLedgerQuery } from '@/api/ledger.api';
+import { useUsersByLedgerQuery } from '@/api/user.api.ts';
 import { cn } from '@/lib/utils.ts';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
 import { CreditCardIcon } from 'lucide-react';
@@ -18,26 +19,22 @@ const CreditCard: FC<CreditCardProps> = ({
 	onCardClick,
 }: CreditCardProps) => {
 	const { t } = useTranslation('credits');
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(credit?.ledgerId);
 	const { data: account } = useAccountQuery(credit?.accountId);
 	const { data: ledgerUsers } = useUsersByLedgerQuery(account?.ledgerId);
 
 	const creditDataList = useMemo(() => {
-		if (!credit || !user || !account || !ledgerUsers) return [];
-		const defaultData = [
-			t(credit?.type),
-			user?.defaultCurrency,
-			account?.name,
-		];
+		if (!credit || !ledger || !account || !ledgerUsers) return [];
+		const defaultData = [t(credit?.type), ledger?.currency, account?.name];
 		if (credit?.ownerId) {
 			defaultData.push(
 				ledgerUsers?.find((user) => user.id === credit.ownerId)!.name,
 			);
 		}
 		return defaultData;
-	}, [credit, user, account, t, ledgerUsers]);
+	}, [credit, ledger, account, t, ledgerUsers]);
 
-	if (!credit || !user || !account) return null;
+	if (!credit || !ledger || !account) return null;
 
 	return (
 		<div
@@ -70,7 +67,7 @@ const CreditCard: FC<CreditCardProps> = ({
 				>
 					<CurrencyFormatter
 						amount={credit.amount}
-						currency={user.defaultCurrency}
+						currency={ledger?.currency}
 					/>
 				</span>
 				<span className="text-[10px] text-gray-400">

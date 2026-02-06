@@ -22,7 +22,7 @@ const CategoryIcon: FC<CategoryIconProps> = ({
 			className={cn('p-3 rounded-full', className)}
 			style={{
 				color: category?.color,
-				backgroundColor: `${category?.color}1A`,
+				backgroundColor: `${category?.color || '#000000'}1A`,
 			}}
 		>
 			<Icon className="w-5 h-5" />

@@ -1,9 +1,9 @@
+import { useLedgerQuery } from '@/api/ledger.api';
 import {
 	useCreateTransactionMutation,
 	useDeleteTransactionMutation,
 	useUpdateTransactionMutation,
 } from '@/api/transaction.api';
-import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import {
@@ -40,7 +40,7 @@ export function TransactionForm({
 }: TransactionFormProps) {
 	const { t } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 	const [formState, setFormState] = useState<'base' | 'details'>('base');
 
 	const createTransactionMutation = useCreateTransactionMutation();
@@ -51,7 +51,7 @@ export function TransactionForm({
 		defaultValues: {
 			description: '',
 			amount: 0,
-			currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+			currency: ledger?.currency ?? SupportedCurrencies.ILS,
 			paymentId: '',
 			paymentType: 'account',
 			ledgerId: ledgerId || '',
@@ -146,7 +146,7 @@ export function TransactionForm({
 					amount: transactionToEdit.amount,
 					currency: transactionToEdit.currency,
 					ledgerId: transactionToEdit.ledgerId,
-					date: transactionToEdit.date,
+					date: new Date(transactionToEdit.date),
 					category: transactionToEdit.category,
 					notes: transactionToEdit.notes,
 					paymentId: transactionToEdit.paymentId,
@@ -157,7 +157,7 @@ export function TransactionForm({
 					description: '',
 					type: TransactionType.EXPENSE,
 					amount: 0,
-					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+					currency: ledger?.currency ?? SupportedCurrencies.ILS,
 					ledgerId: ledgerId || '',
 					date: new Date(),
 					paymentId: '',
@@ -165,7 +165,7 @@ export function TransactionForm({
 				});
 			}
 		}
-	}, [open, transactionToEdit, form, ledgerId, user]);
+	}, [open, transactionToEdit, form, ledgerId, ledger]);
 
 	return (
 		<AppearingModalForm

@@ -1,7 +1,8 @@
+import { useLedgerQuery } from '@/api/ledger.api';
 import { useTransactionsQuery } from '@/api/transaction.api';
-import { useUserQuery } from '@/api/user.api.ts';
 import CurrencyFormatter from '@/components/formatters/CurrencyFormatter';
 import PageTitle from '@/components/layout/PageTitle';
+import LanguageSelector from '@/components/selectors/LanguageSelector';
 import LedgerSelector from '@/components/selectors/LedgerSelector';
 import TransactionCard from '@/components/transaction/TransactionCard';
 import { Card } from '@/components/ui/card';
@@ -18,7 +19,7 @@ import { Link } from 'react-router';
 const Summary: FC = () => {
 	const { t } = useTranslation('summary');
 	const { ledgerId, setLedgerId } = usePreferencesStore();
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 
 	const currentDate = new Date();
 	const startDate = DateTime.fromJSDate(currentDate)
@@ -40,6 +41,10 @@ const Summary: FC = () => {
 		<div className="flex flex-col h-full overflow-hidden">
 			{/* Header */}
 			<PageTitle title={t('title')} className="mb-4">
+				<LanguageSelector
+					className="w-fit"
+					containerClassName="w-fit"
+				/>
 				<LedgerSelector
 					value={ledgerId ?? undefined}
 					onValueChange={setLedgerId}
@@ -60,7 +65,7 @@ const Summary: FC = () => {
 								<CurrencyFormatter
 									amount={124500}
 									currency={
-										user?.defaultCurrency ||
+										ledger?.currency ||
 										SupportedCurrencies.ILS
 									}
 								/>

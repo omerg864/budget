@@ -1,3 +1,4 @@
+import { cn } from '@/lib/utils';
 import type { AnyFieldApi } from '@tanstack/react-form';
 import type { FC } from 'react';
 import { DatePicker } from '../custom/DatePicker';
@@ -7,13 +8,20 @@ interface FormDateInputProps {
 	field: AnyFieldApi;
 	label: string;
 	required?: boolean;
+	placeholder?: string;
+	className?: string;
 }
 
 const FormDateInput: FC<FormDateInputProps> = ({
 	field,
 	label,
 	required = false,
+	placeholder,
+	className,
 }) => {
+	const hasErrors =
+		!!field.state.meta.errors && field.state.meta.errors.length > 0;
+
 	return (
 		<div className="grid gap-2">
 			<div>
@@ -25,8 +33,13 @@ const FormDateInput: FC<FormDateInputProps> = ({
 			<DatePicker
 				date={field.state.value}
 				setDate={(date) => field.handleChange(date)}
+				placeholder={placeholder}
+				className={cn(
+					hasErrors ? 'border-red-500' : undefined,
+					className,
+				)}
 			/>
-			{field.state.meta.errors ? (
+			{hasErrors ? (
 				<p className="text-xs text-red-500">
 					{field.state.meta.errors
 						.map((error) => error.message)

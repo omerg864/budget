@@ -8,6 +8,7 @@ import { useMemo, type FC } from 'react';
 import CategoryNameFormatter from '../formatters/CategoryNameFormatter.tsx';
 import CurrencyFormatter from '../formatters/CurrencyFormatter';
 import TransactionRecurringFrequencyFormatter from '../formatters/TransactionRecurringFrequencyFormatter';
+import TransactionTypeFormatter from '../formatters/TransactionTypeFormatter';
 
 export type BillCardProps = {
 	bill: RecurringTransactionEntity;
@@ -50,6 +51,10 @@ const BillCard: FC<BillCardProps> = ({
 									key="frequency"
 									value={bill.frequency}
 								/>,
+								<TransactionTypeFormatter
+									key="type"
+									value={bill.type}
+								/>,
 							]}
 						/>
 					</div>
@@ -60,6 +65,7 @@ const BillCard: FC<BillCardProps> = ({
 					amount={bill.amount * (isExpense ? -1 : 1)}
 					currency={bill.currency}
 					signDisplay="always"
+					className="text-nowrap"
 				/>
 			</div>
 		</div>

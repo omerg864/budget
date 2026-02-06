@@ -75,6 +75,7 @@ const Settings: FC = () => {
 						<Button
 							size="icon"
 							className="rounded-full bg-white/20 hover:bg-white/30 text-white border-0 h-10 w-10 backdrop-blur-sm"
+							onClick={() => navigate('/settings/profile')}
 						>
 							<Pencil size={18} />
 						</Button>

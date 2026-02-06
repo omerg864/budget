@@ -1,5 +1,5 @@
 import { useTransferMutation } from '@/api/account.api';
-import { useUserQuery } from '@/api/user.api.ts';
+import { useLedgerQuery } from '@/api/ledger.api';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
 import {
@@ -28,11 +28,11 @@ const formName = 'transfer-form';
 export function TransferForm({ open, onOpenChange }: TransferFormProps) {
 	const { t } = useTranslation('accounts');
 	const { ledgerId } = usePreferencesStore();
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 
 	const transferMutation = useTransferMutation();
 
-	const defaultCurrency = user?.defaultCurrency ?? SupportedCurrencies.ILS;
+	const defaultCurrency = ledger?.currency ?? SupportedCurrencies.ILS;
 
 	const form = useForm({
 		defaultValues: {

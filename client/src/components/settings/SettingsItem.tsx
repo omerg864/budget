@@ -1,5 +1,5 @@
-import { ChevronRight } from 'lucide-react';
 import type { FC } from 'react';
+import ForwardArrow from '../custom/ForwardArrow';
 
 export type SettingsItemProps = {
 	icon: any;
@@ -29,7 +29,7 @@ const SettingsItem: FC<SettingsItemProps> = ({
 				)}
 			</div>
 		</div>
-		<ChevronRight className="text-gray-400" size={20} />
+		<ForwardArrow className="text-gray-400" size={20} />
 	</div>
 );
 

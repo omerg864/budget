@@ -5,9 +5,10 @@ import { Collapsible, CollapsibleContent } from '@/components/ui/collapsible';
 import { cn } from '@/lib/utils';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import type { LedgerCategory } from '@shared/types/ledger.type';
-import { ChevronDown, ChevronRight } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import ForwardArrow from '../custom/ForwardArrow';
 
 interface CategorySelectorProps {
 	ledgerId: string;
@@ -75,7 +76,7 @@ export function CategorySelector({
 						{isOpen ? (
 							<ChevronDown className="ml-1 h-3 w-3" />
 						) : (
-							<ChevronRight className="ml-1 h-3 w-3" />
+							<ForwardArrow className="ml-1 h-3 w-3" />
 						)}
 					</Button>
 				)}

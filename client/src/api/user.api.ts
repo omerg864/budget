@@ -1,9 +1,10 @@
 import { API_ROUTES } from '@shared/constants/routes.constants';
+import type { UpdateUserSchemaType } from '@shared/schemas/user.schemas';
+import type { LedgerUser } from '@shared/types/ledger.type';
 import type { UserEntity } from '@shared/types/user.type';
 import { generateLink } from '@shared/utils/route.utils.ts';
-import { useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
-import type { LedgerUser } from '@shared/types/ledger.type';
 
 export const useUserQuery = () => {
 	return useQuery({
@@ -35,5 +36,26 @@ export const useUsersByLedgerQuery = (ledgerId: string | undefined) => {
 			return data.users;
 		},
 		enabled: !!ledgerId,
+	});
+};
+
+export const useUpdateUserMutation = () => {
+	const queryClient = useQueryClient();
+	return useMutation({
+		mutationFn: async (data: UpdateUserSchemaType) => {
+			const res = await axios.patch<{ user: UserEntity }>(
+				generateLink({
+					route: [API_ROUTES.USER.BASE, API_ROUTES.USER.UPDATE],
+				}),
+				data,
+			);
+			return res.data.user;
+		},
+		onSuccess: (updatedUser) => {
+			queryClient.setQueryData(
+				[API_ROUTES.USER.BASE, API_ROUTES.USER.ME],
+				updatedUser,
+			);
+		},
 	});
 };

@@ -22,6 +22,7 @@ const Settings = lazy(() => import('./pages/Settings'));
 const Ledgers = lazy(() => import('./pages/Ledgers'));
 const Categories = lazy(() => import('./pages/Categories'));
 const Sharing = lazy(() => import('./pages/Sharing'));
+const Profile = lazy(() => import('./pages/Profile'));
 
 function App() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
@@ -29,11 +30,8 @@ function App() {
 
 	useEffect(() => {
 		setZodLocale(i18n.language);
-		// set default language to en if not set
-		if (i18n.language !== 'en') {
-			i18n.changeLanguage('en');
-		}
-	}, [i18n, i18n.language]);
+		document.dir = i18n.dir();
+	}, [i18n]);
 
 	return (
 		<PersistQueryClientProvider
@@ -44,7 +42,7 @@ function App() {
 			}}
 		>
 			<NetworkBanner />
-			<Toaster />
+			<Toaster position="top-center" />
 			<Suspense fallback={<Loader />}>
 				<main className="flex h-full overflow-hidden flex-col bg-slate-50 dark:bg-slate-950">
 					<Routes>
@@ -64,6 +62,10 @@ function App() {
 								element={<Transactions />}
 							/>
 							<Route path="/accounts" element={<Accounts />} />
+							<Route
+								path="/settings/profile"
+								element={<Profile />}
+							/>
 							<Route path="/settings" element={<Settings />} />
 							<Route
 								path="/settings/ledgers"

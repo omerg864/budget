@@ -34,6 +34,9 @@ const FormSelectInput: FC<FormSelectInputProps> = ({
 	children,
 	...props
 }: FormSelectInputProps) => {
+	const hasErrors =
+		!!field.state.meta.errors && field.state.meta.errors.length > 0;
+
 	return (
 		<div className={cn('grid gap-2', containerClassName)}>
 			<div>
@@ -47,12 +50,15 @@ const FormSelectInput: FC<FormSelectInputProps> = ({
 					value={field.state.value}
 					onValueChange={field.handleChange}
 					options={options}
-					className={className}
 					placeholder={placeholder}
+					className={cn(
+						hasErrors ? 'border-red-500' : undefined,
+						className,
+					)}
 					{...props}
 				/>
 			)}
-			{field.state.meta.errors ? (
+			{hasErrors ? (
 				<p className="text-xs text-red-500">
 					{field.state.meta.errors
 						.map((error) => error.message)

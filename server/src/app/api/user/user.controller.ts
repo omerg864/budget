@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   NotFoundException,
   Param,
+  Patch,
   UnauthorizedException,
   UseGuards,
 } from '@nestjs/common';
@@ -16,6 +18,7 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
 import { AuthGuard } from '../auth/auth.guard';
+import { UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
 @Controller(generateLink({ route: [API_ROUTES.USER.BASE] }))
@@ -65,6 +68,20 @@ export class UserController {
       users: users.map((user) =>
         this.userService.resolveUser(user, keyedAccess[user.id].role),
       ),
+    };
+  }
+
+  @Patch(API_ROUTES.USER.UPDATE)
+  async updateMe(
+    @User() user: UserEntity,
+    @Body() body: UpdateUserDto,
+  ): Promise<{ user: UserEntity }> {
+    const updatedUser = await this.userService.update(user.id, body);
+    if (!updatedUser) {
+      throw new NotFoundException(this.i18n.t('errorMessages.user.notFound'));
+    }
+    return {
+      user: updatedUser,
     };
   }
 }

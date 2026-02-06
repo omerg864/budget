@@ -2,7 +2,6 @@ import { useAccountsQuery } from '@/api/account.api';
 import { useCreditsQuery } from '@/api/credit.api.ts';
 import { useGetAllReversedExchangeRates } from '@/api/currency.api';
 import { useLedgerQuery } from '@/api/ledger.api';
-import { useUserQuery } from '@/api/user.api.ts';
 import AccountCard from '@/components/account/AccountCard.tsx';
 import { AccountForm } from '@/components/account/AccountForm';
 import { TransferForm } from '@/components/account/TransferForm.tsx';
@@ -16,7 +15,7 @@ import PageTitle from '@/components/layout/PageTitle.tsx';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
-import { SupportedCurrencies } from '@shared/constants/currency.constants.ts';
+import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { convertCurrency } from '@shared/services/transaction.shared-service';
 import type { AccountEntity } from '@shared/types/account.type';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
@@ -34,7 +33,6 @@ import { useTranslation } from 'react-i18next';
 export default function Accounts() {
 	const { t } = useTranslation('accounts');
 	const { ledgerId } = usePreferencesStore();
-	const { data: user, isLoading: isLoadingUser } = useUserQuery();
 	const { data: ledger, isLoading: isLoadingLedger } = useLedgerQuery(
 		ledgerId ?? undefined,
 	);
@@ -90,7 +88,6 @@ export default function Accounts() {
 	});
 
 	const isLoading =
-		isLoadingUser ||
 		isLoadingAccounts ||
 		isLoadingCredits ||
 		isLoadingExchangeRates ||
@@ -169,7 +166,7 @@ export default function Accounts() {
 										<CurrencyFormatter
 											amount={totalAccountsBalance}
 											currency={
-												user?.defaultCurrency ??
+												ledger?.currency ??
 												SupportedCurrencies.ILS
 											}
 										/>

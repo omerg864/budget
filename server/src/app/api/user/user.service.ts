@@ -28,4 +28,11 @@ export class UserService {
       role,
     };
   }
+
+  async update(
+    id: string,
+    data: Partial<UserEntity>,
+  ): Promise<UserEntity | null> {
+    return this.userProvider.update(id, data);
+  }
 }

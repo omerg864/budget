@@ -7,7 +7,6 @@ export type FormErrorsProps = {
 };
 
 function FormErrors({ form, path }: FormErrorsProps) {
-	console.log(form.getAllErrors());
 	return (
 		<form.Subscribe
 			selector={(state) => state.errors}

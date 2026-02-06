@@ -23,4 +23,11 @@ export class UserProvider {
     }
     return this.userModel.find(query);
   }
+
+  async update(
+    id: string,
+    data: Partial<UserEntity>,
+  ): Promise<UserEntity | null> {
+    return this.userModel.findByIdAndUpdate(id, data, { new: true });
+  }
 }

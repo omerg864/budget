@@ -1,10 +1,10 @@
+import { useLedgerQuery } from '@/api/ledger.api';
 import {
 	useCreateRecurringTransactionMutation,
 	useDeleteRecurringTransactionMutation,
 	useUpdateRecurringTransactionMutation,
 	type CreateRecurringTransactionDto,
 } from '@/api/recurring-transaction.api';
-import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import {
@@ -37,7 +37,7 @@ const formName = 'bill-form';
 export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 	const { t } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
-	const { data: user } = useUserQuery();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 	const [formState, setFormState] = useState<'base' | 'details'>('base');
 
 	const createMutation = useCreateRecurringTransactionMutation();
@@ -48,7 +48,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 		defaultValues: {
 			description: '',
 			amount: 0,
-			currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+			currency: ledger?.currency ?? SupportedCurrencies.ILS,
 			paymentId: '',
 			paymentType: 'account',
 			ledgerId: ledgerId || '',
@@ -159,7 +159,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 					description: '',
 					type: TransactionType.EXPENSE,
 					amount: 0,
-					currency: user?.defaultCurrency ?? SupportedCurrencies.ILS,
+					currency: ledger?.currency ?? SupportedCurrencies.ILS,
 					ledgerId: ledgerId || '',
 					startDate: new Date(),
 					endDate: undefined,
@@ -169,7 +169,7 @@ export function BillForm({ open, onOpenChange, billToEdit }: BillFormProps) {
 				});
 			}
 		}
-	}, [open, billToEdit, form, ledgerId, user]);
+	}, [open, billToEdit, form, ledgerId, ledger]);
 
 	return (
 		<AppearingModalForm

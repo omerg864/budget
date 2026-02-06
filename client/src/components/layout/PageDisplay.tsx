@@ -1,5 +1,5 @@
 import type { FC, PropsWithChildren, ReactNode } from 'react';
-import { Loader } from '../custom/Loader.tsx';
+import { Loader } from '../custom/Loader';
 
 export type PageDisplayProps = PropsWithChildren & {
 	isLoading?: boolean;
