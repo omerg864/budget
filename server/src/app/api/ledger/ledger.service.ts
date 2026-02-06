@@ -1,9 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Types } from 'mongoose';
+import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
+import { defaultCategories } from 'src/constants/ledger.constants';
 import {
   LedgerCategory,
   LedgerEntity,
 } from '../../../../../shared/types/ledger.type';
+import { I18nPath } from '../../modules/i18n/i18n.types';
 import { LedgerAccess } from '../../modules/ledgerAccess/ledgerAccess.model';
 import { AccountService } from '../account/account.service';
 import { CreditService } from '../credit/credit.service';
@@ -20,10 +23,20 @@ export class LedgerService {
     private readonly recurringTransactionService: RecurringTransactionService,
     private readonly creditService: CreditService,
     private readonly accountService: AccountService,
+    private readonly i18n: AppI18nService,
   ) {}
 
   async create(data: Omit<LedgerEntity, 'id'>): Promise<LedgerEntity> {
-    return this.ledgerProvider.create(data);
+    return this.ledgerProvider.create({
+      ...data,
+      categories: defaultCategories.map(
+        (category) =>
+          ({
+            ...category,
+            name: this.i18n.t(`categories.${category.name}` as I18nPath),
+          }) as LedgerCategory,
+      ),
+    });
   }
 
   async findByIds(ids: string[]): Promise<LedgerEntity[]> {

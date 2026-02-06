@@ -10,7 +10,6 @@ import type { LedgerEntity } from '@shared/types/ledger.type';
 import { generateLink } from '@shared/utils/route.utils';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import axios from '../lib/clients/axios.client';
-import { usePreferencesStore } from '../stores/usePreferences';
 
 export const useLedgerQuery = (id?: string) => {
 	return useQuery({
@@ -220,45 +219,67 @@ export const useDeleteCategoryMutation = () => {
 };
 
 export const useAddUserMutation = () => {
-	const { ledgerId } = usePreferencesStore();
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (values: {
-			email: string;
-			role: LedgerAccessRole;
+		mutationFn: async ({
+			ledgerId,
+			values,
+		}: {
+			ledgerId: string;
+			values: {
+				email: string;
+				role: LedgerAccessRole;
+			};
 		}) => {
-			if (!ledgerId) throw new Error('No ledger selected');
 			await axios.post(
-				API_ROUTES.LEDGER.ADD_USER.replace(':id', ledgerId),
+				generateLink({
+					route: [API_ROUTES.LEDGER.BASE, API_ROUTES.LEDGER.ADD_USER],
+					params: { id: ledgerId },
+				}),
 				values,
 			);
 		},
-		onSuccess: () => {
+		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({
-				queryKey: ['ledgerUsers', ledgerId],
+				queryKey: [
+					API_ROUTES.USER.BASE,
+					API_ROUTES.USER.LEDGER,
+					variables.ledgerId,
+				],
 			});
 		},
 	});
 };
 
 export const useRemoveUserMutation = () => {
-	const { ledgerId } = usePreferencesStore();
 	const queryClient = useQueryClient();
 
 	return useMutation({
-		mutationFn: async (userId: string) => {
-			if (!ledgerId) throw new Error('No ledger selected');
+		mutationFn: async ({
+			ledgerId,
+			userId,
+		}: {
+			ledgerId: string;
+			userId: string;
+		}) => {
 			await axios.delete(
-				API_ROUTES.LEDGER.REMOVE_USER.replace(':id', ledgerId).replace(
-					':userId',
-					userId,
-				),
+				generateLink({
+					route: [
+						API_ROUTES.LEDGER.BASE,
+						API_ROUTES.LEDGER.REMOVE_USER,
+					],
+					params: { id: ledgerId, userId },
+				}),
 			);
 		},
-		onSuccess: () => {
+		onSuccess: (_, variables) => {
 			queryClient.invalidateQueries({
-				queryKey: ['ledgerUsers', ledgerId],
+				queryKey: [
+					API_ROUTES.USER.BASE,
+					API_ROUTES.USER.LEDGER,
+					variables.ledgerId,
+				],
 			});
 		},
 	});

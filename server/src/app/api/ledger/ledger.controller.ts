@@ -296,14 +296,14 @@ export class LedgerController {
         this.i18n.t('errorMessages.ledger.deleteForbidden'),
       );
     }
-    const access = await this.ledgerAccessService.findByLedgerIdAndUserId(
+    const userAccess = await this.ledgerAccessService.findByLedgerIdAndUserId(
       ledgerId,
       userId,
     );
-    if (!access) {
+    if (!userAccess) {
       throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
     }
-    if (access.role !== LedgerAccessRole.OWNER && user.id !== userId) {
+    if (userAccess.role === LedgerAccessRole.OWNER) {
       throw new ForbiddenException(
         this.i18n.t('errorMessages.ledger.deleteForbidden'),
       );
@@ -319,10 +319,14 @@ export class LedgerController {
     if (!ledger) {
       throw new NotFoundException(this.i18n.t('errorMessages.ledger.notFound'));
     }
+    const access = await this.ledgerAccessService.findByLedgerIdAndUserId(
+      ledgerId,
+      user.id,
+    );
     return this.ledgerService.resolveLedger(ledger, {
       ledgerId: ledger.id,
       userId: user.id,
-      role: access.role,
+      role: access!.role,
     });
   }
 

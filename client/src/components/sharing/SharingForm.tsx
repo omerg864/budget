@@ -1,4 +1,5 @@
 import { useAddUserMutation } from '@/api/ledger.api';
+import { usePreferencesStore } from '@/stores/usePreferences';
 import { AddUserSchema } from '@shared/schemas/ledger.schemas';
 import { useForm } from '@tanstack/react-form';
 import { useMemo, type FC } from 'react';
@@ -19,6 +20,7 @@ const formName = 'sharing-form';
 
 export const SharingForm: FC<SharingFormProps> = ({ open, onOpenChange }) => {
 	const { t } = useTranslation('sharing');
+	const { ledgerId } = usePreferencesStore();
 	const { mutateAsync: addUser, isPending } = useAddUserMutation();
 
 	const roleOptions = useMemo(
@@ -50,7 +52,7 @@ export const SharingForm: FC<SharingFormProps> = ({ open, onOpenChange }) => {
 		},
 		onSubmit: async ({ value }) => {
 			try {
-				await addUser(value);
+				await addUser({ ledgerId: ledgerId!, values: value });
 				toast.success(t('userAdded'));
 				form.reset();
 				onOpenChange(false);
