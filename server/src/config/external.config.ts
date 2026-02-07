@@ -1,12 +1,7 @@
 import z from 'zod';
 
 export const configurationSchema = z.object({
-  EMAIL_HOST: z.string(),
-  EMAIL_PORT: z.string(),
-  EMAIL_SECURE: z.string(),
-  EMAIL_USERNAME: z.string(),
-  EMAIL_PASSWORD: z.string(),
-  EMAIL_ADDRESS: z.string(),
+  CURRENCY_API_KEY: z.string(),
 });
 
 export type Configuration = z.infer<typeof configurationSchema>;

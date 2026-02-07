@@ -52,10 +52,7 @@ export class LedgerController {
     @User() user: UserEntity,
     @Body() createLedgerDto: CreateLedgerDto,
   ): Promise<Ledger> {
-    const ledger = await this.ledgerService.create({
-      ...createLedgerDto,
-      categories: [],
-    });
+    const ledger = await this.ledgerService.create(createLedgerDto);
     await this.ledgerAccessService.create({
       ledgerId: ledger.id,
       userId: user.id,

@@ -1,14 +1,7 @@
 import { passkey } from '@better-auth/passkey';
-import {
-  LedgerAccessRole,
-  SupportedIcons,
-} from '@shared/constants/ledger.constants';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
-import { MongoClient, ObjectId } from 'mongodb';
-import { I18nContext } from 'nestjs-i18n';
-import { defaultCategories } from '../constants/ledger.constants';
-import { SupportedCurrencies } from '@shared/constants/currency.constants';
+import { MongoClient } from 'mongodb';
 
 let client: MongoClient;
 
@@ -25,51 +18,7 @@ function getClient(): MongoClient {
 
 export const auth = betterAuth({
   database: mongodbAdapter(getClient().db()),
-  databaseHooks: {
-    user: {
-      create: {
-        // Runs AFTER the user is saved to MongoDB
-        after: async (user) => {
-          const lang = I18nContext.current()?.lang;
-          const db = getClient().db();
-          const ledgerResult = await db.collection('ledgers').insertOne({
-            name: 'Ledger',
-            categories: defaultCategories.map((category) => ({
-              ...category,
-              name:
-                I18nContext.current()?.t(`categories.${category.name}`, {
-                  lang,
-                }) || category.name,
-            })),
-            icon: SupportedIcons.Home,
-            color: '#FF0000',
-            currency: SupportedCurrencies.USD,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
-          await db.collection('user').updateOne(
-            { _id: new ObjectId(user.id) },
-            {
-              $set: {
-                defaultLedgerId: ledgerResult.insertedId,
-              },
-            },
-          );
-          await db.collection('ledgeraccesses').insertOne({
-            userId: user.id,
-            ledgerId: ledgerResult.insertedId.toString(),
-            role: LedgerAccessRole.OWNER,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-          });
-
-          console.log(
-            `User ${user.id} linked to Ledger ${ledgerResult.insertedId.toString()}`,
-          );
-        },
-      },
-    },
-  },
+  hooks: {},
   user: {
     additionalFields: {
       defaultLedgerId: {

@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  Logger,
   NotFoundException,
   Param,
   Patch,
@@ -24,6 +25,7 @@ import { UserService } from './user.service';
 @Controller(generateLink({ route: [API_ROUTES.USER.BASE] }))
 @UseGuards(AuthGuard)
 export class UserController {
+  private readonly logger = new Logger(UserController.name);
   constructor(
     private readonly userService: UserService,
     private readonly ledgerAccessService: LedgerAccessService,
@@ -33,6 +35,8 @@ export class UserController {
   @Get(API_ROUTES.USER.ME)
   async getMe(@User() user: UserEntity): Promise<{ user: UserEntity }> {
     const userEntity = await this.userService.findOne(user.id);
+    this.logger.debug(this.i18n.t('errorMessages.user.notFound'));
+
     if (!userEntity) {
       throw new NotFoundException(this.i18n.t('errorMessages.user.notFound'));
     }

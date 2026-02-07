@@ -5,7 +5,9 @@ import { API_ROUTES } from '../../shared/constants/routes.constants';
 import { AppModule } from './app.module';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, {
+    bodyParser: false,
+  });
 
   // Enable CORS for frontend
   app.enableCors({

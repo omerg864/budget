@@ -28,12 +28,16 @@ export class EmailService {
     text,
     html,
   }: SendEmailOptions): Promise<boolean> {
-    const EMAIL_SERVICE = this.configService.get<string>('EMAIL_SERVICE');
+    const EMAIL_HOST = this.configService.get<string>('EMAIL_HOST');
+    const EMAIL_PORT = this.configService.get<string>('EMAIL_PORT');
+    const EMAIL_SECURE = this.configService.get<string>('EMAIL_SECURE');
     const EMAIL_USERNAME = this.configService.get<string>('EMAIL_USERNAME');
     const EMAIL_PASSWORD = this.configService.get<string>('EMAIL_PASSWORD');
     const EMAIL_ADDRESS = this.configService.get<string>('EMAIL_ADDRESS');
     if (
-      !EMAIL_SERVICE ||
+      !EMAIL_HOST ||
+      !EMAIL_PORT ||
+      !EMAIL_SECURE ||
       !EMAIL_USERNAME ||
       !EMAIL_PASSWORD ||
       !EMAIL_ADDRESS
@@ -45,7 +49,9 @@ export class EmailService {
     }
 
     const transporter = createTransport({
-      service: EMAIL_SERVICE,
+      host: EMAIL_HOST,
+      port: Number(EMAIL_PORT),
+      secure: EMAIL_SECURE === 'true',
       auth: {
         user: EMAIL_USERNAME,
         pass: EMAIL_PASSWORD,
@@ -53,7 +59,7 @@ export class EmailService {
     });
 
     const mailOptions = {
-      from: EMAIL_ADDRESS,
+      from: `"Budget App" <${EMAIL_ADDRESS}>`,
       to: Array.isArray(receiver) ? receiver.join(',') : receiver,
       subject,
       text,

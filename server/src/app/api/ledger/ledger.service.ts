@@ -26,7 +26,9 @@ export class LedgerService {
     private readonly i18n: AppI18nService,
   ) {}
 
-  async create(data: Omit<LedgerEntity, 'id'>): Promise<LedgerEntity> {
+  async create(
+    data: Omit<LedgerEntity, 'id' | 'categories'>,
+  ): Promise<LedgerEntity> {
     return this.ledgerProvider.create({
       ...data,
       categories: defaultCategories.map(

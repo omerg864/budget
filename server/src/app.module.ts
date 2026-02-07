@@ -18,7 +18,6 @@ import { LedgerModule } from './app/api/ledger/ledger.module';
 import { RecurringTransactionModule } from './app/api/recurringTransaction/recurringTransaction.module';
 import { TransactionModule } from './app/api/transaction/transaction.module';
 import { UserModule } from './app/api/user/user.module';
-import { EmailModule } from './app/modules/email/email.module';
 import { AppI18nModule } from './app/modules/i18n/app-i18n.module';
 import appConfig from './config/app.config';
 import authConfig from './config/auth.config';
@@ -67,7 +66,7 @@ import emailConfig from './config/email.config';
     I18nModule.forRoot({
       fallbackLanguage: 'en',
       loaderOptions: {
-        path: path.join(__dirname, './locale/'),
+        path: path.join(__dirname, './i18n/'),
         watch: true,
       },
       resolvers: [
@@ -77,7 +76,6 @@ import emailConfig from './config/email.config';
       ],
     }),
     AppI18nModule,
-    AuthModule,
     UserModule,
     LedgerModule,
     AccountModule,
@@ -85,7 +83,7 @@ import emailConfig from './config/email.config';
     CurrencyModule,
     TransactionModule,
     RecurringTransactionModule,
-    EmailModule,
+    AuthModule,
   ],
 })
 export class AppModule {}

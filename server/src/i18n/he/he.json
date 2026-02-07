@@ -1,13 +1,16 @@
 {
   "categories": {
-    "groceries": "Groceries",
-    "transport": "Transport",
-    "housing": "Housing",
-    "utilities": "Utilities",
-    "entertainment": "Entertainment",
-    "salary": "Salary"
+    "groceries": "קניות",
+    "transport": "תחבורה",
+    "housing": "דיור",
+    "utilities": "חשבונות",
+    "entertainment": "בילויים",
+    "salary": "משכורת"
   },
   "errorMessages": {
+    "user": {
+      "notFound": "המשתמש לא נמצא"
+    },
     "common": {
       "unauthorized": "Not authenticated",
       "forbidden": "Access denied"
@@ -39,22 +42,6 @@
     "recurringTransaction": {
       "notFound": "Recurring transaction not found",
       "accessDenied": "You do not have access to this recurring transaction"
-    },
-    "user": {
-      "notFound": "User not found"
-    },
-    "currency": {
-      "invalidCurrency": "Invalid currency"
-    }
-  },
-  "templates": {
-    "shareLedger": {
-      "title": "Ledger Sharing Invitation",
-      "greeting": "Hello {{name}},",
-      "body": "You have been invited to join the ledger <strong>{{ledgerName}}</strong>.",
-      "action": "Access Ledger",
-      "ignore": "If you did not expect this invitation, you can safely ignore this email.",
-      "subject": "You have been invited to join {{ledgerName}}"
     }
   }
 }
