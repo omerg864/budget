@@ -3,7 +3,7 @@ import { ConfigService } from '@nestjs/config';
 import * as ejs from 'ejs';
 import { AppI18nService } from '../i18n/app-i18n.service';
 
-import { createTransport } from 'nodemailer';
+import { createTransport, Transporter } from 'nodemailer';
 import * as path from 'path';
 
 type SendEmailOptions = {
@@ -16,11 +16,22 @@ type SendEmailOptions = {
 @Injectable()
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
+  private readonly transporter: Transporter;
 
   constructor(
     private readonly configService: ConfigService,
     private readonly i18n: AppI18nService,
-  ) {}
+  ) {
+    this.transporter = createTransport({
+      host: this.configService.get<string>('EMAIL_HOST'),
+      port: Number(this.configService.get<string>('EMAIL_PORT')),
+      secure: this.configService.get<string>('EMAIL_SECURE') === 'true',
+      auth: {
+        user: this.configService.get<string>('EMAIL_USERNAME'),
+        pass: this.configService.get<string>('EMAIL_PASSWORD'),
+      },
+    });
+  }
 
   private async sendEmail({
     receiver,
@@ -28,35 +39,13 @@ export class EmailService {
     text,
     html,
   }: SendEmailOptions): Promise<boolean> {
-    const EMAIL_HOST = this.configService.get<string>('EMAIL_HOST');
-    const EMAIL_PORT = this.configService.get<string>('EMAIL_PORT');
-    const EMAIL_SECURE = this.configService.get<string>('EMAIL_SECURE');
-    const EMAIL_USERNAME = this.configService.get<string>('EMAIL_USERNAME');
-    const EMAIL_PASSWORD = this.configService.get<string>('EMAIL_PASSWORD');
     const EMAIL_ADDRESS = this.configService.get<string>('EMAIL_ADDRESS');
-    if (
-      !EMAIL_HOST ||
-      !EMAIL_PORT ||
-      !EMAIL_SECURE ||
-      !EMAIL_USERNAME ||
-      !EMAIL_PASSWORD ||
-      !EMAIL_ADDRESS
-    ) {
+    if (!EMAIL_ADDRESS) {
       this.logger.error(
         'Missing email configuration in environment variables.',
       );
       return false;
     }
-
-    const transporter = createTransport({
-      host: EMAIL_HOST,
-      port: Number(EMAIL_PORT),
-      secure: EMAIL_SECURE === 'true',
-      auth: {
-        user: EMAIL_USERNAME,
-        pass: EMAIL_PASSWORD,
-      },
-    });
 
     const mailOptions = {
       from: `"Budget App" <${EMAIL_ADDRESS}>`,
@@ -70,7 +59,7 @@ export class EmailService {
 
     for (let attempt = 1; attempt <= 3 && !success; attempt++) {
       try {
-        await transporter.sendMail(mailOptions);
+        await this.transporter.sendMail(mailOptions);
         success = true;
       } catch (error) {
         this.logger.error(`Email send failed (attempt ${attempt}):`, error);
@@ -82,6 +71,7 @@ export class EmailService {
 
     return success;
   }
+
   async sendLedgerShareEmail(
     email: string,
     ledgerName: string,
@@ -90,7 +80,7 @@ export class EmailService {
   ): Promise<boolean> {
     const templatePath = path.join(
       process.cwd(),
-      'dist/server/src/templates/share-ledger.ejs',
+      './app/modules/email/templates/share-ledger.ejs',
     );
 
     const html = await ejs.renderFile(templatePath, {
@@ -99,6 +89,7 @@ export class EmailService {
       name,
       t: (key: string, args?: any) => this.i18n.t(key as any, { args }),
     });
+
     return this.sendEmail({
       receiver: email,
       subject: this.i18n.t('templates.shareLedger.subject', {
