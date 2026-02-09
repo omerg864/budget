@@ -14,6 +14,8 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { AccountEntity } from '@shared/types/account.type';
+import { CreditEntity } from '@shared/types/credit.type';
 import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
@@ -76,16 +78,13 @@ export class TransactionController {
         this.i18n.t('errorMessages.payment.accessDenied'),
       );
     }
-    const ledger = (await this.ledgerService.findOne(
-      createTransactionDto.ledgerId,
-    ))!;
 
     return this.transactionService.create(
       {
         ...createTransactionDto,
         userId: user.id,
       },
-      ledger,
+      payment,
     );
   }
 
@@ -200,47 +199,52 @@ export class TransactionController {
       );
     }
 
+    const targetLedgerId =
+      updateTransactionDto.ledgerId || transaction.ledgerId;
+
+    let newPayment: AccountEntity | CreditEntity | null = null;
+    const currentPayment = await this.paymentService.getPayment(
+      transaction.paymentId,
+      transaction.paymentType,
+    );
     if (updateTransactionDto.paymentId && updateTransactionDto.paymentType) {
-      const payment = await this.paymentService.getPayment(
+      newPayment = await this.paymentService.getPayment(
         updateTransactionDto.paymentId,
         updateTransactionDto.paymentType,
       );
-      if (!payment) {
+      if (!newPayment) {
         throw new NotFoundException(
           this.i18n.t('errorMessages.payment.notFound'),
         );
       }
 
-      const targetLedgerId =
-        updateTransactionDto.ledgerId || transaction.ledgerId;
-
-      if (payment.ledgerId !== targetLedgerId) {
+      if (newPayment.ledgerId !== targetLedgerId) {
         throw new UnauthorizedException(
           this.i18n.t('errorMessages.payment.accessDenied'),
         );
       }
+    }
 
-      if (transaction.ledgerId !== targetLedgerId) {
-        const hasAccessToNewLedger =
-          await this.ledgerAccessService.doesUserHaveAccessToTransactionAction(
-            targetLedgerId,
-            user.id,
-            'write',
-          );
-        if (!hasAccessToNewLedger) {
-          throw new UnauthorizedException(
-            this.i18n.t('errorMessages.ledger.accessDenied'),
-          );
-        }
+    if (transaction.ledgerId !== targetLedgerId) {
+      const hasAccessToNewLedger =
+        await this.ledgerAccessService.doesUserHaveAccessToTransactionAction(
+          targetLedgerId,
+          user.id,
+          'write',
+        );
+      if (!hasAccessToNewLedger) {
+        throw new UnauthorizedException(
+          this.i18n.t('errorMessages.ledger.accessDenied'),
+        );
       }
     }
-    const ledger = (await this.ledgerService.findOne(transaction.ledgerId))!;
 
     const updatedTransaction = await this.transactionService.update(
       id,
       updateTransactionDto,
       transaction,
-      ledger,
+      currentPayment,
+      newPayment,
     );
 
     if (!updatedTransaction) {

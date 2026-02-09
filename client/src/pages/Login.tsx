@@ -86,7 +86,7 @@ export default function Login() {
 	};
 
 	return (
-		<div>
+		<div className="flex min-h-screen flex-col">
 			<HomeHeader />
 			<div className="flex flex-1 items-center justify-center px-4">
 				<Card className="w-full max-w-md border-none shadow-xl dark:bg-slate-900">
@@ -130,6 +130,14 @@ export default function Login() {
 									/>
 								)}
 							/>
+							<div className="flex justify-end">
+								<Link
+									to="/forgot-password"
+									className="text-sm underline underline-offset-4 hover:text-primary"
+								>
+									{t('forgotPassword')}
+								</Link>
+							</div>
 							<Button
 								className="w-full"
 								type="submit"

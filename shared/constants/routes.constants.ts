@@ -22,6 +22,7 @@ export const API_ROUTES = {
 		DELETE_CATEGORY: '/:id/category/:categoryId',
 		REMOVE_USER: '/remove/:id/:userId',
 		ADD_USER: '/add/:id',
+		ACCEPT_SHARE: '/share/accept',
 		DELETE: '/:id',
 	},
 	ACCOUNT: {
@@ -64,6 +65,11 @@ export const API_ROUTES = {
 		GET_EXCHANGE_RATE: '/exchange-rate',
 		GET_ALL_EXCHANGE_RATES: '/exchange-rates',
 		GET_ALL_REVERSED_EXCHANGE_RATES: '/exchange-rates/reversed',
+	},
+	JOB: {
+		BASE: '/v1/job',
+		CREATE_RECURRING_TRANSACTIONS: '/recurring-transactions',
+		CHARGE_CREDITS_OF_MONTH: '/charge-credits-of-month',
 	},
 };
 

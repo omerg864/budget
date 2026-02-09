@@ -21,6 +21,10 @@ export class CreditProvider {
     return this.creditModel.find({ deletedAt: null });
   }
 
+  async findByIds(ids: string[]): Promise<CreditEntity[]> {
+    return this.creditModel.find({ _id: { $in: ids }, deletedAt: null });
+  }
+
   async findByLedgerId(ledgerId: string): Promise<CreditEntity[]> {
     return this.creditModel.find({ ledgerId, deletedAt: null });
   }
@@ -44,10 +48,50 @@ export class CreditProvider {
     );
   }
 
-  async delete(id: string): Promise<CreditEntity | null> {
+  async delete(id: CreditEntity['id']): Promise<CreditEntity | null> {
     return this.creditModel.findByIdAndUpdate(
       id,
       { deletedAt: new Date() },
+      { new: true },
+    );
+  }
+
+  async updateAmount(
+    id: string,
+    operation: 'increment' | 'decrement',
+    amount: number,
+  ): Promise<CreditEntity | null> {
+    if (operation === 'increment') {
+      return this.incrementAmount(id, amount);
+    }
+    return this.decrementAmount(id, amount);
+  }
+
+  async updateByAccountId(accountId: string, data: Partial<CreditEntity>) {
+    return this.creditModel.updateMany(
+      { accountId, deletedAt: null },
+      { $set: data },
+    );
+  }
+
+  private async decrementAmount(
+    id: string,
+    amount: number,
+  ): Promise<CreditEntity | null> {
+    return this.creditModel.findByIdAndUpdate(
+      id,
+      { $inc: { amount: -amount } },
+      { new: true },
+    );
+  }
+
+  private async incrementAmount(
+    id: string,
+    amount: number,
+  ): Promise<CreditEntity | null> {
+    return this.creditModel.findByIdAndUpdate(
+      id,
+      { $inc: { amount } },
       { new: true },
     );
   }

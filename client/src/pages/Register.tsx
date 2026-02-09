@@ -10,6 +10,7 @@ import {
 } from '@/components/ui/card';
 import { authClient } from '@/lib/clients/auth.client';
 import { useAuthStore } from '@/stores/useAuthStore.ts';
+import { generateLink } from '@shared/utils/route.utils';
 import { useForm } from '@tanstack/react-form';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -44,6 +45,10 @@ export default function Register() {
 				email: value.email,
 				password: value.password,
 				name: value.name,
+				callbackURL: generateLink({
+					baseUrl: window.location.origin,
+					route: [CLIENT_ROUTES.LOGIN],
+				}),
 			});
 			if (error) {
 				toast.error(error.message || 'Failed to sign up');
@@ -69,7 +74,7 @@ export default function Register() {
 	};
 
 	return (
-		<div>
+		<div className="flex min-h-screen flex-col">
 			<HomeHeader />
 			<div className="flex flex-1 items-center justify-center px-4">
 				<Card className="w-full max-w-md border-none shadow-xl dark:bg-slate-900">

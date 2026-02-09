@@ -39,6 +39,10 @@ export class RecurringTransactionProvider {
     return this.recurringTransactionModel.findById(id);
   }
 
+  async findAll(): Promise<RecurringTransactionEntity[]> {
+    return this.recurringTransactionModel.find();
+  }
+
   async update(
     id: string,
     data: Partial<RecurringTransactionEntity>,

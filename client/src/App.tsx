@@ -14,6 +14,8 @@ import { useAuthStore } from './stores/useAuthStore.ts';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'));
+const ResetPassword = lazy(() => import('./pages/ResetPassword'));
 const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Summary = lazy(() => import('./pages/Summary'));
 const Transactions = lazy(() => import('./pages/Transactions'));
@@ -45,7 +47,7 @@ function App() {
 			<NetworkBanner />
 			<Toaster position="top-center" />
 			<Suspense fallback={<Loader />}>
-				<main className="flex h-full overflow-hidden flex-col bg-slate-50 dark:bg-slate-950">
+				<main className="flex h-full overflow-auto flex-col bg-slate-50 dark:bg-slate-950">
 					<Routes>
 						{!isAuthenticated && (
 							<Route path="/" element={<Home />} />
@@ -57,6 +59,14 @@ function App() {
 						)}
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
+						<Route
+							path="/forgot-password"
+							element={<ForgotPassword />}
+						/>
+						<Route
+							path="/reset-password"
+							element={<ResetPassword />}
+						/>
 						<Route path="/verify-email" element={<VerifyEmail />} />
 						<Route element={<AuthenticatedRoute />}>
 							<Route

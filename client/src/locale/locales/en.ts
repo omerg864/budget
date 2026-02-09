@@ -101,6 +101,7 @@ export default {
 		dontHaveAccount: "Don't have an account?",
 		signUp: 'Sign up',
 		error: 'Failed to sign in',
+		forgotPassword: 'Forgot password?',
 	},
 	register: {
 		title: 'Create an account',
@@ -359,5 +360,26 @@ export default {
 			update: 'Failed to update profile',
 		},
 		save: 'Save',
+	},
+	forgotPassword: {
+		title: 'Forgot Password',
+		description: 'Enter your email to receive a password reset link',
+		email: 'Email',
+		submit: 'Send Reset Link',
+		backToLogin: 'Back to Login',
+		success:
+			'If an account exists with this email, you will receive a password reset link shortly.',
+		error: 'Failed to send reset link',
+	},
+	resetPassword: {
+		title: 'Reset Password',
+		description: 'Enter your new password below',
+		password: 'New Password',
+		confirmPassword: 'Confirm Password',
+		submit: 'Reset Password',
+		success: 'Password reset successfully',
+		error: 'Failed to reset password',
+		backToLogin: 'Back to Login',
+		passwordMismatch: 'Passwords do not match',
 	},
 };

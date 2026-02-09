@@ -43,5 +43,17 @@
       "notFound": "Recurring transaction not found",
       "accessDenied": "You do not have access to this recurring transaction"
     }
+  },
+  "templates": {
+    "resetPassword": {
+      "subject": "Reset your password",
+      "title": "Reset Your Password",
+      "greeting": "Hello {name}",
+      "message": "We received a request to reset your password. Click the button below to choose a new one.",
+      "button": "Reset Password",
+      "linkAlt": "Or copy and paste this link into your browser:",
+      "footer": "If you didn't request a password reset, you can safely ignore this email.",
+      "expiration": "הקישור יפוג בעוד שבוע."
+    }
   }
 }

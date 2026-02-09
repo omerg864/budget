@@ -45,11 +45,16 @@ import { AuthService } from './auth.service';
             emailAndPassword: {
               enabled: true,
               requireEmailVerification: true,
+              sendResetPassword: async ({ user, url }) => {
+                await authService.handlePasswordReset(user, url);
+              },
+              resetPasswordTokenExpiresIn: 60 * 60 * 24 * 7, // 1 week
             },
             emailVerification: {
               sendVerificationEmail: async ({ user, url }) => {
                 await authService.handleEmailVerification(user, url);
               },
+              sendOnSignIn: true,
             },
             socialProviders: {
               google: {

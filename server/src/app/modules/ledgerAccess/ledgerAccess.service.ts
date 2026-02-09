@@ -1,12 +1,22 @@
 import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { LedgerAccessRole } from '@shared/constants/ledger.constants';
+import {
+  createCipheriv,
+  createDecipheriv,
+  randomBytes,
+  scryptSync,
+} from 'crypto';
 import { LedgerAccessEntity } from '../../../types/ledgerAccess.type';
 import { LedgerAccess } from './ledgerAccess.model';
 import { LedgerAccessProvider } from './ledgerAccess.provider';
 
 @Injectable()
 export class LedgerAccessService {
-  constructor(private readonly ledgerAccessProvider: LedgerAccessProvider) {}
+  constructor(
+    private readonly ledgerAccessProvider: LedgerAccessProvider,
+    private readonly configService: ConfigService,
+  ) {}
 
   async create(data: LedgerAccessEntity): Promise<LedgerAccess> {
     return this.ledgerAccessProvider.create(data);
@@ -141,5 +151,39 @@ export class LedgerAccessService {
       case 'delete':
         return ledgerAccess.role !== LedgerAccessRole.READ_ONLY;
     }
+  }
+
+  private getKey(): Buffer {
+    const secret = this.configService.get<string>('SHARE_SECRET_KEY')!;
+    return scryptSync(secret, 'salt', 32);
+  }
+
+  generateInviteToken(
+    email: string,
+    role: LedgerAccessRole,
+    ledgerId: string,
+  ): string {
+    const key = this.getKey();
+    const iv = randomBytes(16);
+    const cipher = createCipheriv('aes-256-ctr', key, iv);
+    const data = JSON.stringify({ email, role, ledgerId });
+    const encrypted = Buffer.concat([cipher.update(data), cipher.final()]);
+    return `${iv.toString('hex')}:${encrypted.toString('hex')}`;
+  }
+
+  decryptInviteToken(token: string): {
+    email: string;
+    role: LedgerAccessRole;
+    ledgerId: string;
+  } {
+    const [ivHex, encryptedHex] = token.split(':');
+    const key = this.getKey();
+    const iv = Buffer.from(ivHex, 'hex');
+    const decipher = createDecipheriv('aes-256-ctr', key, iv);
+    const decrypted = Buffer.concat([
+      decipher.update(Buffer.from(encryptedHex, 'hex')),
+      decipher.final(),
+    ]);
+    return JSON.parse(decrypted.toString());
   }
 }

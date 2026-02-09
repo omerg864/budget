@@ -2,7 +2,9 @@ import { Injectable, Logger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import * as ejs from 'ejs';
 import { AppI18nService } from '../i18n/app-i18n.service';
+import { I18nPath } from '../i18n/i18n.types';
 
+import { TranslateOptions } from 'nestjs-i18n';
 import { createTransport, Transporter } from 'nodemailer';
 import * as path from 'path';
 
@@ -17,6 +19,7 @@ type SendEmailOptions = {
 export class EmailService {
   private readonly logger = new Logger(EmailService.name);
   private readonly transporter: Transporter;
+  private readonly sender: string;
 
   constructor(
     private readonly configService: ConfigService,
@@ -31,6 +34,7 @@ export class EmailService {
         pass: this.configService.get<string>('EMAIL_PASSWORD'),
       },
     });
+    this.sender = `"Budget App" <${this.configService.get<string>('EMAIL_ADDRESS')}>`;
   }
 
   private async sendEmail({
@@ -39,16 +43,8 @@ export class EmailService {
     text,
     html,
   }: SendEmailOptions): Promise<boolean> {
-    const EMAIL_ADDRESS = this.configService.get<string>('EMAIL_ADDRESS');
-    if (!EMAIL_ADDRESS) {
-      this.logger.error(
-        'Missing email configuration in environment variables.',
-      );
-      return false;
-    }
-
     const mailOptions = {
-      from: `"Budget App" <${EMAIL_ADDRESS}>`,
+      from: this.sender,
       to: Array.isArray(receiver) ? receiver.join(',') : receiver,
       subject,
       text,
@@ -87,7 +83,8 @@ export class EmailService {
       ledgerName,
       link,
       name,
-      t: (key: string, args?: any) => this.i18n.t(key as any, { args }),
+      t: (key: string, args?: TranslateOptions) =>
+        this.i18n.t(key as I18nPath, args),
     });
 
     return this.sendEmail({
@@ -112,12 +109,37 @@ export class EmailService {
     const html = await ejs.renderFile(templatePath, {
       name: username,
       link,
-      t: (key: string, args?: any) => this.i18n.t(key as any, { args }),
+      t: (key: string, args?: TranslateOptions) =>
+        this.i18n.t(key as I18nPath, args),
     });
 
     return this.sendEmail({
       receiver: email,
       subject: this.i18n.t('templates.verification.subject'),
+      html,
+    });
+  }
+
+  async sendResetPasswordEmail(
+    email: string,
+    username: string,
+    link: string,
+  ): Promise<boolean> {
+    const templatePath = path.join(
+      process.cwd(),
+      './src/app/modules/email/templates/reset-password.ejs',
+    );
+
+    const html = await ejs.renderFile(templatePath, {
+      name: username,
+      link,
+      t: (key: string, args?: TranslateOptions) =>
+        this.i18n.t(key as I18nPath, args),
+    });
+
+    return this.sendEmail({
+      receiver: email,
+      subject: this.i18n.t('templates.resetPassword.subject'),
       html,
     });
   }

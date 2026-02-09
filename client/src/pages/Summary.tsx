@@ -41,16 +41,18 @@ const Summary: FC = () => {
 		<div className="flex flex-col h-full overflow-hidden">
 			{/* Header */}
 			<PageTitle title={t('title')} className="mb-4">
-				<LanguageSelector
-					className="w-fit"
-					containerClassName="w-fit"
-				/>
-				<LedgerSelector
-					value={ledgerId ?? undefined}
-					onValueChange={setLedgerId}
-					className="w-fit"
-					containerClassName="w-fit"
-				/>
+				<div className="flex gap-2">
+					<LanguageSelector
+						className="w-fit"
+						containerClassName="w-fit"
+					/>
+					<LedgerSelector
+						value={ledgerId ?? undefined}
+						onValueChange={setLedgerId}
+						className="w-fit"
+						containerClassName="w-fit"
+					/>
+				</div>
 			</PageTitle>
 
 			<div className="flex-1 overflow-y-auto space-y-4 pb-4 px-1 -mx-1">

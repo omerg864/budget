@@ -14,6 +14,7 @@ import { RecurringTransactionService } from '../recurringTransaction/recurringTr
 import { TransactionService } from '../transaction/transaction.service';
 import { LedgerDocument } from './ledger.model.js';
 import { LedgerProvider } from './ledger.provider';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 
 @Injectable()
 export class LedgerService {
@@ -133,7 +134,7 @@ export class LedgerService {
       ...(((ledger as LedgerDocument).toJSON
         ? (ledger as LedgerDocument).toJSON()
         : ledger) as LedgerEntity),
-      access: ledgerAccess.role,
+      access: ledgerAccess?.role ?? LedgerAccessRole.REQUESTED,
     };
   }
 }

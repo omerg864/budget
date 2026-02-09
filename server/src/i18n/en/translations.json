@@ -13,7 +13,8 @@
   "errorMessages": {
     "common": {
       "unauthorized": "Not authenticated",
-      "forbidden": "Access denied"
+      "forbidden": "Access denied",
+      "invalidApiKey": "Invalid API key"
     },
     "account": {
       "notFound": "Account not found",
@@ -57,16 +58,26 @@
       "body": "You have been invited to join the ledger",
       "action": "Access Ledger",
       "ignore": "If you did not expect this invitation, you can safely ignore this email.",
-      "subject": "You have been invited to join {{ledgerName}}"
+      "subject": "You have been invited to join {ledgerName}"
     },
     "verification": {
       "subject": "Verify your email address",
       "title": "Verify your email",
-      "greeting": "Hello {{name}}",
+      "greeting": "Hello {name}",
       "message": "Thanks for signing up! Please verify your email address to get started.",
       "button": "Verify Email",
       "linkAlt": "Or copy and paste this link into your browser:",
       "footer": "If you didn't create an account, you can safely ignore this email."
+    },
+    "resetPassword": {
+      "subject": "Reset your password",
+      "title": "Reset Your Password",
+      "greeting": "Hello {name}",
+      "message": "We received a request to reset your password. Click the button below to choose a new one.",
+      "button": "Reset Password",
+      "linkAlt": "Or copy and paste this link into your browser:",
+      "footer": "If you didn't request a password reset, you can safely ignore this email.",
+      "expiration": "This link will expire in 1 week."
     }
   }
 }

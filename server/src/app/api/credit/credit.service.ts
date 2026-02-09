@@ -40,11 +40,31 @@ export class CreditService {
     return this.creditProvider.findOne(id);
   }
 
+  async findByIds(ids: string[]): Promise<CreditEntity[]> {
+    return this.creditProvider.findByIds(ids);
+  }
+
   async update(
     id: string,
     data: Partial<CreditEntity>,
   ): Promise<CreditEntity | null> {
     return this.creditProvider.update(id, data);
+  }
+
+  async updateAmount(
+    id: string,
+    operation: 'increment' | 'decrement',
+    amount: number,
+  ): Promise<CreditEntity | null> {
+    return this.creditProvider.updateAmount(id, operation, amount);
+  }
+
+  async updateByAccountId(
+    accountId: string,
+    data: Partial<CreditEntity>,
+  ): Promise<CreditEntity[]> {
+    await this.creditProvider.updateByAccountId(accountId, data);
+    return this.creditProvider.findByAccountId(accountId);
   }
 
   async remove(id: string): Promise<CreditEntity | null> {

@@ -4,6 +4,8 @@ export const configurationSchema = z.object({
   GOOGLE_CLIENT_ID: z.string(),
   GOOGLE_CLIENT_SECRET: z.string(),
   BETTER_AUTH_SECRET: z.string().optional(),
+  JOB_API_KEY: z.string().optional().default('DEFAULT_KEY'),
+  SHARE_SECRET_KEY: z.string().optional().default('DEFAULT_KEY'),
 });
 
 export type Configuration = z.infer<typeof configurationSchema>;

@@ -1,11 +1,11 @@
 import { Injectable } from '@nestjs/common';
+import { TransactionPaymentType } from '@shared/constants/transaction.constants.js';
 import { DateTime } from 'luxon';
 import { getThisMonthChargeDates } from '../../../../../shared/services/transaction.shared-service';
 import { RecurringTransactionEntity } from '../../../../../shared/types/recurringTransaction.type';
 import { TransactionEntity } from '../../../../../shared/types/transaction.type';
 import { TransactionService } from '../transaction/transaction.service';
 import { RecurringTransactionProvider } from './recurringTransaction.provider';
-import { TransactionPaymentType } from '@shared/constants/transaction.constants.js';
 
 @Injectable()
 export class RecurringTransactionService {
@@ -14,7 +14,7 @@ export class RecurringTransactionService {
     private readonly transactionService: TransactionService,
   ) {}
 
-  private createTransactionEntity(
+  public createTransactionEntity(
     date: Date,
     recurringTransaction: RecurringTransactionEntity,
   ): Omit<TransactionEntity, 'id' | 'createdAt' | 'updatedAt'> {
@@ -52,6 +52,10 @@ export class RecurringTransactionService {
       );
     }
     return recurringTransaction;
+  }
+
+  async findAll(): Promise<RecurringTransactionEntity[]> {
+    return this.recurringTransactionProvider.findAll();
   }
 
   async findByLedgerId(

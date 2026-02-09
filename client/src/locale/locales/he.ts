@@ -12,6 +12,9 @@ export default {
 		accounts: 'חשבונות',
 		settings: 'הגדרות',
 	},
+	login: {
+		forgotPassword: 'Forgot password?',
+	},
 	accounts: {
 		title: 'חשבונות',
 		totalAssets: 'סה"כ נכסים',
@@ -32,5 +35,26 @@ export default {
 		cancel: 'ביטול',
 		add: 'הוסף',
 		save: 'שמור',
+	},
+	forgotPassword: {
+		title: 'Forgot Password',
+		description: 'Enter your email to receive a password reset link',
+		email: 'Email',
+		submit: 'Send Reset Link',
+		backToLogin: 'Back to Login',
+		success:
+			'If an account exists with this email, you will receive a password reset link shortly.',
+		error: 'Failed to send reset link',
+	},
+	resetPassword: {
+		title: 'Reset Password',
+		description: 'Enter your new password below',
+		password: 'New Password',
+		confirmPassword: 'Confirm Password',
+		submit: 'Reset Password',
+		success: 'Password reset successfully',
+		error: 'Failed to reset password',
+		backToLogin: 'Back to Login',
+		passwordMismatch: 'Passwords do not match',
 	},
 };

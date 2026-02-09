@@ -33,7 +33,7 @@ export const UpdateLedgerSchema = z.object({
 
 export const AddUserSchema = z.object({
 	email: z.email(),
-	role: z.enum(LedgerAccessRole),
+	role: z.enum([LedgerAccessRole.FULL_ACCESS, LedgerAccessRole.READ_ONLY]),
 });
 
 export type CategoryDto = z.infer<typeof CategorySchema>;

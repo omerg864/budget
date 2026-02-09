@@ -16,6 +16,7 @@ import { AccountModule } from './app/api/account/account.module';
 import { BetterAuthModule } from './app/api/auth/better-auth.module';
 import { CreditModule } from './app/api/credit/credit.module';
 import { CurrencyModule } from './app/api/currency/currency.module';
+import { JobModule } from './app/api/job/job.module';
 import { LedgerModule } from './app/api/ledger/ledger.module';
 import { RecurringTransactionModule } from './app/api/recurringTransaction/recurringTransaction.module';
 import { TransactionModule } from './app/api/transaction/transaction.module';
@@ -85,6 +86,7 @@ import emailConfig from './config/email.config';
     CurrencyModule,
     TransactionModule,
     RecurringTransactionModule,
+    JobModule,
     BetterAuthModule,
     ThrottlerModule.forRoot([
       {
