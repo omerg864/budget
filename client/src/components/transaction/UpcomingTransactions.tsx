@@ -5,6 +5,7 @@ import { usePreferencesStore } from '@/stores/usePreferences';
 import { getThisMonthChargeDates } from '@shared/services/transaction.shared-service';
 import type { RecurringTransactionEntity } from '@shared/types/recurringTransaction.type';
 import type { TransactionEntity } from '@shared/types/transaction.type';
+import { DateTime } from 'luxon';
 import { useMemo, type FC } from 'react';
 
 type UpcomingTransactionsProps = {
@@ -21,13 +22,11 @@ const UpcomingTransactions: FC<UpcomingTransactionsProps> = ({ month }) => {
 
 		recurringTransactions.forEach((bill: RecurringTransactionEntity) => {
 			// Get occurrences for the specific month
-			const nextDates = getThisMonthChargeDates(bill, month);
+			const monthDates = getThisMonthChargeDates(bill, month);
 
-			nextDates.forEach((date) => {
-				const isToday =
-					new Date().toDateString() === date.toDateString();
-				if (isToday) return;
-
+			monthDates.forEach((date: Date) => {
+				const today = DateTime.now().endOf('day');
+				if (DateTime.fromJSDate(date) <= today) return;
 				transactions.push({
 					id: `${bill.id}-${date.toISOString()}`,
 					description: bill.description,

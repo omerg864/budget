@@ -50,20 +50,31 @@
   </head>
   <body>
     <div class="container">
-        <div class="header">
-            <h1><%= t('templates.shareLedger.title') %></h1>
-        </div>
-        <div class="content">
-            <p><%- t('templates.shareLedger.greeting', { name }) %></p>
-            <p><%- t('templates.shareLedger.body', { ledgerName }) %></p>
-            <p style="text-align: center;">
-                <a href="<%= link %>" class="button"><%= t('templates.shareLedger.action') %></a>
-            </p>
-            <p><%= t('templates.shareLedger.ignore') %></p>
-        </div>
-        <div class="footer">
-            <p>&copy; <%= new Date().getFullYear() %> Budget App. All rights reserved.</p>
-        </div>
+      <div class="header">
+        <h1><%= t('templates.shareLedger.title') %></h1>
+      </div>
+      <div class="content">
+        <p>
+          <%= t('templates.shareLedger.greeting') %>
+          <strong><%= name %></strong>,
+        </p>
+        <p>
+          <%= t('templates.shareLedger.body') %>
+          <strong><%= ledgerName %></strong>
+        </p>
+        <p style="text-align: center">
+          <a href="<%= link %>" class="button"
+            ><%= t('templates.shareLedger.action') %></a
+          >
+        </p>
+        <p><%= t('templates.shareLedger.ignore') %></p>
+      </div>
+      <div class="footer">
+        <p>
+          &copy; <%= new Date().getFullYear() %> Budget App. All rights
+          reserved.
+        </p>
+      </div>
     </div>
   </body>
 </html>

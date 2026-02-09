@@ -14,6 +14,7 @@ import { useAuthStore } from './stores/useAuthStore.ts';
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
 const Register = lazy(() => import('./pages/Register'));
+const VerifyEmail = lazy(() => import('./pages/VerifyEmail'));
 const Summary = lazy(() => import('./pages/Summary'));
 const Transactions = lazy(() => import('./pages/Transactions'));
 const Bills = lazy(() => import('./pages/Bills'));
@@ -56,6 +57,7 @@ function App() {
 						)}
 						<Route path="/login" element={<Login />} />
 						<Route path="/register" element={<Register />} />
+						<Route path="/verify-email" element={<VerifyEmail />} />
 						<Route element={<AuthenticatedRoute />}>
 							<Route
 								path="/transactions"

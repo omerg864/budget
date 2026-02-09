@@ -53,11 +53,20 @@
   "templates": {
     "shareLedger": {
       "title": "Ledger Sharing Invitation",
-      "greeting": "Hello {{name}},",
-      "body": "You have been invited to join the ledger <strong>{{ledgerName}}</strong>.",
+      "greeting": "Hello",
+      "body": "You have been invited to join the ledger",
       "action": "Access Ledger",
       "ignore": "If you did not expect this invitation, you can safely ignore this email.",
       "subject": "You have been invited to join {{ledgerName}}"
+    },
+    "verification": {
+      "subject": "Verify your email address",
+      "title": "Verify your email",
+      "greeting": "Hello {{name}}",
+      "message": "Thanks for signing up! Please verify your email address to get started.",
+      "button": "Verify Email",
+      "linkAlt": "Or copy and paste this link into your browser:",
+      "footer": "If you didn't create an account, you can safely ignore this email."
     }
   }
 }

@@ -10,8 +10,7 @@ import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import { generateLink } from '../../../../../shared/utils/route.utils';
 import { CurrencyService } from '../../modules/currency/currency.service';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
-import { AuthGuard } from '../auth/auth.guard';
-
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 @Controller(generateLink({ route: [API_ROUTES.CURRENCY.BASE] }))
 @UseGuards(AuthGuard)
 export class CurrencyController {

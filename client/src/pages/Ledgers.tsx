@@ -34,20 +34,19 @@ const Ledgers: FC = () => {
 			<PageDisplay
 				isLoading={isLoading}
 				fixed={
-					<div className="shrink-0 mb-4">
-						<PageTitle
-							title={
-								<div className="flex items-center gap-2">
-									<BackButton onClick={() => navigate(-1)} />
-									<h1 className="text-2xl font-bold">
-										{t('ledgers')}
-									</h1>
-								</div>
-							}
-						>
-							<AddButton onAdd={handleCreateLedger} />
-						</PageTitle>
-					</div>
+					<PageTitle
+						className="mb-2"
+						title={
+							<div className="flex items-center gap-2">
+								<BackButton onClick={() => navigate(-1)} />
+								<h1 className="text-2xl font-bold">
+									{t('ledgers')}
+								</h1>
+							</div>
+						}
+					>
+						<AddButton onAdd={handleCreateLedger} />
+					</PageTitle>
 				}
 			>
 				<div className="flex-1 overflow-y-auto pb-4 px-1 -mx-1">

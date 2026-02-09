@@ -35,13 +35,17 @@ const Sharing: FC = () => {
 
 	return (
 		<div className="flex flex-col h-full">
-			<div className="flex items-center justify-between p-4">
-				<div className="flex items-center gap-2">
-					<BackButton onClick={() => navigate(-1)} />
-					<PageTitle title={t('title')} />
-				</div>
+			<PageTitle
+				className="mb-2"
+				title={
+					<div className="flex items-center gap-2">
+						<BackButton onClick={() => navigate(-1)} />
+						<h1 className="text-2xl font-bold">{t('title')}</h1>
+					</div>
+				}
+			>
 				<AddButton onAdd={() => setIsAddUserModalOpen(true)} />
-			</div>
+			</PageTitle>
 
 			<div className="flex-1 overflow-y-auto p-4 space-y-4">
 				{isLoading ? (

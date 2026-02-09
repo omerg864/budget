@@ -19,9 +19,9 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { AccountService } from '../account/account.service';
 import { User } from '../auth/auth.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 import { CreateCreditDto, UpdateCreditDto } from './credit.dto';
 import { CreditService } from './credit.service';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 @Controller(generateLink({ route: [API_ROUTES.CREDIT.BASE] }))
 @UseGuards(AuthGuard)

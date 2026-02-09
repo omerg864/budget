@@ -9,6 +9,7 @@ import {
   type AuthHookContext,
   Hook,
 } from '@thallesp/nestjs-better-auth';
+import { User } from 'better-auth';
 import { EmailService } from '../../modules/email/email.service';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
@@ -28,15 +29,7 @@ export class AuthHookService {
     private readonly i18n: AppI18nService,
   ) {}
 
-  // Hook 1: Run logic before a user signs up
-  @AfterHook('/sign-up/email')
-  @AfterHook('/callback/google')
-  async handleNewUserSetup(ctx: AuthHookContext) {
-    // Better Auth returns the user object in the response body or context
-    const user = (ctx.context.returned as any)?.user || ctx.context.returned;
-
-    if (!user || !user.id) return;
-
+  private async createDefaultLedger(user: User, provider: string) {
     const ledger = await this.ledgerService.create({
       name: this.i18n.t('variables.defaultLedgerName'),
       currency: SupportedCurrencies.ILS,
@@ -54,6 +47,25 @@ export class AuthHookService {
       defaultLedgerId: ledger.id,
     });
 
-    this.logger.log(`User ${user.id} created with default ledger ${ledger.id}`);
+    this.logger.log(
+      `User ${user.id} created with default ledger ${ledger.id} with ${provider}`,
+    );
+  }
+
+  @AfterHook('/sign-up/email')
+  async handleNewUserSetup(ctx: AuthHookContext) {
+    const user = (ctx.context.returned as any)?.user || ctx.context.returned;
+
+    if (!user || !user.id) return;
+
+    await this.createDefaultLedger(user, 'email');
+  }
+
+  @AfterHook('/callback/google')
+  async handleGoogleUserSetup(ctx: AuthHookContext) {
+    const user = (ctx.context.returned as any)?.user || ctx.context.returned;
+    if (!user || !user.id) return;
+
+    await this.createDefaultLedger(user, 'google');
   }
 }

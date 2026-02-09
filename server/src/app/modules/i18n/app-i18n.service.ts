@@ -8,7 +8,7 @@ export class AppI18nService {
 
   t(key: I18nPath, options?: TranslateOptions): string {
     const lang = I18nContext.current()?.lang;
-    return this.i18n.t(lang + '.' + key, {
+    return this.i18n.t(`translations.${key}`, {
       ...options,
       lang: options?.lang || lang,
     });

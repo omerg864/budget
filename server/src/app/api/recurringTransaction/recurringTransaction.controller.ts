@@ -23,12 +23,12 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { PaymentService } from '../../modules/payment/payment.service';
 import { User } from '../auth/auth.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 import {
   CreateRecurringTransactionDto,
   UpdateRecurringTransactionDto,
 } from './recurringTransaction.dto';
 import { RecurringTransactionService } from './recurringTransaction.service';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 @Controller(generateLink({ route: [API_ROUTES.RECURRING_TRANSACTION.BASE] }))
 @UseGuards(AuthGuard)

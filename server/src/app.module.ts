@@ -1,6 +1,8 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
+import { APP_GUARD } from '@nestjs/core';
 import { MongooseModule } from '@nestjs/mongoose';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
 import { WinstonModule } from 'nest-winston';
 import {
   AcceptLanguageResolver,
@@ -11,7 +13,7 @@ import {
 import * as path from 'path';
 import * as winston from 'winston';
 import { AccountModule } from './app/api/account/account.module';
-import { AuthModule } from './app/api/auth/auth.module';
+import { BetterAuthModule } from './app/api/auth/better-auth.module';
 import { CreditModule } from './app/api/credit/credit.module';
 import { CurrencyModule } from './app/api/currency/currency.module';
 import { LedgerModule } from './app/api/ledger/ledger.module';
@@ -83,7 +85,19 @@ import emailConfig from './config/email.config';
     CurrencyModule,
     TransactionModule,
     RecurringTransactionModule,
-    AuthModule,
+    BetterAuthModule,
+    ThrottlerModule.forRoot([
+      {
+        ttl: 60000,
+        limit: 10,
+      },
+    ]),
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ThrottlerGuard,
+    },
   ],
 })
 export class AppModule {}

@@ -5,6 +5,7 @@ export enum AccountType {
 }
 
 export const ACCOUNT_COLORS = [
+	'#', // black-500
 	'#3b82f6', // blue-500
 	'#22c55e', // green-500
 	'#f97316', // orange-500

@@ -47,7 +47,7 @@ export default function Login() {
 				password: value.password,
 			});
 			if (error) {
-				toast.error(error.message || 'Failed to sign in');
+				toast.error(error.message || t('error'));
 			} else {
 				setLedgerId(
 					(data?.user as unknown as UserEntity).defaultLedgerId,
@@ -60,26 +60,26 @@ export default function Login() {
 	});
 
 	const handleGoogleSignIn = async () => {
-		const { error, data } = await authClient.signIn.social({
+		const { error } = await authClient.signIn.social({
 			provider: 'google',
 		});
 		if (error) {
 			toast.error(error.message || 'Failed to sign in with Google');
 		} else {
-			setLedgerId(
-				((data as any)?.user as unknown as UserEntity).defaultLedgerId,
-			);
+			const user = (await authClient.getSession()).data?.user;
+			setLedgerId((user as unknown as UserEntity).defaultLedgerId);
 			setAuthenticated();
 			navigate(CLIENT_ROUTES.HOME);
 		}
 	};
 
 	const handlePasskeySignIn = async () => {
-		const { error, data } = await authClient.signIn.passkey();
+		const { error } = await authClient.signIn.passkey();
 		if (error) {
 			toast.error(error?.message || 'Failed to sign in with Passkey');
 		} else {
-			setLedgerId((data?.user as unknown as UserEntity).defaultLedgerId);
+			const user = (await authClient.getSession()).data?.user;
+			setLedgerId((user as unknown as UserEntity).defaultLedgerId);
 			setAuthenticated();
 			navigate(CLIENT_ROUTES.HOME);
 		}

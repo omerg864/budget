@@ -71,5 +71,6 @@ export const CLIENT_ROUTES = {
 	HOME: '/',
 	LOGIN: '/login',
 	REGISTER: '/register',
+	VERIFY_EMAIL: '/verify-email',
 	SHARING: '/sharing',
 };

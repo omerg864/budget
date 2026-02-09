@@ -100,6 +100,7 @@ export default {
 		or: 'Or continue with',
 		dontHaveAccount: "Don't have an account?",
 		signUp: 'Sign up',
+		error: 'Failed to sign in',
 	},
 	register: {
 		title: 'Create an account',
@@ -113,6 +114,15 @@ export default {
 		alreadyHaveAccount: 'Already have an account?',
 		signIn: 'Sign in',
 		or: 'Or continue with',
+		success:
+			'Account created successfully. Please check your email to verify your account.',
+	},
+	verification: {
+		title: 'Verify your email',
+		description: 'Verifying your email...',
+		success: 'Email verified successfully',
+		error: 'Failed to verify email',
+		backToLogin: 'Back to Login',
 	},
 	generic: {
 		noInternetConnection: 'No internet connection',
@@ -325,6 +335,19 @@ export default {
 		cancel: 'Cancel',
 		title: 'Profile',
 		personalInfo: 'Personal Information',
+		security: 'Security',
+		passkeys: {
+			title: 'Passkeys',
+			add: 'Add Passkey',
+			noPasskeys: 'No passkeys found',
+			passkey: 'Passkey',
+			successMessages: {
+				add: 'Passkey added successfully',
+			},
+			errorMessages: {
+				add: 'Failed to add passkey',
+			},
+		},
 		fields: {
 			name: 'Name',
 			email: 'Email',

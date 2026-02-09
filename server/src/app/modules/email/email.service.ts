@@ -80,7 +80,7 @@ export class EmailService {
   ): Promise<boolean> {
     const templatePath = path.join(
       process.cwd(),
-      './app/modules/email/templates/share-ledger.ejs',
+      './src/app/modules/email/templates/share-ledger.ejs',
     );
 
     const html = await ejs.renderFile(templatePath, {
@@ -95,6 +95,29 @@ export class EmailService {
       subject: this.i18n.t('templates.shareLedger.subject', {
         args: { ledgerName },
       }),
+      html,
+    });
+  }
+
+  async sendVerificationEmail(
+    email: string,
+    username: string,
+    link: string,
+  ): Promise<boolean> {
+    const templatePath = path.join(
+      process.cwd(),
+      './src/app/modules/email/templates/verification.ejs',
+    );
+
+    const html = await ejs.renderFile(templatePath, {
+      name: username,
+      link,
+      t: (key: string, args?: any) => this.i18n.t(key as any, { args }),
+    });
+
+    return this.sendEmail({
+      receiver: email,
+      subject: this.i18n.t('templates.verification.subject'),
       html,
     });
   }

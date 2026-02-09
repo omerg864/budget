@@ -1,5 +1,5 @@
-import en from '../../../i18n/en/en.json';
-import he from '../../../i18n/he/he.json';
+import en from '../../../i18n/en/translations.json';
+import he from '../../../i18n/he/translations.json';
 
 type Flatten<T, P extends string = ''> = {
   [K in keyof T]: T[K] extends string

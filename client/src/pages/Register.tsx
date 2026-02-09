@@ -48,8 +48,8 @@ export default function Register() {
 			if (error) {
 				toast.error(error.message || 'Failed to sign up');
 			} else {
-				setAuthenticated();
-				navigate(CLIENT_ROUTES.HOME);
+				toast.success(t('success'));
+				navigate(CLIENT_ROUTES.LOGIN);
 			}
 			setIsLoading(false);
 		},
@@ -59,7 +59,6 @@ export default function Register() {
 	const handleGoogleSignUp = async () => {
 		const { error } = await authClient.signIn.social({
 			provider: 'google',
-			callbackURL: '/',
 		});
 		if (error) {
 			toast.error(error.message || 'Failed to sign up with Google');

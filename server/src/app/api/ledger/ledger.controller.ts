@@ -11,10 +11,10 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LedgerAccessRole } from '@shared/constants/ledger.constants';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import { LedgerCategory } from '../../../../../shared/types/ledger.type';
-
 import type { UserEntity } from '../../../../../shared/types/user.type';
 import { generateLink } from '../../../../../shared/utils/route.utils';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
@@ -23,8 +23,6 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
 import { UserService } from '../user/user.service';
-
-import { AuthGuard } from '../auth/auth.guard';
 import {
   AddUserDto,
   CreateCategoryDto,
@@ -32,7 +30,6 @@ import {
   UpdateCategoryDto,
   UpdateLedgerDto,
 } from './ledger.dto';
-
 import { Ledger } from './ledger.model';
 import { LedgerService } from './ledger.service';
 
@@ -363,18 +360,17 @@ export class LedgerController {
         role: LedgerAccessRole.REQUESTED,
       });
 
-      const ledger = await this.ledgerService.findOne(ledgerId);
-      if (ledger) {
-        await this.emailService.sendLedgerShareEmail(
-          targetUser.email,
-          ledger.name,
-          generateLink({
-            route: [API_ROUTES.LEDGER.BASE, ledgerId],
-            params: { id: ledgerId },
-          }),
-          targetUser.name,
-        );
-      }
+      const ledger = (await this.ledgerService.findOne(ledgerId))!;
+
+      await this.emailService.sendLedgerShareEmail(
+        targetUser.email,
+        ledger.name,
+        generateLink({
+          route: [API_ROUTES.LEDGER.BASE, ledgerId],
+          params: { id: ledgerId },
+        }),
+        targetUser.name,
+      );
     }
 
     const ledgerAccess =

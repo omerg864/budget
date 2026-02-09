@@ -14,6 +14,7 @@ import {
   UseGuards,
   UsePipes,
 } from '@nestjs/common';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { ZodValidationPipe } from 'nestjs-zod';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import { TransactionEntity } from '../../../../../shared/types/transaction.type';
@@ -24,7 +25,6 @@ import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { PaymentService } from '../../modules/payment/payment.service';
 import { User } from '../auth/auth.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 import { CreditService } from '../credit/credit.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { CreateTransactionDto, UpdateTransactionDto } from './transaction.dto';

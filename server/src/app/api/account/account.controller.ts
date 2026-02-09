@@ -18,9 +18,9 @@ import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 import { CreateAccountDto, TransferDto, UpdateAccountDto } from './account.dto';
 import { AccountService } from './account.service';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
 @UseGuards(AuthGuard)

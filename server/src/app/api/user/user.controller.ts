@@ -10,6 +10,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { LedgerUser } from '@shared/types/ledger.type.js';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { keyBy } from 'lodash';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
 import type { UserEntity } from '../../../../../shared/types/user.type';
@@ -18,7 +19,6 @@ import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
-import { AuthGuard } from '../auth/auth.guard';
 import { UpdateUserDto } from './user.dto';
 import { UserService } from './user.service';
 
@@ -35,7 +35,6 @@ export class UserController {
   @Get(API_ROUTES.USER.ME)
   async getMe(@User() user: UserEntity): Promise<{ user: UserEntity }> {
     const userEntity = await this.userService.findOne(user.id);
-    this.logger.debug(this.i18n.t('errorMessages.user.notFound'));
 
     if (!userEntity) {
       throw new NotFoundException(this.i18n.t('errorMessages.user.notFound'));
