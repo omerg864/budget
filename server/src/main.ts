@@ -1,3 +1,4 @@
+import 'module-alias/register';
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 import morgan from 'morgan';

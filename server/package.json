@@ -36,6 +36,7 @@
     "graphql": "^16.12.0",
     "lodash": "^4.17.23",
     "luxon": "^3.7.2",
+    "module-alias": "^2.3.4",
     "mongodb": "^7.0.0",
     "mongoose": "^9.1.2",
     "morgan": "^1.10.1",
@@ -78,6 +79,9 @@
     "tsconfig-paths": "^4.2.0",
     "typescript": "^5.7.3",
     "typescript-eslint": "^8.20.0"
+  },
+  "_moduleAliases": {
+    "@shared": "../shared"
   },
   "jest": {
     "moduleFileExtensions": [
