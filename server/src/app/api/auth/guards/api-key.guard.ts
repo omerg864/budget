@@ -5,7 +5,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
-import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 
 @Injectable()
 export class ApiKeyGuard implements CanActivate {

@@ -2,7 +2,7 @@ import { Injectable, UnprocessableEntityException } from '@nestjs/common';
 import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { convertCurrency } from '@shared/services/transaction.shared-service';
 import { parallel } from 'async';
-import { CurrencyService } from 'src/app/modules/currency/currency.service';
+import { CurrencyService } from '../../modules/currency/currency.service';
 import { AccountEntity } from '@shared/types/account.type';
 import { AccountProvider } from './account.provider';
 

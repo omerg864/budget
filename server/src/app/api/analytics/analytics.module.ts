@@ -13,7 +13,7 @@ import {
 import { MonthlyAnalyticProvider } from './monthly-analytic.provider';
 import { YearlyAnalytic, YearlyAnalyticSchema } from './yearly-analytic.model';
 import { YearlyAnalyticProvider } from './yearly-analytic.provider';
-import { LedgerAccessModule } from 'src/app/modules/ledgerAccess/ledgerAccess.module';
+import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module';
 import { UserModule } from '../user/user.module';
 
 @Module({

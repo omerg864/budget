@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { Types } from 'mongoose';
-import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
-import { defaultCategories } from 'src/constants/ledger.constants';
+import { AppI18nService } from '../../modules/i18n/app-i18n.service';
+import { defaultCategories } from '../constants/ledger.constants';
 import {
   LedgerCategory,
   LedgerEntity,
