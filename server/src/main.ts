@@ -1,4 +1,9 @@
-import 'module-alias/register';
+import * as moduleAlias from 'module-alias';
+import path from 'path';
+
+moduleAlias.addAliases({
+  '@shared': path.resolve(__dirname, '../../shared'),
+});
 import { NestFactory } from '@nestjs/core';
 import 'dotenv/config';
 import morgan from 'morgan';
