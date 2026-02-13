@@ -1,7 +1,7 @@
-import CurrencyAPI from '@everapi/currencyapi-js';
 import {
   Injectable,
   Logger,
+  OnModuleInit,
   UnprocessableEntityException,
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
@@ -9,14 +9,21 @@ import { SupportedCurrencies } from '@shared/constants/currency.constants';
 import { DateTime } from 'luxon';
 
 @Injectable()
-export class CurrencyService {
+export class CurrencyService implements OnModuleInit {
   private readonly logger = new Logger(CurrencyService.name);
-  private readonly currencyAPI: CurrencyAPI;
+  private currencyAPI: any;
   private readonly cache = new Map<string, number>();
 
-  constructor(private readonly configService: ConfigService) {
+  constructor(private readonly configService: ConfigService) {}
+
+  async onModuleInit() {
     const apiKey = this.configService.get<string>('CURRENCY_API_KEY');
-    this.currencyAPI = new CurrencyAPI(apiKey);
+    // Dynamically load the ESM module at runtime
+    const module = await import('@everapi/currencyapi-js');
+    // Note: Some ESM modules require .default
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    this.currencyAPI = new (module.default || module)(apiKey);
   }
 
   private getCacheKey(
