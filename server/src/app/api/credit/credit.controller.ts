@@ -10,10 +10,11 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
-import { CreditEntity } from '../../../../../shared/types/credit.type';
-import type { UserEntity } from '../../../../../shared/types/user.type';
-import { generateLink } from '../../../../../shared/utils/route.utils';
+import { API_ROUTES } from '@shared/constants/routes.constants';
+import { CreditEntity } from '@shared/types/credit.type';
+import type { UserEntity } from '@shared/types/user.type';
+import { generateLink } from '@shared/utils/route.utils';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
@@ -21,7 +22,6 @@ import { AccountService } from '../account/account.service';
 import { User } from '../auth/auth.decorator';
 import { CreateCreditDto, UpdateCreditDto } from './credit.dto';
 import { CreditService } from './credit.service';
-import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 @Controller(generateLink({ route: [API_ROUTES.CREDIT.BASE] }))
 @UseGuards(AuthGuard)

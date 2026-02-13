@@ -10,17 +10,17 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
-import { AccountEntity } from '../../../../../shared/types/account.type';
-import type { UserEntity } from '../../../../../shared/types/user.type';
-import { generateLink } from '../../../../../shared/utils/route.utils';
+import { API_ROUTES } from '@shared/constants/routes.constants';
+import { AccountEntity } from '@shared/types/account.type';
+import type { UserEntity } from '@shared/types/user.type';
+import { generateLink } from '@shared/utils/route.utils';
+import { AuthGuard } from '@thallesp/nestjs-better-auth';
 import { ParseObjectIdPipe } from '../../../pipes/parse-object-id.pipe';
 import { AppI18nService } from '../../modules/i18n/app-i18n.service';
 import { LedgerAccessService } from '../../modules/ledgerAccess/ledgerAccess.service';
 import { User } from '../auth/auth.decorator';
 import { CreateAccountDto, TransferDto, UpdateAccountDto } from './account.dto';
 import { AccountService } from './account.service';
-import { AuthGuard } from '@thallesp/nestjs-better-auth';
 
 @Controller(generateLink({ route: [API_ROUTES.ACCOUNT.BASE] }))
 @UseGuards(AuthGuard)
