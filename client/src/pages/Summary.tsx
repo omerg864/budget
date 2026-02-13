@@ -58,12 +58,7 @@ const Summary: FC = () => {
 				onValueChange={(v) => setView(v as 'monthly' | 'yearly')}
 				className="w-full flex-1 overflow-y-auto"
 			>
-				<TabsList className="grid w-full grid-cols-2 mb-4">
-					<TabsTrigger value="monthly">{t('monthly')}</TabsTrigger>
-					<TabsTrigger value="yearly">{t('yearly')}</TabsTrigger>
-				</TabsList>
-
-				<div className="flex items-center justify-center gap-4 mb-6">
+				<div className="flex items-center justify-between gap-4">
 					<button
 						onClick={handlePrev}
 						className="p-2 rounded-full hover:bg-gray-100"
@@ -82,6 +77,11 @@ const Summary: FC = () => {
 						<ForwardArrow className="w-5 h-5" />
 					</button>
 				</div>
+
+				<TabsList className="grid w-full grid-cols-2 mb-4">
+					<TabsTrigger value="monthly">{t('monthly')}</TabsTrigger>
+					<TabsTrigger value="yearly">{t('yearly')}</TabsTrigger>
+				</TabsList>
 
 				<TabsContent value="monthly">
 					<MonthlyTab date={date.toJSDate()} />
