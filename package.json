@@ -1,0 +1,11 @@
+{
+	"name": "budget-monorepo",
+	"private": true,
+	"workspaces": [
+		"server",
+		"shared"
+	],
+	"scripts": {
+		"build:server": "npm run build --workspace=server"
+	}
+}
