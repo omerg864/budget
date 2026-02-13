@@ -42,7 +42,7 @@ const TransactionCard: FC<TransactionCardProps> = ({
 					</p>
 				</div>
 			</div>
-			<div className={cn('font-bold text-lg', amountColor)}>
+			<div className={cn('font-bold text-lg text-nowrap', amountColor)}>
 				<CurrencyFormatter
 					amount={transaction.amount * (isExpense ? -1 : 1)}
 					currency={transaction.currency}

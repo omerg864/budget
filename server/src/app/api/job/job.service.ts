@@ -7,6 +7,7 @@ import { RecurringTransactionEntity } from '@shared/types/recurringTransaction.t
 import { forEachLimit, parallel } from 'async';
 import { groupBy, keyBy } from 'lodash';
 import { AccountService } from '../account/account.service';
+import { AnalyticsService } from '../analytics/analytics.service';
 import { CreditService } from '../credit/credit.service';
 import { LedgerService } from '../ledger/ledger.service';
 import { RecurringTransactionService } from '../recurringTransaction/recurringTransaction.service';
@@ -20,6 +21,7 @@ export class JobService {
     private readonly creditService: CreditService,
     private readonly recurringTransactionService: RecurringTransactionService,
     private readonly transactionService: TransactionService,
+    private readonly analyticsService: AnalyticsService,
   ) {}
 
   private getPaymentKey(rt: RecurringTransactionEntity) {
@@ -137,5 +139,19 @@ export class JobService {
         ]);
       },
     );
+  }
+
+  async calculateAllMonthlyAnalytics(month: Date) {
+    const ledgers = await this.ledgerService.findAll();
+    for (const ledger of ledgers) {
+      await this.analyticsService.calculateMonthlyAnalytics(ledger.id, month);
+    }
+  }
+
+  async calculateAllYearlyAnalytics(year: number) {
+    const ledgers = await this.ledgerService.findAll();
+    for (const ledger of ledgers) {
+      await this.analyticsService.calculateYearlyAnalytics(ledger.id, year);
+    }
   }
 }

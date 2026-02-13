@@ -13,6 +13,7 @@ import {
 import * as path from 'path';
 import * as winston from 'winston';
 import { AccountModule } from './app/api/account/account.module';
+import { AnalyticsModule } from './app/api/analytics/analytics.module';
 import { BetterAuthModule } from './app/api/auth/better-auth.module';
 import { CreditModule } from './app/api/credit/credit.module';
 import { CurrencyModule } from './app/api/currency/currency.module';
@@ -88,6 +89,7 @@ import emailConfig from './config/email.config';
     RecurringTransactionModule,
     JobModule,
     BetterAuthModule,
+    AnalyticsModule,
     ThrottlerModule.forRoot([
       {
         ttl: 60000,

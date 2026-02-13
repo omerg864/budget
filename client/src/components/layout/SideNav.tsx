@@ -2,17 +2,29 @@ import { Button } from '@/components/ui/button';
 import { getNavItems, getSecondaryNavItems } from '@/constants/nav.constants';
 import { cn } from '@/lib/utils';
 import { Plus } from 'lucide-react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
+import { TransactionForm } from '../transaction/TransactionForm';
 
 export default function SideNav() {
-	const { t } = useTranslation('nav');
+	const { t, i18n } = useTranslation('nav');
+	const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
 
 	const navItems = getNavItems(t);
 	const secondaryNavItems = getSecondaryNavItems(t);
 
 	return (
-		<div className="fixed bottom-4 top-4 left-4 z-50 flex w-20 flex-col items-center justify-between rounded-2xl bg-[#1c1c1e]/90 py-6 text-white shadow-2xl backdrop-blur-xl transition-all">
+		<div
+			className={cn(
+				'fixed bottom-4 top-4 z-50 flex w-20 flex-col items-center justify-between rounded-2xl bg-[#1c1c1e]/90 py-6 text-white shadow-2xl backdrop-blur-xl transition-all',
+				i18n.dir(i18n.language) === 'rtl' ? 'right-4' : 'left-4',
+			)}
+		>
+			<TransactionForm
+				open={isTransactionFormOpen}
+				onOpenChange={setIsTransactionFormOpen}
+			/>
 			<div className="flex flex-col gap-6">
 				<div className="flex flex-col gap-2">
 					{navItems.map((item) => (
@@ -37,6 +49,7 @@ export default function SideNav() {
 				<Button
 					size="icon"
 					className="h-10 w-10 rounded-xl bg-white text-black shadow-lg hover:bg-white/90"
+					onClick={() => setIsTransactionFormOpen(true)}
 				>
 					<Plus className="h-5 w-5" />
 				</Button>

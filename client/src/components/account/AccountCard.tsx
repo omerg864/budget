@@ -78,7 +78,7 @@ const AccountCard: FC<AccountCardProps> = ({
 			<div className="flex flex-col items-end">
 				<span
 					className={cn(
-						'font-bold',
+						'font-bold text-nowrap',
 						account.balance < 0
 							? 'text-red-500'
 							: 'text-gray-900 dark:text-white',

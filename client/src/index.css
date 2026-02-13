@@ -163,3 +163,8 @@ button {
 .no-month-caption > .rdp-months > .rdp-month > .rdp-month_caption {
 	display: none;
 }
+
+[data-sonner-toaster] {
+	z-index: 99999 !important;
+	pointer-events: auto !important;
+}

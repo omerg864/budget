@@ -58,6 +58,9 @@ export const useCreateTransactionMutation = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.ANALYTICS.BASE],
+			});
+			queryClient.invalidateQueries({
 				queryKey: [API_ROUTES.TRANSACTION.BASE],
 			});
 			// Also invalidate account/credit balances if needed
@@ -96,6 +99,9 @@ export const useUpdateTransactionMutation = () => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.ANALYTICS.BASE],
+			});
+			queryClient.invalidateQueries({
 				queryKey: [API_ROUTES.TRANSACTION.BASE],
 			});
 			queryClient.invalidateQueries({
@@ -124,6 +130,9 @@ export const useDeleteTransactionMutation = () => {
 			return response;
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: [API_ROUTES.ANALYTICS.BASE],
+			});
 			queryClient.invalidateQueries({
 				queryKey: [API_ROUTES.TRANSACTION.BASE],
 			});

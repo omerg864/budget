@@ -25,6 +25,10 @@ export class LedgerProvider {
     return this.ledgerModel.find({ _id: { $in: ids } });
   }
 
+  async findAll(): Promise<LedgerEntity[]> {
+    return this.ledgerModel.find();
+  }
+
   async findOne(id: string): Promise<LedgerEntity | null> {
     return this.ledgerModel.findById(id);
   }

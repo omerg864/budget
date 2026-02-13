@@ -9,11 +9,13 @@ import {
 } from '@shared/services/transaction.shared-service';
 import { AccountEntity } from '@shared/types/account.type';
 import { CreditEntity } from '@shared/types/credit.type';
+import { forEachLimit } from 'async';
 import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
 import { PaymentService } from 'src/app/modules/payment/payment.service';
 import { TransactionEntity } from '../../../../../shared/types/transaction.type';
 import { CurrencyService } from '../../modules/currency/currency.service';
 import { AccountService } from '../account/account.service';
+import { AnalyticsService } from '../analytics/analytics.service';
 import { TransactionProvider } from './transaction.provider';
 
 @Injectable()
@@ -23,6 +25,7 @@ export class TransactionService {
     private readonly accountService: AccountService,
     private readonly currencyService: CurrencyService,
     private readonly paymentService: PaymentService,
+    private readonly analyticsService: AnalyticsService,
     private readonly i18n: AppI18nService,
   ) {}
 
@@ -35,12 +38,38 @@ export class TransactionService {
       payment,
       data as TransactionEntity,
     );
+    await this.analyticsService.updateAnalyticsForTransaction(
+      'create',
+      undefined,
+      data as TransactionEntity,
+    );
     return this.transactionProvider.create(data);
   }
 
   async createMany(
     data: Omit<TransactionEntity, 'id' | 'createdAt' | 'updatedAt'>[],
   ): Promise<TransactionEntity[]> {
+    await forEachLimit(data, 10, async (transaction) => {
+      const payment = await this.paymentService.getPayment(
+        transaction.paymentId,
+        transaction.paymentType,
+      );
+      if (!payment) {
+        throw new UnprocessableEntityException(
+          this.i18n.t('errorMessages.payment.notFound'),
+        );
+      }
+      await this.paymentService.handlePaymentUpdateForTransaction(
+        transaction.paymentType,
+        payment,
+        transaction as TransactionEntity,
+      );
+      await this.analyticsService.updateAnalyticsForTransaction(
+        'create',
+        undefined,
+        transaction as TransactionEntity,
+      );
+    });
     return this.transactionProvider.createMany(data);
   }
 
@@ -100,6 +129,11 @@ export class TransactionService {
         ),
       ]);
     }
+    await this.analyticsService.updateAnalyticsForTransaction(
+      'update',
+      currentTransaction,
+      data as TransactionEntity,
+    );
     return this.transactionProvider.update(id, data);
   }
 
@@ -132,6 +166,11 @@ export class TransactionService {
         convertCurrency(transaction.amount, exchangeRate),
       );
     }
+    await this.analyticsService.updateAnalyticsForTransaction(
+      'delete',
+      transaction,
+      undefined,
+    );
     return this.transactionProvider.delete(id);
   }
 
@@ -145,7 +184,7 @@ export class TransactionService {
       )
       .map((transaction) => transaction.paymentId);
     const accounts = await this.accountService.findByIds(accountsAffected);
-    const promises: Promise<AccountEntity | null>[] = [];
+    const promises: Promise<AccountEntity | null | void>[] = [];
     for (const account of accounts) {
       const accountTransactions = transactions.filter(
         (transaction) =>
@@ -161,6 +200,13 @@ export class TransactionService {
         totalInAccountCurrency += convertCurrency(
           getTransactionActualAmount(transaction),
           exchangeRate,
+        );
+        promises.push(
+          this.analyticsService.updateAnalyticsForTransaction(
+            'delete',
+            transaction,
+            undefined,
+          ),
         );
       }
       promises.push(

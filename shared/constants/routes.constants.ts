@@ -70,6 +70,13 @@ export const API_ROUTES = {
 		BASE: '/v1/job',
 		CREATE_RECURRING_TRANSACTIONS: '/recurring-transactions',
 		CHARGE_CREDITS_OF_MONTH: '/charge-credits-of-month',
+		CALCULATE_ANALYTICS_MONTHLY: '/calculate-analytics-monthly',
+		CALCULATE_ANALYTICS_YEARLY: '/calculate-analytics-yearly',
+	},
+	ANALYTICS: {
+		BASE: '/v1/analytics',
+		GET_MONTHLY: '/monthly/:ledgerId',
+		GET_YEARLY: '/yearly/:ledgerId',
 	},
 };
 
@@ -79,4 +86,5 @@ export const CLIENT_ROUTES = {
 	REGISTER: '/register',
 	VERIFY_EMAIL: '/verify-email',
 	SHARING: '/sharing',
+	SUMMARY: '/',
 };

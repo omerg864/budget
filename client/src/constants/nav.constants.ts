@@ -1,9 +1,10 @@
+import { CLIENT_ROUTES } from '@shared/constants/routes.constants';
 import type { TFunction } from 'i18next';
 import { FileText, Home, Landmark, Settings } from 'lucide-react';
 
 export const getNavItems = (t: TFunction<'nav'>) => [
 	{
-		to: '/',
+		to: CLIENT_ROUTES.SUMMARY,
 		icon: Home,
 		label: t('summary'),
 	},

@@ -1,4 +1,5 @@
 import { Injectable } from '@nestjs/common';
+import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 import { Types } from 'mongoose';
 import { AppI18nService } from 'src/app/modules/i18n/app-i18n.service';
 import { defaultCategories } from 'src/constants/ledger.constants';
@@ -14,7 +15,6 @@ import { RecurringTransactionService } from '../recurringTransaction/recurringTr
 import { TransactionService } from '../transaction/transaction.service';
 import { LedgerDocument } from './ledger.model.js';
 import { LedgerProvider } from './ledger.provider';
-import { LedgerAccessRole } from '@shared/constants/ledger.constants';
 
 @Injectable()
 export class LedgerService {
@@ -44,6 +44,10 @@ export class LedgerService {
 
   async findByIds(ids: string[]): Promise<LedgerEntity[]> {
     return this.ledgerProvider.findByIds(ids);
+  }
+
+  async findAll(): Promise<LedgerEntity[]> {
+    return this.ledgerProvider.findAll();
   }
 
   async findOne(id: string): Promise<LedgerEntity | null> {

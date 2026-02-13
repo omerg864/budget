@@ -59,7 +59,7 @@ const CreditCard: FC<CreditCardProps> = ({
 			<div className="flex flex-col items-end">
 				<span
 					className={cn(
-						'font-bold',
+						'font-bold text-nowrap',
 						credit.amount < 0
 							? 'text-red-500'
 							: 'text-gray-900 dark:text-white',

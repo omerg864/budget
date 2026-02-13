@@ -36,6 +36,7 @@ export default tseslint.config(
       '@typescript-eslint/no-redundant-type-constituents': 'warn',
       '@typescript-eslint/require-await': 'warn',
       '@typescript-eslint/no-misused-promises': 'off',
+      '@typescript-eslint/unbound-method': 'off',
     },
   },
 );
