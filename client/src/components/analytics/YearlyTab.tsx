@@ -197,6 +197,9 @@ const YearlyTab: FC<YearlyTabProps> = ({ date }) => {
 			</Card>
 
 			<Card className="p-6 rounded-3xl border-0 shadow-sm bg-white">
+				<h3 className="font-bold text-lg mb-4">
+					{t('analytics.userDistribution')}
+				</h3>
 				<UserAnalyticsChart data={analytics} />
 			</Card>
 		</div>

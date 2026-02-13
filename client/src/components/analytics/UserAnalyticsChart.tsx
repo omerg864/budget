@@ -101,7 +101,7 @@ export const UserAnalyticsChart = ({ data }: Props) => {
 				position: 'top' as const,
 			},
 			title: {
-				display: true,
+				display: false,
 				text: t('analytics.userDistribution'),
 			},
 			tooltip: {
