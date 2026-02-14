@@ -3,7 +3,7 @@ import axios from 'axios';
 import { authClient } from './auth.client';
 
 const api = axios.create({
-	baseURL: `${import.meta.env.VITE_API_URL}/${API_ROUTES.BASE}`,
+	baseURL: `${import.meta.env.VITE_API_URL ? import.meta.env.VITE_API_URL : ''}/${API_ROUTES.BASE}`,
 	withCredentials: true, // Crucial for cookie-based auth
 	headers: {
 		'Content-Type': 'application/json',
