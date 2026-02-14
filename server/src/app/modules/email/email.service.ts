@@ -101,10 +101,7 @@ export class EmailService {
     username: string,
     link: string,
   ): Promise<boolean> {
-    const templatePath = path.join(
-      process.cwd(),
-      './src/app/modules/email/templates/verification.ejs',
-    );
+    const templatePath = path.join(__dirname, './templates/verification.ejs');
 
     const html = await ejs.renderFile(templatePath, {
       name: username,
@@ -125,10 +122,7 @@ export class EmailService {
     username: string,
     link: string,
   ): Promise<boolean> {
-    const templatePath = path.join(
-      process.cwd(),
-      './src/app/modules/email/templates/reset-password.ejs',
-    );
+    const templatePath = path.join(__dirname, './templates/reset-password.ejs');
 
     const html = await ejs.renderFile(templatePath, {
       name: username,
