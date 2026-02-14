@@ -54,7 +54,7 @@ export default {
 	},
 	home: {
 		header: {
-			title: 'Budget',
+			title: 'Flow',
 		},
 		hero: {
 			title: 'Take Control of Your Finances',
@@ -86,7 +86,7 @@ export default {
 			description: 'View your financial overview',
 		},
 		footer: {
-			rightsReserved: 'Budget App. All rights reserved.',
+			rightsReserved: 'Flow. All rights reserved.',
 		},
 	},
 	login: {

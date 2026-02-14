@@ -34,7 +34,7 @@ export class EmailService {
         pass: this.configService.get<string>('EMAIL_PASSWORD'),
       },
     });
-    this.sender = `"Budget App" <${this.configService.get<string>('EMAIL_ADDRESS')}>`;
+    this.sender = `"Flow" <${this.configService.get<string>('EMAIL_ADDRESS')}>`;
   }
 
   private async sendEmail({
