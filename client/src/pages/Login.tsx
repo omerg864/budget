@@ -12,6 +12,7 @@ import { authClient } from '@/lib/clients/auth.client';
 import { useAuthStore } from '@/stores/useAuthStore.ts';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import type { UserEntity } from '@shared/types/user.type.ts';
+import { generateLink } from '@shared/utils/route.utils';
 import { useForm } from '@tanstack/react-form';
 import { SmartphoneNfc } from 'lucide-react';
 import { useState } from 'react';
@@ -62,7 +63,10 @@ export default function Login() {
 	const handleGoogleSignIn = async () => {
 		const { error } = await authClient.signIn.social({
 			provider: 'google',
-			callbackURL: '/',
+			callbackURL: generateLink({
+				baseUrl: window.location.origin,
+				route: [CLIENT_ROUTES.HOME],
+			}),
 		});
 		if (error) {
 			toast.error(error.message || 'Failed to sign in with Google');

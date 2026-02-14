@@ -66,6 +66,15 @@ import { AuthService } from './auth.service';
                 mapProfileToUser: () => ({ emailVerified: true }),
               },
             },
+            advanced: {
+              // 3. (Optional but recommended) Force cookies to work on the frontend domain
+              cookiePrefix: 'better-auth',
+              useSecureCookies: true,
+              crossSubdomainCookies: {
+                enabled: true,
+                domain: configService.get<string>('BETTER_AUTH_URL'), // explicit domain binding
+              },
+            },
             trustedOrigins: [
               configService.get<string>('CLIENT_URL') ||
                 'http://localhost:5173',
