@@ -38,9 +38,9 @@ const Settings: FC = () => {
 
 	const isLoading = isLoadingLedger || isLoadingUser;
 
-	const handleLogout = useMemoizedFn(() => {
+	const handleLogout = useMemoizedFn(async () => {
 		try {
-			authClient.signOut();
+			await authClient.signOut();
 			removeAuthenticated();
 			queryClient.clear();
 			navigate('/');

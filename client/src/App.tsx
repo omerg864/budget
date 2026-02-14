@@ -1,3 +1,4 @@
+import type { UserEntity } from '@shared/types/user.type';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { lazy, Suspense, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -6,10 +7,12 @@ import { Toaster } from 'sonner';
 import { Loader } from './components/custom/Loader.tsx';
 import NetworkBanner from './components/custom/NetworkBanner.tsx';
 import AuthenticatedRoute from './components/routes/AuthenticatedRoute.tsx';
+import { authClient } from './lib/clients/auth.client';
 import { idbPersister } from './lib/clients/idb.client';
 import queryClient from './lib/clients/query.client';
 import { setZodLocale } from './lib/utils/zod.utils.ts';
 import { useAuthStore } from './stores/useAuthStore.ts';
+import { usePreferencesStore } from './stores/usePreferences';
 
 const Home = lazy(() => import('./pages/Home'));
 const Login = lazy(() => import('./pages/Login'));
@@ -35,6 +38,24 @@ function App() {
 		setZodLocale(i18n.language);
 		document.dir = i18n.dir();
 	}, [i18n]);
+
+	useEffect(() => {
+		const checkSession = async () => {
+			if (!isAuthenticated) {
+				const { data } = await authClient.getSession();
+				if (data?.user) {
+					useAuthStore.getState().setAuthenticated();
+					usePreferencesStore
+						.getState()
+						.setLedgerId(
+							(data.user as unknown as UserEntity)
+								.defaultLedgerId,
+						);
+				}
+			}
+		};
+		void checkSession();
+	}, [isAuthenticated]);
 
 	return (
 		<PersistQueryClientProvider
