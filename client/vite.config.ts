@@ -39,6 +39,7 @@ export default defineConfig({
 			},
 			workbox: {
 				globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+				navigateFallbackDenylist: [/^\/api/], // Don't serve index.html for /api routes
 			},
 			devOptions: {
 				enabled: true,
