@@ -74,10 +74,7 @@ export class EmailService {
     link: string,
     name: string,
   ): Promise<boolean> {
-    const templatePath = path.join(
-      process.cwd(),
-      './src/app/modules/email/templates/share-ledger.ejs',
-    );
+    const templatePath = path.join(__dirname, './templates/share-ledger.ejs');
 
     const html = await ejs.renderFile(templatePath, {
       ledgerName,

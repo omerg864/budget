@@ -3,7 +3,10 @@ import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import type { SupportedCurrencies } from '@shared/constants/currency.constants';
-import { convertCurrency } from '@shared/services/transaction.shared-service';
+import {
+	convertCurrency,
+	getTransactionActualAmount,
+} from '@shared/services/transaction.shared-service';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
 import { DateTime } from 'luxon';
@@ -52,7 +55,7 @@ const TransactionList: FC<TransactionListProps> = ({
 						const exchangeRate =
 							exchangeRates[transaction.currency];
 						const amount = convertCurrency(
-							transaction.amount,
+							getTransactionActualAmount(transaction),
 							exchangeRate,
 						);
 						return acc + amount;

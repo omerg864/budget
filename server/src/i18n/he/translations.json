@@ -1,59 +1,83 @@
 {
   "categories": {
-    "groceries": "קניות",
+    "groceries": "מכולת וסופר",
     "transport": "תחבורה",
     "housing": "דיור",
-    "utilities": "חשבונות",
-    "entertainment": "בילויים",
+    "utilities": "חשבונות ותשתיות",
+    "entertainment": "פנאי ובידור",
     "salary": "משכורת"
   },
+  "variables": {
+    "defaultLedgerName": "ספר"
+  },
   "errorMessages": {
-    "user": {
-      "notFound": "המשתמש לא נמצא"
-    },
     "common": {
-      "unauthorized": "Not authenticated",
-      "forbidden": "Access denied"
+      "unauthorized": "לא מחובר",
+      "forbidden": "הגישה נדחתה",
+      "invalidApiKey": "מפתח API לא תקין"
     },
     "account": {
-      "notFound": "Account not found",
-      "notBelongToLedger": "Account does not belong to this ledger",
-      "accessDenied": "You do not have access to this account",
-      "deleteForbidden": "You cannot delete this account"
+      "notFound": "חשבון לא נמצא",
+      "notBelongToLedger": "החשבון אינו שייך לספר זה",
+      "accessDenied": "אין לך הרשאת גישה לחשבון זה",
+      "deleteForbidden": "אין באפשרותך למחוק חשבון זה"
     },
     "ledger": {
-      "notFound": "Ledger not found",
-      "accessDenied": "You do not have access to this ledger",
-      "deleteForbidden": "Only the owner can delete this ledger"
+      "notFound": "הספר לא נמצא",
+      "accessDenied": "אין לך הרשאת גישה לספר זה",
+      "deleteForbidden": "רק הבעלים יכול למחוק ספר זה"
     },
     "transaction": {
-      "notFound": "Transaction not found",
-      "accessDenied": "You do not have access to this transaction"
+      "notFound": "התנועה לא נמצאה",
+      "accessDenied": "אין לך הרשאת גישה לתנועה זו"
     },
     "credit": {
-      "notFound": "Credit not found",
-      "accessDenied": "You do not have access to this credit",
-      "accountNotBelongToLedger": "Account does not belong to this ledger"
+      "notFound": "כרטיס האשראי לא נמצא",
+      "accessDenied": "אין לך הרשאת גישה לאשראי זה",
+      "accountNotBelongToLedger": "החשבון אינו שייך לספר זה"
     },
     "payment": {
-      "notFound": "Payment method not found",
-      "accessDenied": "You do not have access to this payment method"
+      "notFound": "אמצעי התשלום לא נמצא",
+      "accessDenied": "אין לך הרשאת גישה לאמצעי תשלום זה"
     },
     "recurringTransaction": {
-      "notFound": "Recurring transaction not found",
-      "accessDenied": "You do not have access to this recurring transaction"
+      "notFound": "התנועה המחזורית לא נמצאה",
+      "accessDenied": "אין לך הרשאת גישה לתנועה מחזורית זו"
+    },
+    "user": {
+      "notFound": "משתמש לא נמצא"
+    },
+    "currency": {
+      "invalidCurrency": "מטבע לא תקין"
     }
   },
   "templates": {
+    "shareLedger": {
+      "title": "הזמנה לשיתוף ספר",
+      "greeting": "שלום",
+      "body": "הוזמנת להצטרף לספר",
+      "action": "לצפייה בספר",
+      "ignore": "אם לא ציפית להזמנה זו, ניתן להתעלם מהודעה זו.",
+      "subject": "הוזמנת להצטרף ל-{ledgerName}"
+    },
+    "verification": {
+      "subject": "אימות כתובת האימייל שלך",
+      "title": "אימות אימייל",
+      "greeting": "שלום {name}",
+      "message": "תודה שנרשמת! אנא אמת את כתובת האימייל שלך כדי להתחיל.",
+      "button": "אימות אימייל",
+      "linkAlt": "או העתק והדבק את הקישור הבא לדפדפן:",
+      "footer": "אם לא יצרת חשבון, ניתן להתעלם מהודעה זו בביטחון."
+    },
     "resetPassword": {
-      "subject": "Reset your password",
-      "title": "Reset Your Password",
-      "greeting": "Hello {name}",
-      "message": "We received a request to reset your password. Click the button below to choose a new one.",
-      "button": "Reset Password",
-      "linkAlt": "Or copy and paste this link into your browser:",
-      "footer": "If you didn't request a password reset, you can safely ignore this email.",
-      "expiration": "הקישור יפוג בעוד שבוע."
+      "subject": "איפוס סיסמה",
+      "title": "איפוס הסיסמה שלך",
+      "greeting": "שלום {name}",
+      "message": "קיבלנו בקשה לאיפוס הסיסמה שלך. לחץ על הכפתור למטה כדי לבחור סיסמה חדשה.",
+      "button": "איפוס סיסמה",
+      "linkAlt": "או העתק והדבק את הקישור הבא לדפדפן:",
+      "footer": "אם לא ביקשת איפוס סיסמה, ניתן להתעלם מהודעה זו בביטחון.",
+      "expiration": "קישור זה יפוג בעוד שבוע אחד."
     }
   }
 }

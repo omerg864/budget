@@ -1,12 +1,11 @@
 import MonthlyTab from '@/components/analytics/MonthlyTab';
 import YearlyTab from '@/components/analytics/YearlyTab';
-import BackArrow from '@/components/custom/BackArrow';
-import ForwardArrow from '@/components/custom/ForwardArrow';
 import PageTitle from '@/components/layout/PageTitle';
 import LanguageSelector from '@/components/selectors/LanguageSelector';
 import LedgerSelector from '@/components/selectors/LedgerSelector';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePreferencesStore } from '@/stores/usePreferences';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import { DateTime } from 'luxon';
 import type { FC } from 'react';
 import { useState } from 'react';
@@ -63,7 +62,7 @@ const Summary: FC = () => {
 						onClick={handlePrev}
 						className="p-2 rounded-full hover:bg-gray-100"
 					>
-						<BackArrow className="w-5 h-5" />
+						<ChevronLeft className="w-5 h-5" />
 					</button>
 					<span className="font-semibold text-lg min-w-[120px] text-center">
 						{view === 'monthly'
@@ -74,7 +73,7 @@ const Summary: FC = () => {
 						onClick={handleNext}
 						className="p-2 rounded-full hover:bg-gray-100"
 					>
-						<ForwardArrow className="w-5 h-5" />
+						<ChevronRight className="w-5 h-5" />
 					</button>
 				</div>
 
