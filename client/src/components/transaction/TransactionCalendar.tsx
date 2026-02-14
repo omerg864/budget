@@ -72,6 +72,7 @@ const TransactionCalendar: FC<TransactionCalendarProps> = ({
 			onSelect={onDateSelect}
 			month={month}
 			onMonthChange={onMonthChange}
+			required
 			components={{
 				DayButton: CustomDayButton,
 			}}

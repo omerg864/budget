@@ -14,10 +14,12 @@ const IncomeCategoryPieChart: React.FC<IncomeCategoryPieChartProps> = ({
 	const aggregatedCategories = useMemo(() => {
 		const categoriesMap: Record<string, number> = {};
 		const categoryNames: Record<string, string> = {};
+		const categoryColors: Record<string, string> = {};
 
 		data.forEach((item) => {
 			(item.categories || []).forEach((cat) => {
 				categoryNames[cat.id] = cat.name;
+				categoryColors[cat.id] = cat.color;
 			});
 
 			Object.entries(item.totalIncomeByCategory || {}).forEach(
@@ -26,7 +28,7 @@ const IncomeCategoryPieChart: React.FC<IncomeCategoryPieChartProps> = ({
 				},
 			);
 		});
-		return { categoriesMap, categoryNames };
+		return { categoriesMap, categoryNames, categoryColors };
 	}, [data]);
 
 	const sortedCategories = Object.entries(aggregatedCategories.categoriesMap)
@@ -40,15 +42,10 @@ const IncomeCategoryPieChart: React.FC<IncomeCategoryPieChartProps> = ({
 		datasets: [
 			{
 				data: sortedCategories.map(([, amount]) => amount),
-				backgroundColor: [
-					'#3b82f6', // blue-500
-					'#ef4444', // red-500
-					'#eab308', // yellow-500
-					'#10b981', // green-500
-					'#a855f7', // purple-500
-					'#f97316', // orange-500
-					'#6b7280', // gray-500
-				],
+				backgroundColor: sortedCategories.map(
+					([catId]) =>
+						aggregatedCategories.categoryColors[catId] || '#cbd5e1',
+				),
 				borderWidth: 1,
 			},
 		],

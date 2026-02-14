@@ -1,6 +1,7 @@
 import { useGetAllReversedExchangeRates } from '@/api/currency.api';
 import { useLedgerQuery } from '@/api/ledger.api';
 import { useUserQuery } from '@/api/user.api.ts';
+import { useDir } from '@/hooks/useDir';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import type { SupportedCurrencies } from '@shared/constants/currency.constants';
 import {
@@ -25,6 +26,7 @@ const TransactionList: FC<TransactionListProps> = ({
 	onCardClick,
 }) => {
 	const { t, i18n } = useTranslation('transactions');
+	const dir = useDir();
 	const { ledgerId } = usePreferencesStore();
 	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 	const { data: exchangeRates = {} as Record<SupportedCurrencies, number> } =
@@ -89,6 +91,7 @@ const TransactionList: FC<TransactionListProps> = ({
 					key={dateKey}
 					id={`date-${dateKey}`}
 					className="scroll-mt-4"
+					dir={dir}
 				>
 					<div className="flex items-center justify-between">
 						<h4 className="text-sm font-medium text-gray-500 mb-3">

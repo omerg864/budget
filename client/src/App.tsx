@@ -7,6 +7,7 @@ import { Toaster } from 'sonner';
 import { Loader } from './components/custom/Loader.tsx';
 import NetworkBanner from './components/custom/NetworkBanner.tsx';
 import AuthenticatedRoute from './components/routes/AuthenticatedRoute.tsx';
+import { useDir } from './hooks/useDir';
 import { authClient } from './lib/clients/auth.client';
 import { idbPersister } from './lib/clients/idb.client';
 import queryClient from './lib/clients/query.client';
@@ -33,11 +34,12 @@ const Profile = lazy(() => import('./pages/Profile'));
 function App() {
 	const isAuthenticated = useAuthStore((state) => state.isAuthenticated);
 	const { i18n } = useTranslation();
+	const dir = useDir();
 
 	useEffect(() => {
 		setZodLocale(i18n.language);
-		document.dir = i18n.dir();
-	}, [i18n]);
+		document.dir = dir;
+	}, [i18n, dir]);
 
 	useEffect(() => {
 		const checkSession = async () => {

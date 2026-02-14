@@ -1,3 +1,4 @@
+import { useDir } from '@/hooks/useDir';
 import { getTransactionTypeIcon } from '@/services/transaction.service';
 import { usePreferencesStore } from '@/stores/usePreferences.ts';
 import type { AnyFormType } from '@/types/form.type.ts';
@@ -55,11 +56,14 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 	transactionToEdit,
 }: TransactionFormBaseDataProps) => {
 	const { t } = useTranslation('transactions');
+	const dir = useDir();
 	const { ledgerId } = usePreferencesStore();
 
 	const [input, dispatch] = useReducer(
 		keypadReducer,
-		transactionToEdit ? String(transactionToEdit.amount) : '0',
+		transactionToEdit
+			? String(transactionToEdit.amount)
+			: String(form.getFieldValue('amount') ?? 0),
 	);
 
 	const onInput = useMemoizedFn((value: string) => {
@@ -87,7 +91,7 @@ const TransactionFormBaseData: FC<TransactionFormBaseDataProps> = ({
 	}, [input, form]);
 
 	return (
-		<Tabs defaultValue={transactionToEdit?.type ?? 'expense'}>
+		<Tabs defaultValue={transactionToEdit?.type ?? 'expense'} dir={dir}>
 			<div className="flex flex-col gap-4 items-center w-full">
 				{transactionToEdit ? (
 					<form.Field

@@ -12,7 +12,7 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 const Summary: FC = () => {
-	const { t } = useTranslation('summary');
+	const { t, i18n } = useTranslation('summary');
 	const ledgerId = usePreferencesStore((state) => state.ledgerId);
 	const setLedgerId = usePreferencesStore((state) => state.setLedgerId);
 
@@ -66,8 +66,10 @@ const Summary: FC = () => {
 					</button>
 					<span className="font-semibold text-lg min-w-[120px] text-center">
 						{view === 'monthly'
-							? date.toFormat('MMMM yyyy')
-							: date.toFormat('yyyy')}
+							? date
+									.setLocale(i18n.language)
+									.toFormat('MMMM yyyy')
+							: date.setLocale(i18n.language).toFormat('yyyy')}
 					</span>
 					<button
 						onClick={handleNext}

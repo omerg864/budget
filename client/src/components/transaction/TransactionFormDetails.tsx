@@ -3,6 +3,7 @@ import type { FC } from 'react';
 import { useTranslation } from 'react-i18next';
 import FormDateInput from '../form/FormDateInput.tsx';
 import FormInput from '../form/FormInput.tsx';
+import FormSelectInput from '../form/FormSelectInput.tsx';
 import FormTextareaInput from '../form/FormTextareaInput.tsx';
 import { CategorySelector } from '../selectors/CategorySelector.tsx';
 
@@ -41,14 +42,19 @@ const TransactionFormDetails: FC<TransactionFormDetailsProps> = ({
 			<form.Field
 				name="category"
 				children={(field) => (
-					<div className="space-y-2">
+					<FormSelectInput
+						field={field}
+						label={t('category')}
+						placeholder={t('category')}
+					>
 						<CategorySelector
 							ledgerId={form.getFieldValue('ledgerId')}
 							value={field.state.value}
 							onValueChange={field.handleChange}
 							type={form.getFieldValue('type')}
+							clearable
 						/>
-					</div>
+					</FormSelectInput>
 				)}
 			/>
 

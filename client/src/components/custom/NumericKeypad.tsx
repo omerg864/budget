@@ -16,7 +16,7 @@ export function NumericKeypad({
 	const keys = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '0'];
 
 	return (
-		<div className={cn('grid grid-cols-3 gap-4 p-4', className)}>
+		<div className={cn('grid grid-cols-3 gap-4 p-4', className)} dir="ltr">
 			{keys.map((key) => (
 				<Button
 					key={key}

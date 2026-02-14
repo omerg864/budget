@@ -82,14 +82,19 @@ const BillFormDetails: FC<BillFormDetailsProps> = ({
 			<form.Field
 				name="category"
 				children={(field) => (
-					<div className="space-y-2">
+					<FormSelectInput
+						field={field}
+						label={t('category')}
+						placeholder={t('category')}
+					>
 						<CategorySelector
 							ledgerId={form.getFieldValue('ledgerId')}
 							value={field.state.value}
 							onValueChange={field.handleChange}
 							type={form.getFieldValue('type')}
+							clearable
 						/>
-					</div>
+					</FormSelectInput>
 				)}
 			/>
 

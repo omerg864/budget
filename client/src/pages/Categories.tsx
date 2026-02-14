@@ -54,17 +54,19 @@ const Categories: FC = () => {
 					</div>
 				}
 			>
-				<ListRenderer
-					data={ledger?.categories}
-					emptyMessage={t('noCategoriesFound')}
-					renderItem={(category) => (
-						<CategoryCard
-							key={category.id}
-							category={category}
-							onClick={() => handleEditCategory(category)}
-						/>
-					)}
-				/>
+				<div className="flex-1 overflow-y-auto">
+					<ListRenderer
+						data={ledger?.categories}
+						emptyMessage={t('noCategoriesFound')}
+						renderItem={(category) => (
+							<CategoryCard
+								key={category.id}
+								category={category}
+								onClick={() => handleEditCategory(category)}
+							/>
+						)}
+					/>
+				</div>
 			</PageDisplay>
 
 			{ledgerId && (

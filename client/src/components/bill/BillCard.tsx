@@ -60,7 +60,7 @@ const BillCard: FC<BillCardProps> = ({
 					</div>
 				</div>
 			</div>
-			<div className={`font-bold text-lg ${amountColor}`}>
+			<div className={`font-bold text-lg text-nowrap ${amountColor}`}>
 				<CurrencyFormatter
 					amount={bill.amount * (isExpense ? -1 : 1)}
 					currency={bill.currency}

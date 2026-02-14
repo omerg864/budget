@@ -71,6 +71,7 @@ export const API_ROUTES = {
 		CREATE_RECURRING_TRANSACTIONS: '/recurring-transactions',
 		CHARGE_CREDITS_OF_MONTH: '/charge-credits-of-month',
 		CALCULATE_ANALYTICS_MONTHLY: '/calculate-analytics-monthly',
+		MONTHLY_JOB: '/monthly-job',
 		CALCULATE_ANALYTICS_YEARLY: '/calculate-analytics-yearly',
 	},
 	ANALYTICS: {

@@ -6,9 +6,11 @@ import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavLink } from 'react-router';
 import { TransactionForm } from '../transaction/TransactionForm';
+import { useDir } from '@/hooks/useDir';
 
 export default function SideNav() {
-	const { t, i18n } = useTranslation('nav');
+	const { t } = useTranslation('nav');
+	const dir = useDir();
 	const [isTransactionFormOpen, setIsTransactionFormOpen] = useState(false);
 
 	const navItems = getNavItems(t);
@@ -18,7 +20,7 @@ export default function SideNav() {
 		<div
 			className={cn(
 				'fixed bottom-4 top-4 z-50 flex w-20 flex-col items-center justify-between rounded-2xl bg-[#1c1c1e]/90 py-6 text-white shadow-2xl backdrop-blur-xl transition-all',
-				i18n.dir(i18n.language) === 'rtl' ? 'right-4' : 'left-4',
+				dir === 'rtl' ? 'right-4' : 'left-4',
 			)}
 		>
 			<TransactionForm

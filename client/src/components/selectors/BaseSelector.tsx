@@ -1,4 +1,6 @@
+import { useDir } from '@/hooks/useDir';
 import { cn } from '@/lib/utils.ts';
+import { useMemoizedFn } from 'ahooks';
 import { X } from 'lucide-react';
 import type { FC, InputHTMLAttributes, ReactNode } from 'react';
 import { Button } from '../ui/button.tsx';
@@ -36,13 +38,20 @@ const BaseSelector: FC<BaseSelectorProps> = ({
 	containerClassName,
 	...porps
 }: BaseSelectorProps) => {
-	const handleClear = (e: React.MouseEvent) => {
+	const dir = useDir();
+
+	const handleClear = useMemoizedFn((e: React.MouseEvent) => {
 		e.stopPropagation();
 		onValueChange('');
-	};
+	});
 
 	return (
-		<Select value={value} onValueChange={onValueChange} {...porps}>
+		<Select
+			value={value}
+			onValueChange={onValueChange}
+			{...porps}
+			dir={dir}
+		>
 			<div className={cn('flex w-full gap-1', containerClassName)}>
 				<SelectTrigger
 					className={cn(

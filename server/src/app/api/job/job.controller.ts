@@ -1,4 +1,4 @@
-import { Controller, Post, UseGuards } from '@nestjs/common';
+import { Controller, Get, UseGuards } from '@nestjs/common';
 import { AllowAnonymous } from '@thallesp/nestjs-better-auth';
 import { DateTime } from 'luxon';
 import { API_ROUTES } from '../../../../../shared/constants/routes.constants';
@@ -12,26 +12,37 @@ import { JobService } from './job.service';
 export class JobController {
   constructor(private readonly jobService: JobService) {}
 
-  @Post(API_ROUTES.JOB.CREATE_RECURRING_TRANSACTIONS)
+  @Get(API_ROUTES.JOB.CREATE_RECURRING_TRANSACTIONS)
   async createRecurringTransactionsOfToday() {
     await this.jobService.createRecurringTransactionsOfToday();
     return { status: 'success' };
   }
 
-  @Post(API_ROUTES.JOB.CHARGE_CREDITS_OF_MONTH)
+  @Get(API_ROUTES.JOB.CHARGE_CREDITS_OF_MONTH)
   async chargeCreditsOfMonth() {
     await this.jobService.chargeCreditsOfMonth();
     return { status: 'success' };
   }
 
-  @Post(API_ROUTES.JOB.CALCULATE_ANALYTICS_MONTHLY)
+  @Get(API_ROUTES.JOB.CALCULATE_ANALYTICS_MONTHLY)
   async calculateAnalyticsMonthly() {
     const previousMonth = DateTime.now().minus({ months: 1 }).toJSDate();
     await this.jobService.calculateAllMonthlyAnalytics(previousMonth);
     return { status: 'success' };
   }
 
-  @Post(API_ROUTES.JOB.CALCULATE_ANALYTICS_YEARLY)
+  @Get(API_ROUTES.JOB.MONTHLY_JOB)
+  async monthlyJob() {
+    const runJobs = async () => {
+      await this.jobService.chargeCreditsOfMonth();
+      const previousMonth = DateTime.now().minus({ months: 1 }).toJSDate();
+      await this.jobService.calculateAllMonthlyAnalytics(previousMonth);
+    };
+    await runJobs();
+    return { status: 'success' };
+  }
+
+  @Get(API_ROUTES.JOB.CALCULATE_ANALYTICS_YEARLY)
   async calculateAnalyticsYearly() {
     const previousYear = DateTime.now().minus({ years: 1 }).year;
     await this.jobService.calculateAllYearlyAnalytics(previousYear);
