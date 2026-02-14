@@ -35,6 +35,7 @@ import { AuthService } from './auth.service';
         return {
           auth: betterAuth({
             database: mongodbAdapter(db as any),
+            baseURL: configService.get<string>('BETTER_AUTH_URL'),
             secret: configService.get<string>('BETTER_AUTH_SECRET'),
             hooks: {},
             user: {
