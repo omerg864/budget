@@ -241,7 +241,7 @@ export default {
 		nextCharges: 'חיובים הבאים',
 		startDate: 'תאריך התחלה',
 		endDate: 'תאריך סיום',
-		upcoming: 'קרוב',
+		upcoming: 'חיובים עתידיים',
 		billCreated: 'החיוב נוצר',
 		billUpdated: 'החיוב עודכן',
 		billDeleted: 'החיוב נמחק',
