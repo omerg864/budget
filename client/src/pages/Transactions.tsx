@@ -13,6 +13,11 @@ import { TransactionForm } from '@/components/transaction/TransactionForm';
 import TransactionList from '@/components/transaction/TransactionList';
 import UpcomingTransactions from '@/components/transaction/UpcomingTransactions';
 import { Button } from '@/components/ui/button';
+import {
+	Popover,
+	PopoverContent,
+	PopoverTrigger,
+} from '@/components/ui/popover';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { usePreferencesStore } from '@/stores/usePreferences';
 import type { SupportedCurrencies } from '@shared/constants/currency.constants';
@@ -22,6 +27,7 @@ import {
 } from '@shared/services/transaction.shared-service.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
+import { CalendarIcon } from 'lucide-react';
 import { DateTime } from 'luxon';
 import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -36,6 +42,8 @@ const Transactions = () => {
 	const [isFormOpen, setIsFormOpen] = useState(false);
 	const [editingTransaction, setEditingTransaction] =
 		useState<TransactionEntity | null>(null);
+	const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+	const [activeTab, setActiveTab] = useState('list');
 
 	const startDate = DateTime.fromJSDate(currentDate)
 		.startOf('month')
@@ -79,6 +87,17 @@ const Transactions = () => {
 		},
 	);
 
+	const handleDateSelect = (newDate: Date | undefined) => {
+		if (newDate) {
+			const dateKey = DateTime.fromJSDate(newDate).toFormat('yyyy-MM-dd');
+			const element = document.getElementById(`date-${dateKey}`);
+			if (element) {
+				element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+			}
+			setIsCalendarOpen(false);
+		}
+	};
+
 	return (
 		<PageDisplay
 			isLoading={isLoading}
@@ -111,26 +130,52 @@ const Transactions = () => {
 							<ForwardArrow className="h-4 w-4" />
 						</Button>
 					</div>
+					{activeTab === 'list' && !isLoading && (
+						<div className="fixed bottom-28 right-2 md:bottom-6 z-[60]">
+							<Popover
+								open={isCalendarOpen}
+								onOpenChange={setIsCalendarOpen}
+							>
+								<PopoverTrigger asChild>
+									<Button
+										size="icon"
+										className="rounded-full h-14 w-14 shadow-lg"
+									>
+										<CalendarIcon className="h-6 w-6" />
+									</Button>
+								</PopoverTrigger>
+								<PopoverContent
+									className="w-auto p-0"
+									align="end"
+								>
+									<TransactionCalendar
+										transactions={transactions}
+										onDateSelect={handleDateSelect}
+										month={currentDate}
+										onMonthChange={setCurrentDate}
+									/>
+								</PopoverContent>
+							</Popover>
+						</div>
+					)}
 				</>
 			}
 		>
-			<div className="flex-1 overflow-hidden flex flex-col">
+			<div className="flex-1 overflow-hidden flex flex-col relative">
 				<Tabs
-					defaultValue="list"
+					value={activeTab}
+					onValueChange={setActiveTab}
 					className="w-full flex-1 flex flex-col h-full"
 				>
-					<TabsList className="grid w-full grid-cols-3 mb-6 shrink-0">
+					<TabsList className="grid w-full grid-cols-2 mb-6 shrink-0">
 						<TabsTrigger value="list">{t('list')}</TabsTrigger>
-						<TabsTrigger value="calendar">
-							{t('calendar')}
-						</TabsTrigger>
 						<TabsTrigger value="upcoming">
 							{t('upcoming')}
 						</TabsTrigger>
 					</TabsList>
 					<TabsContent
 						value="list"
-						className="flex-1 overflow-y-auto pb-24"
+						className="flex-1 overflow-y-auto pb-24 relative"
 					>
 						{isLoading ? (
 							<Loader />
@@ -138,20 +183,6 @@ const Transactions = () => {
 							<TransactionList
 								transactions={transactions}
 								onCardClick={handleEditTransaction}
-							/>
-						)}
-					</TabsContent>
-					<TabsContent
-						value="calendar"
-						className="flex-1 overflow-y-auto pb-24"
-					>
-						{isLoading ? (
-							<Loader />
-						) : (
-							<TransactionCalendar
-								transactions={transactions}
-								onCardClick={handleEditTransaction}
-								month={currentDate}
 							/>
 						)}
 					</TabsContent>

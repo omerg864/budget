@@ -1,66 +1,81 @@
-import { Calendar } from '@/components/ui/calendar';
+import { useLedgerQuery } from '@/api/ledger.api';
+import { Calendar, CalendarDayButton } from '@/components/ui/calendar';
+import { usePreferencesStore } from '@/stores/usePreferences';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { DateTime } from 'luxon';
 import type { FC } from 'react';
-import { useState } from 'react';
-import TransactionList from './TransactionList';
+import { useMemo } from 'react';
+import type { DayButtonProps } from 'react-day-picker';
 
 interface TransactionCalendarProps {
 	transactions: TransactionEntity[];
-	onCardClick: (transaction: TransactionEntity) => void;
+	onDateSelect: (date: Date | undefined) => void;
 	month: Date;
+	onMonthChange: (date: Date) => void;
 }
 
 const TransactionCalendar: FC<TransactionCalendarProps> = ({
 	transactions,
-	onCardClick,
+	onDateSelect,
 	month,
+	onMonthChange,
 }) => {
-	const [date, setDate] = useState<Date | undefined>(new Date());
-	const datesWithTransactions = transactions.map((t) => new Date(t.date));
+	const { ledgerId } = usePreferencesStore();
+	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 
-	const handleDateSelect = (newDate: Date | undefined) => {
-		setDate(newDate);
-		if (newDate) {
-			const dateKey = DateTime.fromJSDate(newDate).toFormat('yyyy-MM-dd');
-			const element = document.getElementById(`date-${dateKey}`);
-			if (element) {
-				element.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	const transactionsByDate = useMemo(() => {
+		const map = new Map<string, TransactionEntity[]>();
+		transactions.forEach((t) => {
+			const dateKey = DateTime.fromJSDate(new Date(t.date)).toFormat(
+				'yyyy-MM-dd',
+			);
+			const current = map.get(dateKey) || [];
+			current.push(t);
+			map.set(dateKey, current);
+		});
+		return map;
+	}, [transactions]);
+
+	const CustomDayButton = (props: DayButtonProps) => {
+		const { day } = props;
+		const dateKey = DateTime.fromJSDate(day.date).toFormat('yyyy-MM-dd');
+		const dayTransactions = transactionsByDate.get(dateKey);
+
+		let categoryColor = 'var(--primary)'; // Default color
+		if (dayTransactions && dayTransactions.length > 0 && ledger) {
+			const firstTransaction = dayTransactions[0];
+			const category = ledger.categories.find(
+				(c) => c.id === firstTransaction.category,
+			);
+			if (category?.color) {
+				categoryColor = category.color;
 			}
 		}
+
+		return (
+			<div className="relative">
+				<CalendarDayButton {...props} />
+				{dayTransactions && dayTransactions.length > 0 && (
+					<div
+						className="absolute bottom-1 left-1/2 -translate-x-1/2 w-1 h-1 rounded-full z-20 pointer-events-none"
+						style={{ backgroundColor: categoryColor }}
+					/>
+				)}
+			</div>
+		);
 	};
 
 	return (
-		<div className="space-y-4">
-			<div className="flex justify-center bg-white rounded-lg shadow-sm sticky top-0 z-10">
-				<Calendar
-					mode="single"
-					selected={date}
-					onSelect={handleDateSelect}
-					month={month}
-					disableNavigation
-					hideNavigation
-					formatters={{
-						formatCaption: () => '',
-					}}
-					className="rounded-md border-0 w-full no-month-caption"
-					modifiers={{
-						hasTransaction: datesWithTransactions,
-					}}
-					modifiersClassNames={{
-						hasTransaction:
-							"relative after:content-[''] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-1 after:h-1 after:bg-primary after:rounded-full",
-					}}
-				/>
-			</div>
-
-			<div className="space-y-3">
-				<TransactionList
-					transactions={transactions}
-					onCardClick={onCardClick}
-				/>
-			</div>
-		</div>
+		<Calendar
+			mode="single"
+			selected={month}
+			onSelect={onDateSelect}
+			month={month}
+			onMonthChange={onMonthChange}
+			components={{
+				DayButton: CustomDayButton,
+			}}
+		/>
 	);
 };
 

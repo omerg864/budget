@@ -24,7 +24,7 @@ const TransactionList: FC<TransactionListProps> = ({
 	transactions,
 	onCardClick,
 }) => {
-	const { t } = useTranslation('transactions');
+	const { t, i18n } = useTranslation('transactions');
 	const { ledgerId } = usePreferencesStore();
 	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
 	const { data: exchangeRates = {} as Record<SupportedCurrencies, number> } =
@@ -71,8 +71,8 @@ const TransactionList: FC<TransactionListProps> = ({
 	}, [transactions, exchangeRates]);
 
 	const getDateHeader = useMemoizedFn((dateString: string) => {
-		const date = DateTime.fromISO(dateString);
-		const now = DateTime.now();
+		const date = DateTime.fromISO(dateString).setLocale(i18n.language);
+		const now = DateTime.now().setLocale(i18n.language);
 
 		if (date.hasSame(now, 'day')) return t('today').toUpperCase();
 		if (date.hasSame(now.minus({ days: 1 }), 'day'))
