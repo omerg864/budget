@@ -91,6 +91,20 @@ export class TransactionProvider {
     return deleted;
   }
 
+  async findByRecurringTransactionIds(
+    recurringTransactionIds: string[],
+    startDate: Date,
+    endDate: Date,
+  ): Promise<TransactionEntity[]> {
+    if (recurringTransactionIds.length === 0) {
+      return [];
+    }
+    return this.transactionModel.find({
+      recurringTransactionId: { $in: recurringTransactionIds },
+      date: { $gte: startDate, $lte: endDate },
+    });
+  }
+
   async deleteByLedgerId(ledgerId: string): Promise<void> {
     await this.transactionModel.deleteMany({ ledgerId });
   }

@@ -86,7 +86,7 @@ const Transactions = () => {
 						<AddButton onAdd={handleAddTransaction} />
 					</PageTitle>
 					{activeTab === 'list' && !isLoading && (
-						<div className="fixed bottom-28 right-2 md:bottom-6 z-[60]">
+						<div className="fixed bottom-28 right-2 z-[60] md:hidden">
 							<Popover
 								open={isCalendarOpen}
 								onOpenChange={setIsCalendarOpen}
@@ -159,10 +159,26 @@ const Transactions = () => {
 							{isLoading ? (
 								<Loader />
 							) : (
-								<TransactionList
-									transactions={transactions}
-									onCardClick={handleEditTransaction}
-								/>
+								<div className="flex gap-6">
+									{/* Desktop only: fixed calendar sidebar */}
+									<div className="hidden md:block shrink-0">
+										<div className="sticky top-0 p-4 mx-2 rounded-xl border bg-card">
+											<TransactionCalendar
+												transactions={transactions}
+												onDateSelect={handleDateSelect}
+												month={currentDate}
+												onMonthChange={setCurrentDate}
+												className="[--cell-size:2.5rem] p-2"
+											/>
+										</div>
+									</div>
+									<div className="flex-1 min-w-0">
+										<TransactionList
+											transactions={transactions}
+											onCardClick={handleEditTransaction}
+										/>
+									</div>
+								</div>
 							)}
 						</TabsContent>
 						<TabsContent

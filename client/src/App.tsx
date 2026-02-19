@@ -54,6 +54,12 @@ function App() {
 								.defaultLedgerId,
 						);
 				}
+			} else {
+				const { data } = await authClient.getSession();
+				if (data === null) {
+					useAuthStore.getState().removeAuthenticated();
+					usePreferencesStore.getState().setLedgerId(null);
+				}
 			}
 		};
 		void checkSession();

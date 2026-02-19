@@ -12,6 +12,7 @@ interface TransactionCalendarProps {
 	onDateSelect: (date: Date | undefined) => void;
 	month: Date;
 	onMonthChange: (date: Date) => void;
+	className?: string;
 }
 
 const TransactionCalendar: FC<TransactionCalendarProps> = ({
@@ -19,6 +20,7 @@ const TransactionCalendar: FC<TransactionCalendarProps> = ({
 	onDateSelect,
 	month,
 	onMonthChange,
+	className,
 }) => {
 	const { ledgerId } = usePreferencesStore();
 	const { data: ledger } = useLedgerQuery(ledgerId ?? undefined);
@@ -67,11 +69,14 @@ const TransactionCalendar: FC<TransactionCalendarProps> = ({
 
 	return (
 		<Calendar
+			className={className}
 			mode="single"
 			selected={month}
 			onSelect={onDateSelect}
 			month={month}
 			onMonthChange={onMonthChange}
+			disableNavigation
+			hideNavigation
 			required
 			components={{
 				DayButton: CustomDayButton,

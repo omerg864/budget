@@ -6,6 +6,7 @@ import { CreditEntity } from '@shared/types/credit.type';
 import { RecurringTransactionEntity } from '@shared/types/recurringTransaction.type';
 import { forEachLimit, parallel } from 'async';
 import { groupBy, keyBy } from 'lodash';
+import { DateTime } from 'luxon';
 import { AccountService } from '../account/account.service';
 import { AnalyticsService } from '../analytics/analytics.service';
 import { CreditService } from '../credit/credit.service';
@@ -43,21 +44,41 @@ export class JobService {
     const recurringTransactions =
       await this.recurringTransactionService.findAll();
 
+    const today = new Date();
     const filteredRecurringTransactions = recurringTransactions.filter((rt) => {
-      const chargeDates = getThisMonthChargeDates(rt, new Date());
-      return (
-        chargeDates.filter((date) => date.getDate() === new Date().getDate())
-          .length > 0
-      );
+      const chargeDates = getThisMonthChargeDates(rt, today);
+      return chargeDates.some((date) => date.getDate() === today.getDate());
     });
 
     if (filteredRecurringTransactions.length === 0) {
       return;
     }
 
+    // Check which recurring transactions already have a transaction for today
+    const startOfDay = DateTime.now().startOf('day').toJSDate();
+    const endOfDay = DateTime.now().endOf('day').toJSDate();
+    const existingTransactions =
+      await this.transactionService.findByRecurringTransactionIds(
+        filteredRecurringTransactions.map((rt) => rt.id),
+        startOfDay,
+        endOfDay,
+      );
+    const existingRecurringIds = new Set(
+      existingTransactions.map((t) => t.recurringTransactionId),
+    );
+
+    // Filter out recurring transactions that already have a transaction today
+    const newRecurringTransactions = filteredRecurringTransactions.filter(
+      (rt) => !existingRecurringIds.has(rt.id),
+    );
+
+    if (newRecurringTransactions.length === 0) {
+      return;
+    }
+
     const accountIds = new Set<string>();
     const creditIds = new Set<string>();
-    filteredRecurringTransactions.forEach((rt) => {
+    newRecurringTransactions.forEach((rt) => {
       if (rt.paymentType === TransactionPaymentType.ACCOUNT) {
         accountIds.add(rt.paymentId);
       } else {
@@ -75,7 +96,7 @@ export class JobService {
     const keyedAccounts = keyBy(accounts, (a) => a.id);
     const keyedCredits = keyBy(credits, (c) => c.id);
     const recurringTransactionByPayment = groupBy(
-      filteredRecurringTransactions,
+      newRecurringTransactions,
       (rt) => this.getPaymentKey(rt),
     );
     await forEachLimit(
@@ -92,10 +113,7 @@ export class JobService {
             continue;
           }
           await this.transactionService.create(
-            this.recurringTransactionService.createTransactionEntity(
-              new Date(),
-              rt,
-            ),
+            this.recurringTransactionService.createTransactionEntity(today, rt),
             payment,
           );
         }

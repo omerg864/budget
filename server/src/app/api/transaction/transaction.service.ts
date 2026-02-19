@@ -221,6 +221,18 @@ export class TransactionService {
     return this.transactionProvider.deleteMany(ids);
   }
 
+  async findByRecurringTransactionIds(
+    recurringTransactionIds: string[],
+    startDate: Date,
+    endDate: Date,
+  ): Promise<TransactionEntity[]> {
+    return this.transactionProvider.findByRecurringTransactionIds(
+      recurringTransactionIds,
+      startDate,
+      endDate,
+    );
+  }
+
   async removeByLedgerId(ledgerId: string): Promise<void> {
     await this.transactionProvider.deleteByLedgerId(ledgerId);
   }
