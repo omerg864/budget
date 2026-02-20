@@ -1,34 +1,23 @@
 import { passkey } from '@better-auth/passkey';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config'; // Add this
+import { ConfigModule, ConfigService } from '@nestjs/config';
 import { getConnectionToken } from '@nestjs/mongoose';
 import { AuthModule as BetterAuthNestModule } from '@thallesp/nestjs-better-auth';
 import { betterAuth } from 'better-auth';
 import { mongodbAdapter } from 'better-auth/adapters/mongodb';
 import { Connection } from 'mongoose';
-import { EmailModule } from '../../modules/email/email.module';
-import { AppI18nModule } from '../../modules/i18n/app-i18n.module';
-import { LedgerAccessModule } from '../../modules/ledgerAccess/ledgerAccess.module';
-import { LedgerModule } from '../ledger/ledger.module';
-import { UserModule } from '../user/user.module';
-import { AuthHookService } from './auth-hooks.service';
 import { AuthModule } from './auth.module';
 import { AuthService } from './auth.service';
 
 @Module({
   imports: [
-    UserModule,
-    LedgerModule,
-    LedgerAccessModule,
-    EmailModule,
-    AppI18nModule,
     BetterAuthNestModule.forRootAsync({
       imports: [ConfigModule, AuthModule],
       inject: [AuthService, getConnectionToken(), ConfigService],
       useFactory: (
         authService: AuthService,
         connection: Connection,
-        configService: ConfigService, // Add to arguments
+        configService: ConfigService,
       ) => {
         const db = connection.db;
 
@@ -37,10 +26,19 @@ import { AuthService } from './auth.service';
             database: mongodbAdapter(db as any),
             baseURL: configService.get<string>('BETTER_AUTH_URL'),
             secret: configService.get<string>('BETTER_AUTH_SECRET'),
-            hooks: {},
             user: {
               additionalFields: {
                 defaultLedgerId: { type: 'string', required: false },
+              },
+            },
+            hooks: {},
+            databaseHooks: {
+              user: {
+                create: {
+                  after: async (user) => {
+                    await authService.createDefaultLedger(user);
+                  },
+                },
               },
             },
             emailAndPassword: {
@@ -67,12 +65,11 @@ import { AuthService } from './auth.service';
               },
             },
             advanced: {
-              // 3. (Optional but recommended) Force cookies to work on the frontend domain
               cookiePrefix: 'better-auth',
               useSecureCookies: true,
               crossSubdomainCookies: {
                 enabled: true,
-                domain: configService.get<string>('BETTER_AUTH_URL'), // explicit domain binding
+                domain: configService.get<string>('BETTER_AUTH_URL'),
               },
             },
             trustedOrigins: [
@@ -85,6 +82,5 @@ import { AuthService } from './auth.service';
       },
     }),
   ],
-  providers: [AuthHookService],
 })
 export class BetterAuthModule {}
