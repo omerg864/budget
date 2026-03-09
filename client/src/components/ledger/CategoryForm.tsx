@@ -5,6 +5,7 @@ import {
 } from '@/api/ledger.api';
 import FormInput from '@/components/form/FormInput';
 import FormSelectInput from '@/components/form/FormSelectInput';
+import { SupportedIcons } from '@shared/constants/ledger.constants';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import {
 	CreateCategorySchema,
@@ -44,8 +45,8 @@ export default function CategoryForm({
 	const form = useForm({
 		defaultValues: {
 			name: '',
-			icon: '',
-			color: '',
+			icon: SupportedIcons.Other as string,
+			color: '#000000',
 			type: TransactionType.EXPENSE,
 			imageId: undefined as string | undefined,
 		},
@@ -122,7 +123,7 @@ export default function CategoryForm({
 			if (categoryToEdit) {
 				form.reset({
 					name: categoryToEdit.name,
-					icon: categoryToEdit.icon ?? '',
+					icon: categoryToEdit.icon ?? SupportedIcons.Other,
 					color: categoryToEdit.color,
 					type: categoryToEdit.type,
 					imageId: categoryToEdit.imageId,
@@ -130,10 +131,10 @@ export default function CategoryForm({
 			} else {
 				form.reset({
 					name: '',
-					icon: '',
-					color: '',
+					icon: SupportedIcons.Other as string,
+					color: '#000000',
 					type: TransactionType.EXPENSE,
-					imageId: undefined,
+					imageId: undefined as string | undefined,
 				});
 			}
 		}
