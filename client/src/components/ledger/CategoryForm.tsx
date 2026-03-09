@@ -5,6 +5,7 @@ import {
 } from '@/api/ledger.api';
 import FormInput from '@/components/form/FormInput';
 import FormSelectInput from '@/components/form/FormSelectInput';
+import { ACCOUNT_COLORS } from '@shared/constants/account.constants';
 import { SupportedIcons } from '@shared/constants/ledger.constants';
 import { TransactionType } from '@shared/constants/transaction.constants';
 import {
@@ -46,7 +47,7 @@ export default function CategoryForm({
 		defaultValues: {
 			name: '',
 			icon: SupportedIcons.Other as string,
-			color: '#000000',
+			color: ACCOUNT_COLORS[0],
 			type: TransactionType.EXPENSE,
 			imageId: undefined as string | undefined,
 		},
@@ -132,7 +133,7 @@ export default function CategoryForm({
 				form.reset({
 					name: '',
 					icon: SupportedIcons.Other as string,
-					color: '#000000',
+					color: ACCOUNT_COLORS[0],
 					type: TransactionType.EXPENSE,
 					imageId: undefined as string | undefined,
 				});
