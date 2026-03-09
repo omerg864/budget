@@ -10,21 +10,26 @@ export type IconSelectorProps = Omit<
 	'options' | 'onValueChange'
 > & {
 	onValueChange: (value: SupportedIcons) => void;
+	color?: string; // Optional color prop to pass to LedgerIcon
 };
 
-const IconSelector: FC<IconSelectorProps> = ({ onValueChange, ...props }) => {
+const IconSelector: FC<IconSelectorProps> = ({
+	onValueChange,
+	color,
+	...props
+}) => {
 	const iconOptions = useMemo(
 		() =>
 			Object.values(SupportedIcons).map((icon) => ({
 				value: icon,
 				label: (
 					<div className="flex items-center gap-2">
-						<LedgerIcon icon={icon} color="#000000" />
+						<LedgerIcon icon={icon} color={color ?? '#000000'} />
 						<SupportedIconsFormatter value={icon} />
 					</div>
 				),
 			})),
-		[],
+		[color],
 	);
 
 	const onChange = useMemoizedFn((value: string) => {

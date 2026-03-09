@@ -1,32 +1,34 @@
+import { TransactionType } from '@shared/constants/transaction.constants';
+
 export const defaultCategories = [
   {
     name: 'groceries',
-    type: 'expense',
-    color: '#FF6B6B',
+    type: TransactionType.EXPENSE,
+    color: '#ef4444',
   },
   {
     name: 'transport',
-    type: 'expense',
-    color: '#4ECDC4',
+    type: TransactionType.EXPENSE,
+    color: '#14b8a6',
   },
   {
     name: 'housing',
-    type: 'expense',
-    color: '#45B7D1',
+    type: TransactionType.EXPENSE,
+    color: '#3b82f6',
   },
   {
     name: 'utilities',
-    type: 'expense',
-    color: '#F7B731',
+    type: TransactionType.EXPENSE,
+    color: '#f59e0b',
   },
   {
     name: 'entertainment',
-    type: 'expense',
-    color: '#A8DADC',
+    type: TransactionType.EXPENSE,
+    color: '#a855f7',
   },
   {
     name: 'salary',
-    type: 'income',
-    color: '#4ECDC4',
+    type: TransactionType.INCOME,
+    color: '#22c55e',
   },
 ];

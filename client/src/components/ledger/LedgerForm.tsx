@@ -170,26 +170,33 @@ export function LedgerForm({
 				)}
 			/>
 
-			<form.Field
-				name="icon"
-				children={(field) => (
-					<div className="space-y-2">
-						<FormSelectInput
-							field={field}
-							label={t('icon')}
-							required
-						>
-							<IconSelector
-								value={field.state.value}
-								onValueChange={(val) =>
-									field.handleChange(val as SupportedIcons)
-								}
-								placeholder={t('icon')}
-							/>
-						</FormSelectInput>
-					</div>
+			<form.Subscribe selector={(s) => s.values.color}>
+				{(color) => (
+					<form.Field
+						name="icon"
+						children={(field) => (
+							<div className="space-y-2">
+								<FormSelectInput
+									field={field}
+									label={t('icon')}
+									required
+								>
+									<IconSelector
+										color={color}
+										value={field.state.value}
+										onValueChange={(val) =>
+											field.handleChange(
+												val as SupportedIcons,
+											)
+										}
+										placeholder={t('icon')}
+									/>
+								</FormSelectInput>
+							</div>
+						)}
+					/>
 				)}
-			/>
+			</form.Subscribe>
 
 			<form.Field
 				name="color"

@@ -7,6 +7,12 @@ export enum SupportedIcons {
 	Education = 'education',
 	Entertainment = 'entertainment',
 	Travel = 'travel',
+	Plug = 'plug',
+	Calendar = 'calendar',
+	CandleStick = 'candlestick',
+	Gift = 'gift',
+	Shirt = 'shirt',
+	Code = 'code',
 	Other = 'other',
 }
 

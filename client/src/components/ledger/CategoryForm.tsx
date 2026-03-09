@@ -177,17 +177,28 @@ export default function CategoryForm({
 					</FormSelectInput>
 				)}
 			/>
-			<form.Field
-				name="icon"
-				children={(field) => (
-					<FormSelectInput field={field} label={t('icon')} required>
-						<IconSelector
-							value={field.state.value}
-							onValueChange={(val) => field.handleChange(val)}
-						/>
-					</FormSelectInput>
+			<form.Subscribe selector={(s) => s.values.color}>
+				{(color) => (
+					<form.Field
+						name="icon"
+						children={(field) => (
+							<FormSelectInput
+								field={field}
+								label={t('icon')}
+								required
+							>
+								<IconSelector
+									color={color}
+									value={field.state.value}
+									onValueChange={(val) =>
+										field.handleChange(val)
+									}
+								/>
+							</FormSelectInput>
+						)}
+					/>
 				)}
-			/>
+			</form.Subscribe>
 
 			<form.Field
 				name="color"

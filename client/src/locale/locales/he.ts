@@ -9,6 +9,12 @@ export default {
 			education: 'חינוך',
 			entertainment: 'פנאי ובידור',
 			travel: 'טיולים',
+			plug: 'חשמל',
+			calendar: 'לוח שנה',
+			candlestick: 'השקעות',
+			gift: 'מתנות',
+			shirt: 'ביגוד',
+			code: 'קוד',
 			other: 'אחר',
 		},
 		AccountType: {

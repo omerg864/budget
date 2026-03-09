@@ -9,6 +9,12 @@ export default {
 			education: 'Education',
 			entertainment: 'Entertainment',
 			travel: 'Travel',
+			code: 'Code',
+			shirt: 'Clothing',
+			gift: 'Gift',
+			plug: 'Utilities',
+			calendar: 'Calendar',
+			candlestick: 'Investment',
 			other: 'Other',
 		},
 		AccountType: {
