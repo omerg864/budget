@@ -1,11 +1,13 @@
 import { useAccountsQuery } from '@/api/account.api.ts';
 import { useCreditsQuery } from '@/api/credit.api.ts';
+import { useUsersByLedgerQuery } from '@/api/user.api';
 import { TransactionPaymentType } from '@shared/constants/transaction.constants.ts';
 import { isAccountValidForTransaction } from '@shared/services/transaction.shared-service.ts';
 import type { AccountEntity } from '@shared/types/account.type.ts';
 import type { CreditEntity } from '@shared/types/credit.type.ts';
 import type { TransactionEntity } from '@shared/types/transaction.type';
 import { useMemoizedFn } from 'ahooks';
+import { keyBy } from 'lodash';
 import { useMemo, type FC } from 'react';
 import type { BaseSelectorProps } from './BaseSelector.tsx';
 import BaseSelector from './BaseSelector.tsx';
@@ -49,8 +51,10 @@ const PaymentSelector: FC<PaymentSelectorProps> = ({
 }: PaymentSelectorProps) => {
 	const { data: accounts } = useAccountsQuery(ledgerId);
 	const { data: credits } = useCreditsQuery(ledgerId);
+	const { data: ledgerUsers } = useUsersByLedgerQuery(ledgerId);
 
 	const options = useMemo(() => {
+		const keyedUsers = keyBy(ledgerUsers ?? [], (u) => u.id);
 		return [
 			...(accounts || [])
 				.filter((account) => {
@@ -67,7 +71,14 @@ const PaymentSelector: FC<PaymentSelectorProps> = ({
 						account.id,
 						TransactionPaymentType.ACCOUNT,
 					),
-					label: account.name,
+					label: (
+						<span>
+							{account.name}
+							{account.ownerId
+								? ` (${keyedUsers[account.ownerId]?.name || account.ownerId})`
+								: ''}
+						</span>
+					),
 				})),
 			...(credits || [])
 				.filter(filter ? filter : () => true)
@@ -76,10 +87,17 @@ const PaymentSelector: FC<PaymentSelectorProps> = ({
 						credit.id,
 						TransactionPaymentType.CREDIT,
 					),
-					label: credit.name,
+					label: (
+						<span>
+							{credit.name}{' '}
+							{credit.ownerId
+								? ` (${keyedUsers[credit.ownerId]?.name || credit.ownerId})`
+								: ''}
+						</span>
+					),
 				})),
 		];
-	}, [accounts, credits, filter]);
+	}, [accounts, credits, filter, ledgerUsers]);
 
 	const onChange = useMemoizedFn((value: string) => {
 		if (!value) {
