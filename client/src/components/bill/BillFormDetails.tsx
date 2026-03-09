@@ -79,24 +79,33 @@ const BillFormDetails: FC<BillFormDetailsProps> = ({
 			<span className="text-muted"></span>
 
 			{/* Category Selector */}
-			<form.Field
-				name="category"
-				children={(field) => (
-					<FormSelectInput
-						field={field}
-						label={t('category')}
-						placeholder={t('category')}
-					>
-						<CategorySelector
-							ledgerId={form.getFieldValue('ledgerId')}
-							value={field.state.value}
-							onValueChange={field.handleChange}
-							type={form.getFieldValue('type')}
-							clearable
-						/>
-					</FormSelectInput>
+			<form.Subscribe
+				selector={(s) => ({
+					type: s.values.type,
+					ledgerId: s.values.ledgerId,
+				})}
+			>
+				{({ type, ledgerId }) => (
+					<form.Field
+						name="category"
+						children={(field) => (
+							<FormSelectInput
+								field={field}
+								label={t('category')}
+								placeholder={t('category')}
+							>
+								<CategorySelector
+									ledgerId={ledgerId}
+									value={field.state.value}
+									onValueChange={field.handleChange}
+									type={type}
+									clearable
+								/>
+							</FormSelectInput>
+						)}
+					/>
 				)}
-			/>
+			</form.Subscribe>
 
 			{/* Notes */}
 			<form.Field

@@ -109,25 +109,33 @@ const BillFormBaseData: FC<BillFormBaseDataProps> = ({
 				<div className="w-full h-full flex flex-col justify-between">
 					<div>
 						<div className="grid grid-cols-2 gap-2">
-							<form.Field
-								name="paymentId"
-								children={(field) => (
-									<FormSelectInput
-										field={field}
-										label={t('paymentMethod')}
-										required
-									>
-										<PaymentSelector
-											ledgerId={ledgerId ?? undefined}
-											value={field.state.value}
-											valueType={form.getFieldValue(
-												'paymentType',
-											)}
-											onValueChange={onPaymentChange}
-										/>
-									</FormSelectInput>
+							<form.Subscribe
+								selector={(s) => s.values.paymentType}
+							>
+								{(paymentType) => (
+									<form.Field
+										name="paymentId"
+										children={(field) => (
+											<FormSelectInput
+												field={field}
+												label={t('paymentMethod')}
+												required
+											>
+												<PaymentSelector
+													ledgerId={
+														ledgerId ?? undefined
+													}
+													value={field.state.value}
+													valueType={paymentType}
+													onValueChange={
+														onPaymentChange
+													}
+												/>
+											</FormSelectInput>
+										)}
+									/>
 								)}
-							/>
+							</form.Subscribe>
 
 							<form.Field
 								name="currency"
